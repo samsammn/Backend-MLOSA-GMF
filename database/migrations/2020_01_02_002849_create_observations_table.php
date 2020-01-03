@@ -15,11 +15,14 @@ class CreateObservationsTable extends Migration
     {
         Schema::create('observations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('mlosa_plan_id');
             $table->string('observation_no', 50);
             $table->date('observation_date');
             $table->time('start_time');
             $table->time('end_time');
+            $table->text('subtitle');
+            $table->date('due_date');
+            $table->integer('mp_id');
+            $table->integer('uic_id');
             $table->string('component_type', 50);
             $table->string('observer_team', 50);
             $table->string('task_observed', 50);

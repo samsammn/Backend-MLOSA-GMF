@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MlosaPlan extends Model
+class SubThreatCode extends Model
 {
     //
 }

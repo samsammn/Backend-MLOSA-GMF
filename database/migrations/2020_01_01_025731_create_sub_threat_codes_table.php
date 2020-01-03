@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateObservationDetailsTable extends Migration
+class CreateSubThreatCodesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateObservationDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('observation_details', function (Blueprint $table) {
+        Schema::create('sub_threat_codes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('observation_id');
-            $table->bigInteger('mp_detail_id');
+            $table->bigInteger('threat_codes_id');
+            $table->string('description', 150);
         });
     }
 
@@ -27,6 +27,6 @@ class CreateObservationDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('observation_details');
+        Schema::dropIfExists('sub_threat_codes');
     }
 }
