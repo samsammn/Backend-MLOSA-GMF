@@ -41,6 +41,7 @@
                 @csrf
 
                 <div class="form-group row container">
+                    <input type="hidden" name="mp" value="{{ request()->get('mp') }}">
                     <input type="text" class="form-control col-md-2 mr-2 mb-3" placeholder="Observation No" name="observation_no">
                     <input type="text" class="form-control col-md-2 mr-2 mb-3" placeholder="Observation Date" name="observation_date">
                     <input type="text" class="form-control col-md-2 mr-2 mb-3" placeholder="Start Time" name="start_time">
@@ -56,10 +57,9 @@
                     <input type="text" class="form-control col-md-3 mr-3 mb-3" value="{{ $item->activity_name }}">
                     <input type="text" class="form-control col-md-7 mb-3" value="{{ $item->sub_activity_name }}">
                     <select class="form-control col-md-3 mr-3 mb-3" name="safety_risk[]">
-                        <option>At Risk</option>
-                        <option>Safe</option>
-                        <option>Not Applicable</option>
-                        <option>Did Not Observed</option>
+                        @foreach ($safety as $item)
+                            <option value="{{ $item->id }}">{{ $item->description }} ({{ $item->code }})</option>
+                        @endforeach
                     </select>
                     <select class="form-control col-md-4 mr-3 mb-3" name="effectively_managed[]">
                         <option value="Y">Yes</option>
@@ -72,7 +72,7 @@
                     </select>
                     <select class="form-control col-md-11" name="sub_threat[]">
                     @foreach ($sub_threat as $item)
-                            <option value="{{ $item->code }}">{{ $item->code }} {{ $item->description }}</option>
+                            <option value="{{ $item->id }}">{{ $item->code }} {{ $item->description }}</option>
                     @endforeach
                     </select>
                 </div>

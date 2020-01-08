@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 08/01/2020 21:25:28
+ Date: 08/01/2020 23:06:05
 */
 
 SET NAMES utf8mb4;
@@ -179,12 +179,20 @@ CREATE TABLE `observation_details`  (
   `mp_detail_id` bigint(20) NOT NULL,
   `safety_risk_id` int(11) NOT NULL,
   `sub_threat_code_id` int(11) NOT NULL,
-  `risk_index_id` int(11) NOT NULL,
-  `control_efectivenes` int(11) NOT NULL,
+  `risk_index_id` int(11) NULL DEFAULT NULL,
+  `control_efectivenes` int(11) NULL DEFAULT NULL,
   `effectively_managed` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `error_outcome` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of observation_details
+-- ----------------------------
+INSERT INTO `observation_details` VALUES (1, 1, 49, 2, 7, NULL, NULL, 'Y', '1');
+INSERT INTO `observation_details` VALUES (2, 1, 48, 2, 7, NULL, NULL, 'Y', '1');
+INSERT INTO `observation_details` VALUES (3, 2, 47, 2, 10, NULL, NULL, 'Y', '1');
+INSERT INTO `observation_details` VALUES (4, 2, 46, 1, 5, NULL, NULL, 'Y', '1');
 
 -- ----------------------------
 -- Table structure for observation_logs
@@ -209,25 +217,26 @@ CREATE TABLE `observations`  (
   `observation_date` date NOT NULL,
   `start_time` time(0) NOT NULL,
   `end_time` time(0) NOT NULL,
-  `subtitle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subtitle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `due_date` date NOT NULL,
   `mp_id` int(11) NOT NULL,
-  `uic_id` int(11) NOT NULL,
+  `uic_id` int(11) NULL DEFAULT NULL,
   `component_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `observer_team` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `observer_team` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `task_observed` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `location` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `action` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `action` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
 -- ----------------------------
-INSERT INTO `observations` VALUES (1, '004-07-2019-TJ', '2019-07-31', '08:15:00', '09:45:00', '', '0000-00-00', 8, 0, 'PK-CMN', '4,5', 'Engine #2 Completion', 'Hangar 4 Line 4', '', '', NULL, NULL);
+INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2020-01-08', 9, NULL, 'Baggage Towing Car', NULL, 'Changing the Battery', 'GSE Workshop', NULL, NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
+INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-01-08', 6, NULL, '\"B 777 PK-GIA\"', NULL, 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', NULL, NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
 
 -- ----------------------------
 -- Table structure for risk_controls
@@ -306,7 +315,15 @@ CREATE TABLE `safety_risks`  (
   `code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of safety_risks
+-- ----------------------------
+INSERT INTO `safety_risks` VALUES (1, 'S', 'Safety');
+INSERT INTO `safety_risks` VALUES (2, 'AR', 'At Risk');
+INSERT INTO `safety_risks` VALUES (3, 'N/A', 'Not Applicable');
+INSERT INTO `safety_risks` VALUES (4, 'DNO', 'Didn\'t Observe');
 
 -- ----------------------------
 -- Table structure for sub_activities
