@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 03/01/2020 08:12:11
+ Date: 08/01/2020 21:25:28
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,6 @@ CREATE TABLE `activities`  (
 -- ----------------------------
 INSERT INTO `activities` VALUES (1, 'Safety');
 INSERT INTO `activities` VALUES (2, 'Turnover or Completion');
-INSERT INTO `activities` VALUES (3, 'Communication and Coordination');
 INSERT INTO `activities` VALUES (4, 'Procedures');
 INSERT INTO `activities` VALUES (5, 'Tools and Equipment');
 INSERT INTO `activities` VALUES (6, 'Hazard (Threat) Management');
@@ -54,7 +53,59 @@ CREATE TABLE `maintenance_process_details`  (
   `activity_id` bigint(20) NOT NULL,
   `sub_activity_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of maintenance_process_details
+-- ----------------------------
+INSERT INTO `maintenance_process_details` VALUES (1, 8, 7, 31);
+INSERT INTO `maintenance_process_details` VALUES (2, 8, 4, 32);
+INSERT INTO `maintenance_process_details` VALUES (3, 8, 6, 33);
+INSERT INTO `maintenance_process_details` VALUES (4, 8, 8, 3);
+INSERT INTO `maintenance_process_details` VALUES (5, 4, 8, 3);
+INSERT INTO `maintenance_process_details` VALUES (6, 4, 4, 4);
+INSERT INTO `maintenance_process_details` VALUES (8, 4, 4, 23);
+INSERT INTO `maintenance_process_details` VALUES (9, 4, 8, 3);
+INSERT INTO `maintenance_process_details` VALUES (10, 4, 2, 2);
+INSERT INTO `maintenance_process_details` VALUES (11, 4, 1, 1);
+INSERT INTO `maintenance_process_details` VALUES (12, 4, 2, 12);
+INSERT INTO `maintenance_process_details` VALUES (13, 4, 9, 14);
+INSERT INTO `maintenance_process_details` VALUES (14, 4, 8, 19);
+INSERT INTO `maintenance_process_details` VALUES (15, 7, 8, 22);
+INSERT INTO `maintenance_process_details` VALUES (16, 7, 8, 21);
+INSERT INTO `maintenance_process_details` VALUES (17, 3, 4, 6);
+INSERT INTO `maintenance_process_details` VALUES (18, 3, 8, 3);
+INSERT INTO `maintenance_process_details` VALUES (19, 3, 5, 5);
+INSERT INTO `maintenance_process_details` VALUES (20, 3, 4, 7);
+INSERT INTO `maintenance_process_details` VALUES (21, 3, 11, 37);
+INSERT INTO `maintenance_process_details` VALUES (22, 3, 11, 38);
+INSERT INTO `maintenance_process_details` VALUES (23, 3, 6, 8);
+INSERT INTO `maintenance_process_details` VALUES (24, 1, 4, 18);
+INSERT INTO `maintenance_process_details` VALUES (25, 1, 1, 26);
+INSERT INTO `maintenance_process_details` VALUES (26, 1, 1, 17);
+INSERT INTO `maintenance_process_details` VALUES (27, 1, 1, 10);
+INSERT INTO `maintenance_process_details` VALUES (28, 1, 1, 1);
+INSERT INTO `maintenance_process_details` VALUES (29, 1, 8, 19);
+INSERT INTO `maintenance_process_details` VALUES (30, 5, 11, 27);
+INSERT INTO `maintenance_process_details` VALUES (31, 5, 11, 28);
+INSERT INTO `maintenance_process_details` VALUES (32, 5, 4, 29);
+INSERT INTO `maintenance_process_details` VALUES (33, 5, 5, 15);
+INSERT INTO `maintenance_process_details` VALUES (34, 5, 2, 12);
+INSERT INTO `maintenance_process_details` VALUES (35, 5, 2, 16);
+INSERT INTO `maintenance_process_details` VALUES (36, 5, 2, 2);
+INSERT INTO `maintenance_process_details` VALUES (37, 2, 8, 25);
+INSERT INTO `maintenance_process_details` VALUES (38, 2, 7, 11);
+INSERT INTO `maintenance_process_details` VALUES (39, 2, 7, 24);
+INSERT INTO `maintenance_process_details` VALUES (40, 2, 9, 14);
+INSERT INTO `maintenance_process_details` VALUES (41, 2, 4, 30);
+INSERT INTO `maintenance_process_details` VALUES (42, 2, 4, 34);
+INSERT INTO `maintenance_process_details` VALUES (43, 2, 1, 1);
+INSERT INTO `maintenance_process_details` VALUES (44, 2, 5, 5);
+INSERT INTO `maintenance_process_details` VALUES (45, 2, 2, 2);
+INSERT INTO `maintenance_process_details` VALUES (46, 6, 6, 20);
+INSERT INTO `maintenance_process_details` VALUES (47, 6, 1, 1);
+INSERT INTO `maintenance_process_details` VALUES (48, 9, 12, 35);
+INSERT INTO `maintenance_process_details` VALUES (49, 9, 13, 36);
 
 -- ----------------------------
 -- Table structure for maintenance_processes
@@ -127,7 +178,7 @@ CREATE TABLE `observation_details`  (
   `observation_id` bigint(20) NOT NULL,
   `mp_detail_id` bigint(20) NOT NULL,
   `safety_risk_id` int(11) NOT NULL,
-  `threat_code_id` int(11) NOT NULL,
+  `sub_threat_code_id` int(11) NOT NULL,
   `risk_index_id` int(11) NOT NULL,
   `control_efectivenes` int(11) NOT NULL,
   `effectively_managed` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -171,143 +222,12 @@ CREATE TABLE `observations`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 133 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
 -- ----------------------------
-INSERT INTO `observations` VALUES (1, '002-07-2019-TL', '0000-00-00', '00:00:01', '00:00:03', '', '0000-00-00', 0, 0, 'Engine TRENT 700', 'Yogi Maulana Malik, Fitry Nurlaily Ghozali, Wahyu ', 'Removal', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (2, '002-07-2019-TL', '0000-00-00', '00:00:01', '00:00:03', '', '0000-00-00', 0, 0, 'Engine TRENT 700', 'Yogi Maulana Malik, Fitry Nurlaily Ghozali, Wahyu ', 'Removal', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (3, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (4, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (5, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (6, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (7, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (8, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (9, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (10, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (11, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (12, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (13, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (14, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (15, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (16, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (17, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (18, '001-02-2019-TV', '0000-00-00', '00:00:08', '00:00:11', '', '0000-00-00', 0, 0, 'ESN: 660949', 'Agung Setiawan, Julian Akbar, Norman Hadi, M. Andi', 'Removal Spinner Front & Rear Cones', 'Engine Shop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (19, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (20, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (21, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (22, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (23, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (24, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (25, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (26, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (27, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (28, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (29, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (30, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (31, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (32, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (33, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (34, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (35, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (36, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (37, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (38, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (39, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (40, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (41, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (42, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (43, '001-08-2019-TZ', '0000-00-00', '00:00:09', '00:00:10', '', '0000-00-00', 0, 0, 'Baggage Towing Car', 'Adi Nugroho, Imar Masriyah, Fatih Nurudin', 'Changing the Battery', 'GSE Workshop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (44, '002-02-2019-TZ', '0000-00-00', '00:00:04', '00:00:05', '', '0000-00-00', 0, 0, 'PH-BFN', 'I Gede Agung Wibawa, Imar Masriyah, Ali Suhanda', 'A/C Towing', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (45, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (46, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (47, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (48, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (49, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (50, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (51, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (52, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (53, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (54, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (55, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (56, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (57, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (58, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (59, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (60, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (61, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (62, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (63, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (64, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (65, '001-08-2019-TZ', '0000-00-00', '00:00:09', '00:00:10', '', '0000-00-00', 0, 0, 'Baggage Towing Car', 'Adi Nugroho, Imar Masriyah, Fatih Nurudin', 'Changing the Battery', 'GSE Workshop', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (66, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (67, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (68, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (69, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (70, '003-02-2019-TB', '0000-00-00', '00:00:10', '00:00:10', '', '0000-00-00', 0, 0, 'Cebu', 'Sony Mardiana, TQY', 'Cutting Damage Skin', 'Workshop 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (71, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (72, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (73, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (74, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (75, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (76, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (77, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (78, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (79, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (80, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (81, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (82, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (83, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (84, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (85, '004-02-2019-TB', '0000-00-00', '00:00:09', '00:00:09', '', '0000-00-00', 0, 0, 'PH-BFN', 'Suratna Kasan, Sony Mardiana, TQY', 'Installation PCV Rudder', 'Hangar 1', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (86, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (87, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (88, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (89, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (90, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (91, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (92, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (93, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (94, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (95, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (96, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (97, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (98, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (99, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (100, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (101, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (102, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (103, '005-02-2019-TL', '0000-00-00', '00:00:01', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GIC', 'Iman Abdurahman, Yayan Mulyana ', 'NLG Repacking', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (104, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (105, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (106, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (107, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (108, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (109, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (110, '005-03-2019-TN', '0000-00-00', '00:00:08', '00:00:08', '', '0000-00-00', 0, 0, 'PK-GPL', 'Rizal Yopy P, Dwi Cahyo', 'External Washing', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (111, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (112, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (113, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (114, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (115, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (116, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (117, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (118, '006-02-2019-TB', '0000-00-00', '00:00:10', '00:00:11', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, Ery Muheri, TQY', 'Installation Escape Slide', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (119, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (120, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (121, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (122, '002-08-2019-TL', '0000-00-00', '00:00:02', '00:00:03', '', '0000-00-00', 0, 0, 'ESN 42602', 'Fitry N Ghozali, Wahyu Rachmad Wildan', 'Completion Shortage Component from ESN 41046', 'Hangar 2', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (123, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (124, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (125, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (126, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (127, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (128, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (129, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (130, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (131, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
-INSERT INTO `observations` VALUES (132, '007-02-2019-TB', '0000-00-00', '00:00:02', '00:00:04', '', '0000-00-00', 0, 0, 'PK-GPD', 'Sony Mardiana, I Gede Nyoman Antara, TQY', 'Rudder Installation', 'Hangar 3', '', '', NULL, NULL);
+INSERT INTO `observations` VALUES (1, '004-07-2019-TJ', '2019-07-31', '08:15:00', '09:45:00', '', '0000-00-00', 8, 0, 'PK-CMN', '4,5', 'Engine #2 Completion', 'Hangar 4 Line 4', '', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for risk_controls
@@ -450,7 +370,7 @@ CREATE TABLE `sub_threat_codes`  (
   `code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `description` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_threat_codes
@@ -496,6 +416,47 @@ INSERT INTO `sub_threat_codes` VALUES (38, 10, 'J3', 'Between shifts');
 INSERT INTO `sub_threat_codes` VALUES (39, 10, 'J4', 'Between maintenance crew and lead');
 INSERT INTO `sub_threat_codes` VALUES (40, 10, 'J7', 'Other');
 INSERT INTO `sub_threat_codes` VALUES (41, 11, 'K1', 'Missing proper documentation');
+INSERT INTO `sub_threat_codes` VALUES (42, 1, 'A4', 'Inadequate (eg , missing graphics)');
+INSERT INTO `sub_threat_codes` VALUES (43, 1, 'A9', '');
+INSERT INTO `sub_threat_codes` VALUES (44, 1, 'A1', 'Not understandable');
+INSERT INTO `sub_threat_codes` VALUES (45, 1, 'A2', 'Unavailable or inaccessible');
+INSERT INTO `sub_threat_codes` VALUES (46, 1, 'A3', 'Incorrect');
+INSERT INTO `sub_threat_codes` VALUES (47, 1, 'A5', 'Uncontrolled (eg , missing graphics)');
+INSERT INTO `sub_threat_codes` VALUES (48, 1, 'A9', 'Information not used');
+INSERT INTO `sub_threat_codes` VALUES (49, 2, 'B1', 'Defective');
+INSERT INTO `sub_threat_codes` VALUES (50, 2, 'B13', 'Incorrectly used (including unsafely)');
+INSERT INTO `sub_threat_codes` VALUES (51, 2, 'B15', 'Not used');
+INSERT INTO `sub_threat_codes` VALUES (52, 2, 'B16', 'Other');
+INSERT INTO `sub_threat_codes` VALUES (53, 2, 'B6', 'Unavailable');
+INSERT INTO `sub_threat_codes` VALUES (54, 2, 'B7', 'Incomplete');
+INSERT INTO `sub_threat_codes` VALUES (55, 3, 'C4', 'Parts Unavailable');
+INSERT INTO `sub_threat_codes` VALUES (56, 3, 'C5', 'Parts incorrectly labeled/certified');
+INSERT INTO `sub_threat_codes` VALUES (57, 3, 'C8', 'C8');
+INSERT INTO `sub_threat_codes` VALUES (58, 4, 'D5', 'Other');
+INSERT INTO `sub_threat_codes` VALUES (59, 5, 'E5', 'Task Knowledge');
+INSERT INTO `sub_threat_codes` VALUES (60, 5, 'E6', 'Task Planning');
+INSERT INTO `sub_threat_codes` VALUES (61, 6, 'F13', 'Situational Awareness');
+INSERT INTO `sub_threat_codes` VALUES (62, 6, 'F2', 'Fatigue');
+INSERT INTO `sub_threat_codes` VALUES (63, 6, 'F3', 'Time Pressure');
+INSERT INTO `sub_threat_codes` VALUES (64, 6, 'F5', 'Complacency');
+INSERT INTO `sub_threat_codes` VALUES (65, 7, 'G12', 'Cleanliness');
+INSERT INTO `sub_threat_codes` VALUES (66, 7, 'G13', 'Hazardous or toxic subtances');
+INSERT INTO `sub_threat_codes` VALUES (67, 7, 'G17', 'Slippery');
+INSERT INTO `sub_threat_codes` VALUES (68, 7, 'G2', 'Hot');
+INSERT INTO `sub_threat_codes` VALUES (69, 7, 'G22', 'Labels / placards / signage');
+INSERT INTO `sub_threat_codes` VALUES (70, 7, 'G7', 'Lighting');
+INSERT INTO `sub_threat_codes` VALUES (71, 8, 'H1', 'Quality of internal support from technical organizations');
+INSERT INTO `sub_threat_codes` VALUES (72, 8, 'H10', 'Work group normal practice (norm)');
+INSERT INTO `sub_threat_codes` VALUES (73, 8, 'H3', 'Company policies');
+INSERT INTO `sub_threat_codes` VALUES (74, 8, 'H8', 'Work process / procedure not followed');
+INSERT INTO `sub_threat_codes` VALUES (75, 9, 'I1', 'Planning / organization of task');
+INSERT INTO `sub_threat_codes` VALUES (76, 9, 'I5', 'Availibility of supervision');
+INSERT INTO `sub_threat_codes` VALUES (77, 10, 'J1', 'Between department');
+INSERT INTO `sub_threat_codes` VALUES (78, 10, 'J2', 'Between mechanics');
+INSERT INTO `sub_threat_codes` VALUES (79, 10, 'J3', 'Between shifts');
+INSERT INTO `sub_threat_codes` VALUES (80, 10, 'J4', 'Between maintenance crew and lead');
+INSERT INTO `sub_threat_codes` VALUES (81, 10, 'J7', 'Other');
+INSERT INTO `sub_threat_codes` VALUES (82, 11, 'K1', 'Missing proper documentation');
 
 -- ----------------------------
 -- Table structure for threat_codes
@@ -615,6 +576,25 @@ DROP VIEW IF EXISTS `vwuser`;
 CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `vwuser` AS SELECT us.username, us.role, uc.uic_code, uc.uic_name, us.`status`
 FROM users us INNER JOIN uics uc
 ON us.uic_id = uc.id ;
+
+-- ----------------------------
+-- View structure for vw_maintenance_process
+-- ----------------------------
+DROP VIEW IF EXISTS `vw_maintenance_process`;
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `vw_maintenance_process` AS SELECT 
+	mpd.id as id_mp_detail,
+	mp.`name` as maintenance_name,
+	ac.`name` as activity_name,
+	sac.description as sub_activity_name
+
+FROM maintenance_processes mp 
+INNER JOIN `maintenance_process_details` mpd 
+	ON mp.id = mpd.mp_id
+INNER JOIN activities ac 
+	ON mpd.activity_id = ac.id
+INNER JOIN sub_activities sac
+	ON mpd.sub_activity_id = sac.id
+ORDER BY mpd.id DESC ;
 
 -- ----------------------------
 -- Procedure structure for sp_User
