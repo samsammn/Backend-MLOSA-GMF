@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Resources\ResultCollection;
 use Illuminate\Support\Facades\DB;
 
-Route::group(['middleware' => 'cors'], function () {
+//Route::group(['middleware' => 'cors'], function () {
 
     Route::post('/signin', 'UserController@signin');
     Route::resource('user', 'UserController');
@@ -37,4 +37,4 @@ Route::group(['middleware' => 'cors'], function () {
         return $data;
     });
 
-});
+//});
