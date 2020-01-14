@@ -112,7 +112,25 @@ class UserController extends Controller
         $password = $request->password;
 
         $isValidSignin = $this->checkLdap($username, $password);
-        return response()->json(['result' => $isValidSignin ]);
+
+        if ($isValidSignin){
+            $request->session()->put('username', $username);
+            $data = User::where('username','=', $username)->with('uic')->firstOrFail();
+        } else {
+            $data = [];
+        }
+
+        return response()->json([
+            'data' => $data,
+            'result' => $isValidSignin
+        ]);
+    }
+
+    function signout(Request $request){
+        $request->session()->forget('username');
+        return response()->json([
+            'message' => 'Successfully Logout'
+        ]);
     }
 
     function checkLdap($username, $password)
