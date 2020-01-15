@@ -11,10 +11,17 @@ class Observation extends Model
         'observation_date',
         'start_time',
         'end_time',
+        'subtitle',
         'due_date',
         'mp_id',
+        'uic_id',
         'component_type',
         'task_observed',
         'location',
     ];
+
+    public function observation_team()
+    {
+        return $this->hasMany('App\Model\ObservationTeam');
+    }
 }

@@ -24,6 +24,8 @@ Route::group(['middleware' => 'auth_api'], function () {
 
     Route::resource('user', 'UserController');
     Route::resource('uic', 'UICController');
+
+    Route::post('/new_mlosa_plan', 'ObservationController@new_mlosa_plan');
     Route::resource('observation', 'ObservationController');
 
 });

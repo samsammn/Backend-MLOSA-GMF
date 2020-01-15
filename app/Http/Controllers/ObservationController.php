@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Model\Observation;
+use App\Model\ObservationTeam;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ObservationController extends Controller
 {
@@ -16,7 +18,9 @@ class ObservationController extends Controller
      */
     public function index()
     {
-        return new ResultCollection(Observation::paginate());
+        $model = Observation::with(['observation_team'])->paginate();
+
+        return new ResultCollection($model);
     }
 
     /**
@@ -72,7 +76,22 @@ class ObservationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // insert to observation
+        $model = Observation::find($id);
+        $model->observation_no = Str::random();
+        $model->observation_date = $request->observation_date;
+        $model->start_time = $request->start_time;
+        $model->end_time = $request->end_time;
+        $model->mp_id = $request->mp_id;
+        $model->component_type = $request->component_type;
+        $model->task_observed = $request->task_observed;
+        $model->location = $request->location;
+        $model->save();
+
+        // insert to observation team with relation
+        ObservationTeam::insert($request->observation_team);
+
+        return new Result($request->all());
     }
 
     /**
@@ -85,4 +104,11 @@ class ObservationController extends Controller
     {
         //
     }
+
+    public function new_mlosa_plan(Request $request)
+    {
+        $model = Observation::create($request->all());
+        return new Result($model);
+    }
+
 }
