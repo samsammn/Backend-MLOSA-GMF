@@ -18,8 +18,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::with('uic')->paginate();
-        return new ResultCollection($user);
+        $model = User::with('uic')->paginate();
+        return new ResultCollection($model);
     }
 
     /**
@@ -48,8 +48,8 @@ class UserController extends Controller
             'status' => 'required'
         ]);
 
-        $user = User::create($request->all());
-        return new Result($user);
+        $model = User::create($request->all());
+        return new Result($model);
     }
 
     /**
@@ -60,8 +60,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::with('uic')->find($id);
-        return new Result($user);
+        $model = User::with('uic')->find($id);
+        return new Result($model);
     }
 
     /**
@@ -71,10 +71,22 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(User $user, Request $request)
+    public function update($id, Request $request)
     {
-        $user->update($request->all());
-        return new Result($user);
+        $model = User::find($id);
+        $result = new Result($model);
+
+        if ($model != null)
+        {
+            $model->update($request->all());
+            $result->additional(['message' => 'update successfully']);
+            return $result;
+        }
+            else
+        {
+            $result->additional(['message' => 'failed to update, user not found!']);
+            return $result;
+        }
     }
 
     /**
@@ -85,13 +97,13 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id);
-        $result = new Result($user);
+        $model = User::find($id);
+        $result = new Result($model);
 
-        if ($user != null)
+        if ($model != null)
         {
-            $user->delete();
-            $result->additional(['message' => 'deleted successfully']);
+            $model->delete();
+            $result->additional(['message' => 'delete successfully']);
             return $result;
         }
             else

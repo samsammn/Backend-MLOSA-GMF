@@ -23,6 +23,7 @@ Route::get('/signout', 'UserController@signout');
 Route::group(['middleware' => 'auth_api'], function () {
 
     Route::resource('user', 'UserController');
+    Route::resource('uic', 'UICController');
     Route::resource('observation', 'ObservationController');
 
 });
