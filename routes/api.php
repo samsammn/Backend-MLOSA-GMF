@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
+Route::get('/check_auth', 'UserController@check_auth');
 
 Route::group(['middleware' => 'auth_api'], function () {
 

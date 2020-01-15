@@ -145,6 +145,13 @@ class UserController extends Controller
         ]);
     }
 
+    function check_auth(Request $request){
+        $hasLogin = $request->session()->has('username');
+        return response()->json([
+            'hasLogin' => $hasLogin
+        ]);
+    }
+
     function checkLdap($username, $password)
     {
 
