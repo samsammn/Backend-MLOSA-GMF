@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 08/01/2020 23:06:05
+ Date: 15/01/2020 09:03:44
 */
 
 SET NAMES utf8mb4;
@@ -141,7 +141,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -168,6 +168,7 @@ INSERT INTO `migrations` VALUES (19, '2020_01_02_002849_create_observations_tabl
 INSERT INTO `migrations` VALUES (20, '2020_01_02_004326_create_observation_details_table', 2);
 INSERT INTO `migrations` VALUES (21, '2020_01_02_005334_create_sub_activities_table', 2);
 INSERT INTO `migrations` VALUES (22, '2020_01_01_025731_create_sub_threat_codes_table', 3);
+INSERT INTO `migrations` VALUES (24, '2020_01_15_005020_create_observation_teams_table', 4);
 
 -- ----------------------------
 -- Table structure for observation_details
@@ -208,35 +209,58 @@ CREATE TABLE `observation_logs`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for observation_teams
+-- ----------------------------
+DROP TABLE IF EXISTS `observation_teams`;
+CREATE TABLE `observation_teams`  (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `observation_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of observation_teams
+-- ----------------------------
+INSERT INTO `observation_teams` VALUES (1, 3, 1);
+INSERT INTO `observation_teams` VALUES (2, 3, 3);
+INSERT INTO `observation_teams` VALUES (3, 3, 7);
+INSERT INTO `observation_teams` VALUES (4, 3, 10);
+INSERT INTO `observation_teams` VALUES (5, 3, 1);
+INSERT INTO `observation_teams` VALUES (6, 3, 3);
+INSERT INTO `observation_teams` VALUES (7, 3, 7);
+INSERT INTO `observation_teams` VALUES (8, 3, 10);
+
+-- ----------------------------
 -- Table structure for observations
 -- ----------------------------
 DROP TABLE IF EXISTS `observations`;
 CREATE TABLE `observations`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `observation_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `observation_date` date NOT NULL,
-  `start_time` time(0) NOT NULL,
-  `end_time` time(0) NOT NULL,
+  `observation_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `observation_date` date NULL DEFAULT NULL,
+  `start_time` time(0) NULL DEFAULT NULL,
+  `end_time` time(0) NULL DEFAULT NULL,
   `subtitle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
-  `due_date` date NOT NULL,
-  `mp_id` int(11) NOT NULL,
+  `due_date` date NULL DEFAULT NULL,
+  `mp_id` int(11) NULL DEFAULT NULL,
   `uic_id` int(11) NULL DEFAULT NULL,
-  `component_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `observer_team` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `task_observed` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `location` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `component_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `task_observed` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `location` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `action` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
 -- ----------------------------
-INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2020-01-08', 9, NULL, 'Baggage Towing Car', NULL, 'Changing the Battery', 'GSE Workshop', NULL, NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
-INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-01-08', 6, NULL, '\"B 777 PK-GIA\"', NULL, 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', NULL, NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
+INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2020-01-08', 9, NULL, 'Baggage Towing Car', 'Changing the Battery', 'GSE Workshop', NULL, NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
+INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-01-08', 6, NULL, '\"B 777 PK-GIA\"', 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', NULL, NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
+INSERT INTO `observations` VALUES (3, 'vvJACdhl8Zhmrhsc', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-01-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', NULL, NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
 
 -- ----------------------------
 -- Table structure for risk_controls
@@ -511,7 +535,7 @@ CREATE TABLE `uics`  (
   `uic_name` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `uic_code` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of uics
@@ -540,6 +564,7 @@ INSERT INTO `uics` VALUES (21, 'Learning Services', 'TW');
 INSERT INTO `uics` VALUES (22, 'Treasury Management', 'TX');
 INSERT INTO `uics` VALUES (23, 'Financial Analysis & Enterprise Risk Management', 'TY');
 INSERT INTO `uics` VALUES (24, 'Aircraft Support & Power Services', 'TZ');
+INSERT INTO `uics` VALUES (27, 'Baru Diubah', 'BR');
 
 -- ----------------------------
 -- Table structure for users
@@ -555,36 +580,37 @@ CREATE TABLE `users`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'samsam', '111', 1, 'Admin', 0, NULL, '2020-01-03 01:08:41');
-INSERT INTO `users` VALUES (2, 'andy', '123', 2, 'Staff', 1, NULL, NULL);
-INSERT INTO `users` VALUES (3, 'Agung Setiawan', '123', 20, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (4, 'Julian Akbar', '123', 20, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (5, 'Norman Hadi', '123', 20, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (6, 'M. Andi Arifin', '123', 20, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (7, 'Isna Habibie', '123', 20, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (8, 'I Gede Agung Wibawa', '213', 24, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (9, 'Imar Masriyah', '213', 24, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (10, 'Ali Suhanda', '213', 24, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (11, 'Sony Mardiana', '123', 2, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (12, 'I Gede Nyoman Antara', '123', 2, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (13, 'TQY', '123', 2, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (14, 'Kholis', '123', 10, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (15, 'Viki', '123', 10, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (16, 'Andik', '123', 10, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (17, 'Ricky', '123', 10, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (18, 'Johari', '123', 10, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (19, 'Rizal Yopy P', '123', 13, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (20, 'Dwi Cahyo', '123', 13, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (21, 'Aditya Eka', '123', 5, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (22, 'Fransisca Tiur', '123', 5, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (23, 'Yogi Maulana Malik', '123', 11, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (24, 'Fitry Nurlaily Ghozali', '123', 11, 'UIC', 0, NULL, NULL);
-INSERT INTO `users` VALUES (25, 'Wahyu Rachmad Wildan', '123', 11, 'UIC', 0, NULL, NULL);
+INSERT INTO `users` VALUES (1, 'test.license', 'P@ssw0rd', 1, 'Admin', 1, NULL, '2020-01-03 01:08:41');
+INSERT INTO `users` VALUES (2, 'beda', '111', 1, 'Admin', 0, NULL, '2020-01-15 00:09:54');
+INSERT INTO `users` VALUES (3, 'Agung Setiawan', '123', 20, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (4, 'Julian Akbar', '123', 20, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (5, 'Norman Hadi', '123', 20, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (6, 'M. Andi Arifin', '123', 20, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (7, 'Isna Habibie', '123', 20, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (8, 'I Gede Agung Wibawa', '213', 24, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (9, 'Imar Masriyah', '213', 24, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (10, 'Ali Suhanda', '213', 24, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (11, 'Sony Mardiana', '123', 2, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (12, 'I Gede Nyoman Antara', '123', 2, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (13, 'TQY', '123', 2, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (14, 'Kholis', '123', 10, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (15, 'Viki', '123', 10, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (16, 'Andik', '123', 10, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (17, 'Ricky', '123', 10, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (18, 'Johari', '123', 10, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (19, 'Rizal Yopy P', '123', 13, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (20, 'Dwi Cahyo', '123', 13, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (21, 'Aditya Eka', '123', 5, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (22, 'Fransisca Tiur', '123', 5, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (23, 'Yogi Maulana Malik', '123', 11, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (24, 'Fitry Nurlaily Ghozali', '123', 11, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (25, 'Wahyu Rachmad Wildan', '123', 11, 'UIC', 1, NULL, NULL);
+INSERT INTO `users` VALUES (26, 'yogia', '123', 2, 'Administrator', 1, '2020-01-14 23:49:27', '2020-01-14 23:49:27');
 
 -- ----------------------------
 -- View structure for vwuser
