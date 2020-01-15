@@ -27,5 +27,6 @@ Route::group(['middleware' => 'auth_api'], function () {
 
     Route::post('/new_mlosa_plan', 'ObservationController@new_mlosa_plan');
     Route::resource('observation', 'ObservationController');
+    Route::resource('maintenance_process', 'MaintenanceProcessController');
 
 });

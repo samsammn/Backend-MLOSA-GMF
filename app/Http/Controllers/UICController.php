@@ -16,7 +16,7 @@ class UICController extends Controller
      */
     public function index()
     {
-        $model = UIC::paginate(10);
+        $model = UIC::all();
         return new ResultCollection($model);
     }
 

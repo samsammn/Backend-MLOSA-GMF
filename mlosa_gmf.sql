@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 15/01/2020 09:03:44
+ Date: 15/01/2020 18:08:26
 */
 
 SET NAMES utf8mb4;
@@ -114,23 +114,21 @@ DROP TABLE IF EXISTS `maintenance_processes`;
 CREATE TABLE `maintenance_processes`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp(0) NULL DEFAULT NULL,
-  `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of maintenance_processes
 -- ----------------------------
-INSERT INTO `maintenance_processes` VALUES (1, 'Removal', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (2, 'Servicing', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (3, 'Prepare to install', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (4, 'Installation', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (5, 'Removal Preparation', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (6, 'Test', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (7, 'Maintenance Plan', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (8, 'Close up / Restore', NULL, NULL);
-INSERT INTO `maintenance_processes` VALUES (9, 'Troubleshooting', NULL, NULL);
+INSERT INTO `maintenance_processes` VALUES (1, 'Removal');
+INSERT INTO `maintenance_processes` VALUES (2, 'Servicing');
+INSERT INTO `maintenance_processes` VALUES (3, 'Prepare to install');
+INSERT INTO `maintenance_processes` VALUES (4, 'Installation');
+INSERT INTO `maintenance_processes` VALUES (5, 'Removal Preparation');
+INSERT INTO `maintenance_processes` VALUES (6, 'Test');
+INSERT INTO `maintenance_processes` VALUES (7, 'Maintenance Plan');
+INSERT INTO `maintenance_processes` VALUES (8, 'Close up / Restore');
+INSERT INTO `maintenance_processes` VALUES (9, 'Troubleshooting');
 
 -- ----------------------------
 -- Table structure for migrations
