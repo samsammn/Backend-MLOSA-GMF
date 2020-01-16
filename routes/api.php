@@ -12,10 +12,6 @@
 */
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Resources\ResultCollection;
-use App\Model\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
@@ -26,7 +22,10 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::resource('user', 'UserController');
     Route::resource('uic', 'UICController');
 
+    Route::get('/year', 'ObservationController@year');
     Route::post('/new_mlosa_plan', 'ObservationController@new_mlosa_plan');
+    Route::get('/global_mlosa_plan', 'ObservationController@global_mlosa_plan');
+
     Route::resource('observation', 'ObservationController');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
 

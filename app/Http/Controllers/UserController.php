@@ -138,14 +138,16 @@ class UserController extends Controller
         ]);
     }
 
-    function signout(Request $request){
+    function signout(Request $request)
+    {
         $request->session()->forget('username');
         return response()->json([
             'message' => 'Successfully Logout'
         ]);
     }
 
-    function check_auth(Request $request){
+    function check_auth(Request $request)
+    {
         $hasLogin = $request->session()->has('username');
         return response()->json([
             'hasLogin' => $hasLogin

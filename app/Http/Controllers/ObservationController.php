@@ -7,6 +7,7 @@ use App\Http\Resources\ResultCollection;
 use App\Model\Observation;
 use App\Model\ObservationTeam;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ObservationController extends Controller
@@ -109,6 +110,46 @@ class ObservationController extends Controller
     {
         $model = Observation::create($request->all());
         return new Result($model);
+    }
+
+    public function global_mlosa_plan(Request $request)
+    {
+        $filter = [];
+
+        if ($request->year != null)
+        {
+            $filter[] = [DB::raw('year(due_date)'), '=', $request->year];
+        }
+
+        if ($request->start_month != null)
+        {
+            $filter[] = [DB::raw('month(due_date)'), '>=', $request->start_month];
+        }
+
+        if ($request->end_month != null)
+        {
+            $filter[] = [DB::raw('month(due_date)'), '<=', $request->end_month];
+        }
+
+        if ($request->mp_id != null)
+        {
+            $filter[] = ['mp_id', '=', $request->mp_id];
+        }
+
+        if ($request->status != null)
+        {
+            $filter[] = ['status', '=', $request->status];
+        }
+
+        $model = Observation::orWhere($filter)->get();
+
+        return new ResultCollection($model->groupBy('due_date'));
+    }
+
+    public function year()
+    {
+        $model = Observation::select(DB::raw('year(due_date) as year'))->distinct('due_date')->pluck('year');
+        return $model;
     }
 
 }
