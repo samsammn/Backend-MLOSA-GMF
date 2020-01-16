@@ -127,8 +127,6 @@ class UserController extends Controller
         $isValidSignin = $this->checkLdap($username, $password);
 
         if ($isValidSignin){
-            $request->session()->put('username', $username);
-            //$data = User::where('username','=', $username)->with('uic')->firstOrFail();
 
             $client = new Client();
             $headers = [
@@ -140,7 +138,17 @@ class UserController extends Controller
                 'headers' => $headers
             ]);
 
-            $data = json_decode($response->getBody(), true)[0];
+            $body = json_decode($response->getBody(), true);
+
+            if ($body == [])
+            {
+                $data = [];
+                $isValidSignin = false;
+            } else {
+                $data = $body[0];
+                $request->session()->put('username', $username);
+            }
+
         } else {
             $data = [];
         }

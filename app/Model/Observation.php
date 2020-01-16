@@ -24,4 +24,9 @@ class Observation extends Model
     {
         return $this->hasMany('App\Model\ObservationTeam');
     }
+
+    public function uic()
+    {
+        return $this->belongsTo('App\Model\UIC');
+    }
 }

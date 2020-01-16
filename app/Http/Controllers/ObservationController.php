@@ -87,6 +87,7 @@ class ObservationController extends Controller
         $model->component_type = $request->component_type;
         $model->task_observed = $request->task_observed;
         $model->location = $request->location;
+        $model->status = "On Progress";
         $model->save();
 
         // insert to observation team with relation
@@ -141,9 +142,15 @@ class ObservationController extends Controller
             $filter[] = ['status', '=', $request->status];
         }
 
-        $model = Observation::orWhere($filter)->get();
+        $model = Observation::with('uic')->Where($filter)->get();
 
         return new ResultCollection($model->groupBy('due_date'));
+    }
+
+    public function mlosa_implementation()
+    {
+        $model = Observation::select(DB::raw('count(*) as count'), 'status')->groupBy('status')->get();
+        return new ResultCollection($model);
     }
 
     public function year()
