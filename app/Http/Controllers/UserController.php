@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Http\Resources\UserResource;
@@ -127,7 +128,19 @@ class UserController extends Controller
 
         if ($isValidSignin){
             $request->session()->put('username', $username);
-            $data = User::where('username','=', $username)->with('uic')->firstOrFail();
+            //$data = User::where('username','=', $username)->with('uic')->firstOrFail();
+
+            $client = new Client();
+            $headers = [
+                'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImVtYWlsIjoia2lraWsuZGV2QGdtYWlsLmNvbSJ9fQ.bFBBep7EDAwjIioDWsQHt2_mHFnUPy3ea6ocRVxNcm4',
+                'username' => $username,
+            ];
+
+            $response = $client->get('http://172.16.40.164/API/Observer', [
+                'headers' => $headers
+            ]);
+
+            $data = json_decode($response->getBody(), true)[0];
         } else {
             $data = [];
         }
