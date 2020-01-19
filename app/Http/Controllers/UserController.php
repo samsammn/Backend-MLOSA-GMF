@@ -146,6 +146,29 @@ class UserController extends Controller
                 $isValidSignin = false;
             } else {
                 $data = $body[0];
+
+                $dataUser = [
+                    'username' => $data['username'],
+                    'fullname' => $data['fullname'],
+                    'position' => $data['jabatan'],
+                    'obslicense' => $data['obslicense'],
+                    'photo' => $data['photo'],
+                    // 'uic_id' => $data['uic']
+                    'role' => 'Engineer',
+                    'uic_id' => 6,
+                    'status' => 1
+                ];
+
+                $isExists = User::where('username', '=', $username)->first();
+
+                if (!$isExists){
+                    // simpan data dari soe ke internal db
+                    User::create($dataUser);
+                } else {
+                    // dilakukan pengubahan apabila ada update data dari soe
+                    $isExists->update($dataUser);
+                }
+
                 $request->session()->put('username', $username);
             }
 

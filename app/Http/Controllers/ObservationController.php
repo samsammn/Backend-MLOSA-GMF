@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ObservationCollection;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Model\Observation;
@@ -17,11 +18,51 @@ class ObservationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $model = Observation::with(['observation_team'])->paginate();
 
-        return new ResultCollection($model);
+        $filter = [];
+
+        if ($request->year != null)
+        {
+            $filter[] = [DB::raw('year(due_date)'), '=', $request->year];
+        }
+
+        if ($request->start_month != null)
+        {
+            $filter[] = [DB::raw('month(due_date)'), '>=', $request->start_month];
+        }
+
+        if ($request->end_month != null)
+        {
+            $filter[] = [DB::raw('month(due_date)'), '<=', $request->end_month];
+        }
+
+        if ($request->mp_id != null)
+        {
+            $filter[] = ['mp_id', '=', $request->mp_id];
+        }
+
+        if ($request->uic_id != null)
+        {
+            $filter[] = ['uic_id', '=', $request->uic_id];
+        }
+
+        if ($request->status != null)
+        {
+            $filter[] = ['status', '=', $request->status];
+        }
+
+        if ($request->search != null)
+        {
+            $filter[] = ['subtitle', 'LIKE', '%'.$request->search.'%'];
+        }
+
+        $model = Observation::with(['uic', 'maintenance', 'users' => function ($query) {
+                    $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
+                }])->where($filter)->get();
+
+        return new Result($model);
     }
 
     /**
@@ -53,8 +94,11 @@ class ObservationController extends Controller
      */
     public function show($id)
     {
-        $observation = Observation::find($id);
-        return new Result($observation);
+        $model = Observation::with(['uic', 'maintenance', 'users' => function ($query) {
+                    $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
+                }])->find($id);
+
+        return new Result($model);
     }
 
     /**
@@ -135,6 +179,11 @@ class ObservationController extends Controller
         if ($request->mp_id != null)
         {
             $filter[] = ['mp_id', '=', $request->mp_id];
+        }
+
+        if ($request->uic_id != null)
+        {
+            $filter[] = ['uic_id', '=', $request->uic_id];
         }
 
         if ($request->status != null)

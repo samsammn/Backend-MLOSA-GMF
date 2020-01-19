@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 15/01/2020 18:08:26
+ Date: 19/01/2020 10:26:11
 */
 
 SET NAMES utf8mb4;
@@ -224,10 +224,6 @@ INSERT INTO `observation_teams` VALUES (1, 3, 1);
 INSERT INTO `observation_teams` VALUES (2, 3, 3);
 INSERT INTO `observation_teams` VALUES (3, 3, 7);
 INSERT INTO `observation_teams` VALUES (4, 3, 10);
-INSERT INTO `observation_teams` VALUES (5, 3, 1);
-INSERT INTO `observation_teams` VALUES (6, 3, 3);
-INSERT INTO `observation_teams` VALUES (7, 3, 7);
-INSERT INTO `observation_teams` VALUES (8, 3, 10);
 
 -- ----------------------------
 -- Table structure for observations
@@ -256,9 +252,9 @@ CREATE TABLE `observations`  (
 -- ----------------------------
 -- Records of observations
 -- ----------------------------
-INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2020-01-08', 9, NULL, 'Baggage Towing Car', 'Changing the Battery', 'GSE Workshop', NULL, NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
-INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-01-08', 6, NULL, '\"B 777 PK-GIA\"', 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', NULL, NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
-INSERT INTO `observations` VALUES (3, 'vvJACdhl8Zhmrhsc', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-01-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', NULL, NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
+INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2019-09-08', 9, 1, 'Baggage Towing Car', 'Changing the Battery', 'GSE Workshop', 'Open', NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
+INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-05-08', 6, 2, 'B 777 PK-GIA', 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', 'Open', NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
+INSERT INTO `observations` VALUES (3, 'vvJACdhl8Zhmrhsc', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-01-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
 
 -- ----------------------------
 -- Table structure for risk_controls
@@ -571,44 +567,44 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fullname` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `position` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `uic_id` int(11) NOT NULL,
   `role` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` tinyint(1) NOT NULL,
+  `obslicense` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `photo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'test.license', 'P@ssw0rd', 1, 'Admin', 1, NULL, '2020-01-03 01:08:41');
-INSERT INTO `users` VALUES (2, 'beda', '111', 1, 'Admin', 0, NULL, '2020-01-15 00:09:54');
-INSERT INTO `users` VALUES (3, 'Agung Setiawan', '123', 20, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (4, 'Julian Akbar', '123', 20, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (5, 'Norman Hadi', '123', 20, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (6, 'M. Andi Arifin', '123', 20, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (7, 'Isna Habibie', '123', 20, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (8, 'I Gede Agung Wibawa', '213', 24, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (9, 'Imar Masriyah', '213', 24, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (10, 'Ali Suhanda', '213', 24, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (11, 'Sony Mardiana', '123', 2, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (12, 'I Gede Nyoman Antara', '123', 2, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (13, 'TQY', '123', 2, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (14, 'Kholis', '123', 10, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (15, 'Viki', '123', 10, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (16, 'Andik', '123', 10, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (17, 'Ricky', '123', 10, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (18, 'Johari', '123', 10, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (19, 'Rizal Yopy P', '123', 13, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (20, 'Dwi Cahyo', '123', 13, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (21, 'Aditya Eka', '123', 5, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (22, 'Fransisca Tiur', '123', 5, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (23, 'Yogi Maulana Malik', '123', 11, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (24, 'Fitry Nurlaily Ghozali', '123', 11, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (25, 'Wahyu Rachmad Wildan', '123', 11, 'UIC', 1, NULL, NULL);
-INSERT INTO `users` VALUES (26, 'yogia', '123', 2, 'Administrator', 1, '2020-01-14 23:49:27', '2020-01-14 23:49:27');
+INSERT INTO `users` VALUES (3, 'agung', 'Agung Setiawan', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (4, 'julian', 'Julian Akbar', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (5, 'norman', 'Norman Hadi', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (6, 'andi', 'M. Andi Arifin', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (7, 'isna', 'Isna Habibie', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (8, 'gede', 'I Gede Agung Wibawa', 'ASSOCIATE QUALITY AUDITOR', 24, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (9, 'imar', 'Imar Masriyah', 'ASSOCIATE QUALITY AUDITOR', 24, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (10, 'ali', 'Ali Suhanda', 'ASSOCIATE QUALITY AUDITOR', 24, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (11, 'sony', 'Sony Mardiana', 'ASSOCIATE QUALITY AUDITOR', 2, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (12, 'antara', 'I Gede Nyoman Antara', 'ASSOCIATE QUALITY AUDITOR', 2, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (14, 'kholis', 'Kholis', 'ASSOCIATE QUALITY AUDITOR', 10, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (15, 'viki', 'Viki', 'ASSOCIATE QUALITY AUDITOR', 10, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (16, 'andik', 'Andik', 'ASSOCIATE QUALITY AUDITOR', 10, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (17, 'riki', 'Ricky', 'ASSOCIATE QUALITY AUDITOR', 10, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (18, 'johari', 'Johari', 'ASSOCIATE QUALITY AUDITOR', 10, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (19, 'rizal', 'Rizal Yopy P', 'ASSOCIATE QUALITY AUDITOR', 13, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (20, 'dwi', 'Dwi Cahyo', 'ASSOCIATE QUALITY AUDITOR', 13, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (21, 'aditya', 'Aditya Eka', 'ASSOCIATE QUALITY AUDITOR', 5, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (22, 'fransisca', 'Fransisca Tiur', 'ASSOCIATE QUALITY AUDITOR', 5, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (23, 'yogi', 'Yogi Maulana Malik', 'ASSOCIATE QUALITY AUDITOR', 11, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (24, 'fitry', 'Fitry Nurlaily Ghozali', 'ASSOCIATE QUALITY AUDITOR', 11, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (25, 'wahyu', 'Wahyu Rachmad Wildan', 'ASSOCIATE QUALITY AUDITOR', 11, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (35, '580440', 'TEGUH RAHMADANI PAMUNGKAS', 'ASSOCIATE QUALITY AUDITOR', 6, 'Engineer', 1, 'LOSA OBSERVER TRAINING', 'https://talentlead.gmf-aeroasia.co.id/images/avatar/580440.jpg', '2020-01-19 01:52:55', '2020-01-19 01:53:10');
 
 -- ----------------------------
 -- View structure for vwuser

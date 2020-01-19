@@ -20,13 +20,18 @@ class Observation extends Model
         'location',
     ];
 
-    public function observation_team()
+    public function users()
     {
-        return $this->hasMany('App\Model\ObservationTeam');
+        return $this->belongsToMany('App\Model\User', 'observation_teams', 'observation_id', 'user_id');
     }
 
     public function uic()
     {
-        return $this->belongsTo('App\Model\UIC');
+        return $this->belongsTo('App\Model\UIC', 'uic_id');
+    }
+
+    public function maintenance()
+    {
+        return $this->belongsTo('App\Model\MaintenanceProcess', 'mp_id');
     }
 }

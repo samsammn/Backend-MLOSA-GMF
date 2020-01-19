@@ -8,10 +8,13 @@ class User extends Model
 {
     protected $fillable = [
         'username',
-        'password',
+        'fullname',
+        'position',
         'uic_id',
         'role',
-        'status'
+        'status',
+        'obslicense',
+        'photo'
     ];
 
     public function uic()
