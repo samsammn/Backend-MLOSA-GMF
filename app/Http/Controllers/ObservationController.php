@@ -196,7 +196,7 @@ class ObservationController extends Controller
     {
         $observation_no = $this->autoNumber();
         $maintenance = MaintenanceProcess::find($id);
-        $threat_codes = ThreatCode::all()->count();
+        $threat_codes = ThreatCode::all();
         $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');//->select('activity_id')->get();
         $activities = Activity::with(['sub_activities'])->whereIn('id', $maintenance_detail)->get();
 
