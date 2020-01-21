@@ -9,6 +9,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResourceCollection;
 use App\Model\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class UserController extends Controller
 {
@@ -124,9 +125,17 @@ class UserController extends Controller
         $username = $request->username;
         $password = $request->password;
 
+        if ($request->remember_me)
+        {
+            Config::set('sessions.lifetime', 35791394);
+        } else {
+            Config::set('sessions.lifetime', 120);
+        }
+
         $isValidSignin = $this->checkLdap($username, $password);
 
-        if ($isValidSignin){
+        if ($isValidSignin)
+        {
 
             $client = new Client();
             $headers = [

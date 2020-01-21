@@ -34,4 +34,14 @@ class Observation extends Model
     {
         return $this->belongsTo('App\Model\MaintenanceProcess', 'mp_id');
     }
+
+    public function scopeSearch($query, $q)
+    {
+        if ($q == null) return $query;
+        return $query
+                    ->where('subtitle', 'LIKE', '%'.$q.'%')
+                    ->orWhere('component_type', 'LIKE', '%'.$q.'%')
+                    ->orWhere('task_observed', 'LIKE', '%'.$q.'%')
+                    ->orWhere('location', 'LIKE', '%'.$q.'%');
+    }
 }

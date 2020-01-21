@@ -24,6 +24,7 @@ Route::group(['middleware' => 'auth_api'], function () {
 
     Route::get('/year', 'ObservationController@year');
     Route::post('/new_mlosa_plan', 'ObservationController@new_mlosa_plan');
+    Route::get('/observation/{id}/form', 'ObservationController@form');
     Route::get('/global_mlosa_plan', 'ObservationController@global_mlosa_plan');
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
 

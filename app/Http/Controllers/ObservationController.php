@@ -5,10 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ObservationCollection;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
+use App\Model\Activity;
+use App\Model\MaintenanceProcess;
+use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
 use App\Model\ObservationTeam;
+use App\Model\ThreatCode;
+use App\Model\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class ObservationController extends Controller
@@ -28,14 +34,9 @@ class ObservationController extends Controller
             $filter[] = [DB::raw('year(due_date)'), '=', $request->year];
         }
 
-        if ($request->start_month != null)
+        if ($request->month != null)
         {
-            $filter[] = [DB::raw('month(due_date)'), '>=', $request->start_month];
-        }
-
-        if ($request->end_month != null)
-        {
-            $filter[] = [DB::raw('month(due_date)'), '<=', $request->end_month];
+            $filter[] = [DB::raw('month(due_date)'), '=', $request->month];
         }
 
         if ($request->mp_id != null)
@@ -53,14 +54,9 @@ class ObservationController extends Controller
             $filter[] = ['status', '=', $request->status];
         }
 
-        if ($request->search != null)
-        {
-            $filter[] = ['subtitle', 'LIKE', '%'.$request->search.'%'];
-        }
-
         $model = Observation::with(['uic', 'maintenance', 'users' => function ($query) {
                     $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
-                }])->where($filter)->get();
+                }])->where($filter)->search($request->search)->get();
 
         return new Result($model);
     }
@@ -194,6 +190,32 @@ class ObservationController extends Controller
         $model = Observation::with('uic')->Where($filter)->get();
 
         return new ResultCollection($model->groupBy('due_date'));
+    }
+
+    public function form($id)
+    {
+        $observation_no = $this->autoNumber();
+        $maintenance = MaintenanceProcess::find($id);
+        $threat_codes = ThreatCode::all()->count();
+        $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');//->select('activity_id')->get();
+        $activities = Activity::with(['sub_activities'])->whereIn('id', $maintenance_detail)->get();
+
+        return response()->json([
+            'observation_no' => $observation_no,
+            'maintenance_process' => $maintenance,
+            'threat_codes' => $threat_codes,
+            'activities' => $activities
+        ]);
+    }
+
+    public function autoNumber()
+    {
+        $now = date('Y-m-d');
+        $count = Observation::where('observation_date', '=', $now)->count();
+        $user = User::where('username', '=', Session::get('username'))->with('uic')->firstOrFail();
+        $uic = $user->uic->uic_code;
+
+        return str_pad($count + 1, 3, 0, STR_PAD_LEFT) . '-' . date('m-Y') . '-' . $uic;
     }
 
     public function mlosa_implementation()

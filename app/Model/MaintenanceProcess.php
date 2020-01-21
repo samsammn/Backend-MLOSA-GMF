@@ -11,4 +11,9 @@ class MaintenanceProcess extends Model
     protected $fillable = [
         'name'
     ];
+
+    public function activities()
+    {
+        return $this->belongsToMany('App\Model\Activity', 'maintenance_process_details', 'mp_id', 'activity_id');
+    }
 }
