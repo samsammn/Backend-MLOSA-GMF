@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ObservationCollection;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Model\Activity;
@@ -11,6 +10,7 @@ use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
 use App\Model\ObservationTeam;
 use App\Model\ThreatCode;
+use App\Model\UIC;
 use App\Model\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -149,7 +149,17 @@ class ObservationController extends Controller
 
     public function new_mlosa_plan(Request $request)
     {
-        $model = Observation::create($request->all());
+        $uic = UIC::find($request->uic_id);
+
+        $model = new Observation();
+        $model->observation_no = $this->autoNumber($uic->uic_code);
+        $model->subtitle = $request->subtitle;
+        $model->due_date = $request->due_date;
+        $model->observation_date = date('Y-m-d');
+        $model->uic_id = $request->uic_id;
+        $model->status = $request->status;
+        $model->save();
+
         return new Result($model);
     }
 
@@ -194,7 +204,10 @@ class ObservationController extends Controller
 
     public function form($id)
     {
-        $observation_no = $this->autoNumber();
+        $user = User::where('username', '=', Session::get('username'))->with('uic')->firstOrFail();
+        $uic = $user->uic->uic_code;
+
+        $observation_no = $this->autoNumber($uic);
         $maintenance = MaintenanceProcess::find($id);
         $threat_codes = ThreatCode::all();
         $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');//->select('activity_id')->get();
@@ -208,14 +221,17 @@ class ObservationController extends Controller
         ]);
     }
 
-    public function autoNumber()
+    public function autoNumber($uic)
     {
-        $now = date('Y-m-d');
-        $count = Observation::where('observation_date', '=', $now)->count();
-        $user = User::where('username', '=', Session::get('username'))->with('uic')->firstOrFail();
-        $uic = $user->uic->uic_code;
+        $year = date('Y');
+        $month = date('m');
 
-        return str_pad($count + 1, 3, 0, STR_PAD_LEFT) . '-' . date('m-Y') . '-' . $uic;
+        $filter[] = [DB::raw('year(observation_date)'), '=', $year];
+        $filter[] = [DB::raw('month(observation_date)'), '=', $month];
+
+        $observation = Observation::where($filter)->orderBy('id', 'desc')->select(DB::raw('left(observation_no, 3) as no'))->firstOrFail();
+
+        return str_pad($observation->no + 1, 3, 0, STR_PAD_LEFT) . '-' . date('m-Y') . '-' . $uic;
     }
 
     public function mlosa_implementation()

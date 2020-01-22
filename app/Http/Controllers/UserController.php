@@ -18,9 +18,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $model = User::with('uic')->paginate();
+        $model = User::with('uic')->uicId($request->uic_id)->get();
         return new ResultCollection($model);
     }
 

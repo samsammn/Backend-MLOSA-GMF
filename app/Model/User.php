@@ -21,4 +21,10 @@ class User extends Model
     {
         return $this->belongsTo('App\Model\UIC');
     }
+
+    public function scopeUicId($query, $q)
+    {
+        if ($q == null) return $query;
+        return $query->where('uic_id', '=', $q);
+    }
 }
