@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use stdClass;
 
 class ObservationController extends Controller
 {
@@ -212,6 +213,21 @@ class ObservationController extends Controller
         $threat_codes = ThreatCode::all();
         $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');//->select('activity_id')->get();
         $activities = Activity::with(['sub_activities'])->whereIn('id', $maintenance_detail)->get();
+
+        foreach ($activities as $item) {
+            $input = new stdClass;
+            $input->safety_risk_id = "";
+            $input->sub_threat_codes_id = "";
+            $input->risk_index_id = "";
+            $input->control_efectivenes = "";
+            $input->effectively_managed = "";
+            $input->error_outcome = "";
+            $input->remark = "";
+
+            foreach ($item->sub_activities as $value) {
+                $value->inputs = $input;
+            }
+        }
 
         return response()->json([
             'observation_no' => $observation_no,
