@@ -274,9 +274,9 @@ class ObservationController extends Controller
 
         foreach ($activities as $item) {
             $input = new stdClass;
-            $input->safety_risk_id = "";
+            $input->safety_risk = "";
             $input->sub_threat_codes_id = "";
-            $input->risk_index_id = "";
+            $input->risk_index = "";
             $input->control_efectivenes = "";
             $input->effectively_managed = "";
             $input->error_outcome = "";
@@ -299,9 +299,6 @@ class ObservationController extends Controller
     {
         $year = date('Y');
         $month = date('m');
-
-        // $filter[] = [DB::raw('year(observation_date)'), '=', $year];
-        // $filter[] = [DB::raw('month(observation_date)'), '=', $month];
 
         $observation = Observation::where(DB::raw('year(observation_date)'), '=', $year)->where(DB::raw('month(observation_date)'), '=', $month)->orderBy('observation_no', 'desc')->select(DB::raw('left(observation_no, 3) as no'))->first();
         $no = $observation == null ? 1 : $observation->no + 1;

@@ -7,8 +7,10 @@ use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResourceCollection;
+use App\Model\UIC;
 use App\Model\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 
 class UserController extends Controller
@@ -154,19 +156,24 @@ class UserController extends Controller
                 $data = [];
                 $isValidSignin = false;
             } else {
-                $data = $body[0];
+                $data_soe = $body[0];
 
-                $dataUser = [
-                    'username' => $data['username'],
-                    'fullname' => $data['fullname'],
-                    'position' => $data['jabatan'],
-                    'obslicense' => $data['obslicense'],
-                    'photo' => $data['photo'],
-                    // 'uic_id' => $data['uic']
-                    'role' => 'Engineer',
-                    'uic_id' => 6,
+                $uic = UIC::where('uic_code', '=', substr($data_soe['uic'], 3, 2))->first();
+
+                $data = [
+                    'username' => $data_soe['username'],
+                    'fullname' => $data_soe['fullname'],
+                    'position' => $data_soe['jabatan'],
+                    'obslicense' => $data_soe['obslicense'],
+                    'photo' => $data_soe['photo'],
+                    'uic_id' => $uic->id,
+                    'uic' => $uic->uic_code,
+                    'sub_uic' => $data_soe['uic'],
+                    'role' => $data_soe['obslicense'] != "" ? "Engineer Observer" : "UIC",
                     'status' => 1
                 ];
+
+                $dataUser = Arr::except($data, ['sub_uic', 'uic']);
 
                 $isExists = User::where('username', '=', $username)->first();
 
