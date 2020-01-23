@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RiskSeverity extends Model
+class RiskColor extends Model
 {
-    public $timestamps = false;
+    //
 }

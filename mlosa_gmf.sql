@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 19/01/2020 10:26:11
+ Date: 23/01/2020 08:44:50
 */
 
 SET NAMES utf8mb4;
@@ -175,23 +175,26 @@ DROP TABLE IF EXISTS `observation_details`;
 CREATE TABLE `observation_details`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `observation_id` bigint(20) NOT NULL,
-  `mp_detail_id` bigint(20) NOT NULL,
-  `safety_risk_id` int(11) NOT NULL,
-  `sub_threat_code_id` int(11) NOT NULL,
-  `risk_index_id` int(11) NULL DEFAULT NULL,
+  `mp_detail_id` bigint(20) NULL DEFAULT NULL,
+  `activity_id` int(11) NULL DEFAULT NULL,
+  `sub_activity_id` int(11) NULL DEFAULT NULL,
+  `safety_risk` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sub_threat_codes_id` int(11) NOT NULL,
+  `risk_index` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `control_efectivenes` int(11) NULL DEFAULT NULL,
   `effectively_managed` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `error_outcome` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `error_outcome` int(2) NOT NULL,
+  `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_details
 -- ----------------------------
-INSERT INTO `observation_details` VALUES (1, 1, 49, 2, 7, NULL, NULL, 'Y', '1');
-INSERT INTO `observation_details` VALUES (2, 1, 48, 2, 7, NULL, NULL, 'Y', '1');
-INSERT INTO `observation_details` VALUES (3, 2, 47, 2, 10, NULL, NULL, 'Y', '1');
-INSERT INTO `observation_details` VALUES (4, 2, 46, 1, 5, NULL, NULL, 'Y', '1');
+INSERT INTO `observation_details` VALUES (1, 18, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (2, 18, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (3, 18, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (4, 18, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
 
 -- ----------------------------
 -- Table structure for observation_logs
@@ -215,15 +218,15 @@ CREATE TABLE `observation_teams`  (
   `observation_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_teams
 -- ----------------------------
-INSERT INTO `observation_teams` VALUES (1, 3, 1);
-INSERT INTO `observation_teams` VALUES (2, 3, 3);
-INSERT INTO `observation_teams` VALUES (3, 3, 7);
-INSERT INTO `observation_teams` VALUES (4, 3, 10);
+INSERT INTO `observation_teams` VALUES (1, 18, 1);
+INSERT INTO `observation_teams` VALUES (2, 18, 2);
+INSERT INTO `observation_teams` VALUES (3, 18, 4);
+INSERT INTO `observation_teams` VALUES (4, 18, 6);
 
 -- ----------------------------
 -- Table structure for observations
@@ -247,14 +250,56 @@ CREATE TABLE `observations`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
 -- ----------------------------
 INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2019-09-08', 9, 1, 'Baggage Towing Car', 'Changing the Battery', 'GSE Workshop', 'Open', NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
 INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-05-08', 6, 2, 'B 777 PK-GIA', 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', 'Open', NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
-INSERT INTO `observations` VALUES (3, 'vvJACdhl8Zhmrhsc', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-01-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
+INSERT INTO `observations` VALUES (3, '001-02-2020-TC', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-02-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
+INSERT INTO `observations` VALUES (18, '002-01-2020-TA', '2020-01-23', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-23 01:21:06', '2020-01-23 01:21:06');
+
+-- ----------------------------
+-- Table structure for risk_colors
+-- ----------------------------
+DROP TABLE IF EXISTS `risk_colors`;
+CREATE TABLE `risk_colors`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `severity_code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `probability_value` int(5) NULL DEFAULT NULL,
+  `color` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of risk_colors
+-- ----------------------------
+INSERT INTO `risk_colors` VALUES (1, 'A', 5, '#ff0000');
+INSERT INTO `risk_colors` VALUES (2, 'B', 5, '#ff0000');
+INSERT INTO `risk_colors` VALUES (3, 'C', 5, '#ed7d31');
+INSERT INTO `risk_colors` VALUES (4, 'D', 5, '#ffff00');
+INSERT INTO `risk_colors` VALUES (5, 'E', 5, '#ffff00');
+INSERT INTO `risk_colors` VALUES (6, 'A', 4, '#ff0000');
+INSERT INTO `risk_colors` VALUES (7, 'B', 4, '#ed7d31');
+INSERT INTO `risk_colors` VALUES (8, 'C', 4, '#ffff00');
+INSERT INTO `risk_colors` VALUES (9, 'D', 4, '#ffff00');
+INSERT INTO `risk_colors` VALUES (10, 'E', 4, '#ffff00');
+INSERT INTO `risk_colors` VALUES (11, 'A', 3, '#ed7d31');
+INSERT INTO `risk_colors` VALUES (12, 'B', 3, '#ffff00');
+INSERT INTO `risk_colors` VALUES (13, 'C', 3, '#ffff00');
+INSERT INTO `risk_colors` VALUES (14, 'D', 3, '#ffff00');
+INSERT INTO `risk_colors` VALUES (15, 'E', 3, '#92d050');
+INSERT INTO `risk_colors` VALUES (16, 'A', 2, '#ffff00');
+INSERT INTO `risk_colors` VALUES (17, 'B', 2, '#ffff00');
+INSERT INTO `risk_colors` VALUES (18, 'C', 2, '#ffff00');
+INSERT INTO `risk_colors` VALUES (19, 'D', 2, '#92d050');
+INSERT INTO `risk_colors` VALUES (20, 'E', 2, '#548235');
+INSERT INTO `risk_colors` VALUES (21, 'A', 1, '#ffff00');
+INSERT INTO `risk_colors` VALUES (22, 'B', 1, '#92d050');
+INSERT INTO `risk_colors` VALUES (23, 'C', 1, '#92d050');
+INSERT INTO `risk_colors` VALUES (24, 'D', 1, '#548235');
+INSERT INTO `risk_colors` VALUES (25, 'E', 1, '#548235');
 
 -- ----------------------------
 -- Table structure for risk_controls
@@ -288,11 +333,20 @@ CREATE TABLE `risk_indices`  (
 DROP TABLE IF EXISTS `risk_probabilities`;
 CREATE TABLE `risk_probabilities`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `code` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `qualitative` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `definition` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `meaning` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` int(2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of risk_probabilities
+-- ----------------------------
+INSERT INTO `risk_probabilities` VALUES (1, 'Almost Certain', 'a:3:{i:0;s:50:\"Will undoubtedly happen/occur, possibly frequently\";i:1;s:52:\"Likely to occur many times (has occurred frequently)\";i:2;s:14:\"Chance ≥ 90%\";}', 5);
+INSERT INTO `risk_probabilities` VALUES (2, 'Likely', 'a:3:{i:0;s:62:\"Will probably happen/occur , but it is not a persisting issue.\";i:1;s:53:\"Likely to occur sometimes (has occurred infrequently)\";i:2;s:25:\"Chance ≥ 65% , or < 90%\";}', 4);
+INSERT INTO `risk_probabilities` VALUES (3, 'Posible', 'a:3:{i:0;s:31:\"Might happen/occur ocassionally\";i:1;s:53:\"Unlikely to occur, but possible (has occurred rarely)\";i:2;s:25:\"Chance ≥ 30% , or < 65%\";}', 3);
+INSERT INTO `risk_probabilities` VALUES (4, 'Unlikely', 'a:3:{i:0;s:61:\"Expected to not happen /occur but it is possible it may do so\";i:1;s:51:\"Very unlikely to occur (not known to have occurred)\";i:2;s:24:\"Chance ≥ 5% , or < 30%\";}', 2);
+INSERT INTO `risk_probabilities` VALUES (5, 'Rare', 'a:3:{i:0;s:31:\"This will probably never happen\";i:1;s:46:\"Almost inconceivable that the event will occur\";i:2;s:11:\"Chance < 5%\";}', 1);
 
 -- ----------------------------
 -- Table structure for risk_severities
@@ -309,9 +363,17 @@ CREATE TABLE `risk_severities`  (
   `operational` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `it_system` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `reputational` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of risk_severities
+-- ----------------------------
+INSERT INTO `risk_severities` VALUES (1, 'A', 'Catastrophic', 'a:1:{i:0;s:19:\"Multiple Fatalities\";}', 'a:2:{i:0;s:55:\"Severe calamity, large pollution of water , soil or air\";i:1;s:28:\"Severe danger to environment\";}', 'a:1:{i:0;s:72:\"Loss of A/C due to successful attack, terrorist activity or civil unrest\";}', 'a:2:{i:0;s:60:\"Multiple A/C damage resulting in serious network disruptions\";i:1;s:51:\"BER (Beyond Economical Repair) > 65% of asset value\";}', 'a:1:{i:0;s:16:\"Loss of aircraft\";}', 'a:1:{i:0;s:126:\"The entire system fail, or major subsystem stop working, or other devices on the network to be disrupted. No workaround exist.\";}', 'a:3:{i:0;s:49:\"Sustained negative global (social) media coverage\";i:1;s:55:\"Sustained long-term negative financial / revenue impact\";i:2;s:59:\"Long term inability to attract customers & generate revenue\";}');
+INSERT INTO `risk_severities` VALUES (2, 'B', 'Hazardous', 'a:2:{i:0;s:12:\"One Fatality\";i:1;s:43:\"Serious Injury resulting in hospitalization\";}', 'a:1:{i:0;s:39:\"Medium pollution to water , soil or air\";}', 'a:1:{i:0;s:104:\"Security threat assessment is genuine. Situation is only resolve by handling control to outside agencies\";}', 'a:2:{i:0;s:27:\"Aircraft out of use > 24Hrs\";i:1;s:43:\"Cost of repair >50%  or <65% of asset value\";}', 'a:3:{i:0;s:46:\"Practically no operational safety margins left\";i:1;s:74:\"Phsycal distress / high workload impairing accuracy and completion of task\";i:2;s:53:\"Damage out of limits and not recognized before flight\";}', 'a:1:{i:0;s:127:\"Important functions are unusable and workaround do not exist. other functions and the rest of the network is operating normally\";}', 'a:3:{i:0;s:56:\"Sustained negative international (social) media coverage\";i:1;s:38:\"Significant financial / revenue impact\";i:2;s:60:\"Short term inability to attract customers & generate revenue\";}');
+INSERT INTO `risk_severities` VALUES (3, 'C', 'Major', 'a:1:{i:0;s:70:\"Injury / ill health resulting in absence not requiring hospitalization\";}', 'a:1:{i:0;s:36:\"Small pollution to water soil or air\";}', 'a:1:{i:0;s:119:\"Security threat assessment is genuine. Situation is only mitigate and / or resolved with assistance of outside agencies\";}', 'a:2:{i:0;s:29:\"Aircraft out of use 2 - 24Hrs\";i:1;s:44:\"Cost of repair > 10%  or <50% of asset value\";}', 'a:3:{i:0;s:45:\"Large reduction in operational safety margins\";i:1;s:82:\"Reduction in ability to cope with adverse operating conditions / increase work loa\";i:2;s:52:\"Damage within limits and not recognized before fligh\";}', 'a:1:{i:0;s:133:\"Failures occur in unusual circumstances, or minor features do not work at all, or other failure occur but low impact workaround exist\";}', 'a:3:{i:0;s:51:\"Sustained negative national (social) media coverage\";i:1;s:32:\"Major financial / revenue impact\";i:2;s:68:\"Inability to attract customers in specific region & generate revenue\";}');
+INSERT INTO `risk_severities` VALUES (4, 'D', 'Minor', 'a:1:{i:0;s:37:\"Minor Injury not resulting in absence\";}', 'a:1:{i:0;s:28:\"Small spill and no pollution\";}', 'a:1:{i:0;s:90:\"Security threat assessment is genuine. Situation is only mitigate and / or resolved by GMF\";}', 'a:2:{i:0;s:26:\"Aircraft out of use < 2Hrs\";i:1;s:33:\"Cost of repair 10% of asset value\";}', 'a:2:{i:0;s:21:\"Operating limitations\";i:1;s:24:\"Damage timely recognized\";}', 'a:1:{i:0;s:184:\"Failures occur under very unusual circumstances , but operation essentially. recovers without intervention. User did not need install any workaround and performance impact is tolerable\";}', 'a:3:{i:0;s:27:\"Local (social) media impact\";i:1;s:21:\"Short - lived effects\";i:2;s:22:\"Minor financial impact\";}');
+INSERT INTO `risk_severities` VALUES (5, 'E', 'Negligible', 'a:1:{i:0;s:9:\"No Injury\";}', 'a:1:{i:0;s:23:\"No pollution , no spill\";}', 'a:1:{i:0;s:27:\"Security threatment is hoax\";}', 'a:2:{i:0;s:22:\"No delay due to damage\";i:1;s:18:\"No Facility damage\";}', 'a:1:{i:0;s:39:\"No adverse effect to operational safety\";}', 'a:1:{i:0;s:67:\"Defects do not cause any detrimental effect on system functionality\";}', 'a:1:{i:0;s:9:\"No effect\";}');
 
 -- ----------------------------
 -- Table structure for risk_values
