@@ -215,7 +215,7 @@ class ObservationController extends Controller
         $model->due_date = $request->due_date;
         $model->observation_date = date('Y-m-d');
         $model->uic_id = $request->uic_id;
-        $model->status = $request->status;
+        $model->status = "Open";
         $model->save();
 
         return new Result($model);
