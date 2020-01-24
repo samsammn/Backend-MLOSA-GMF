@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Model\Activity;
-use App\Model\MaintenanceProcess;
-use App\Model\MaintenanceProcessDetail;
 use Illuminate\Http\Request;
 
-class MaintenanceProcessController extends Controller
+class ActivityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +16,7 @@ class MaintenanceProcessController extends Controller
      */
     public function index()
     {
-        $model = MaintenanceProcess::all();
+        $model = Activity::all();
         return new ResultCollection($model);
     }
 
@@ -41,29 +39,11 @@ class MaintenanceProcessController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required'
         ]);
 
-        $maintenance = new MaintenanceProcess();
-        $maintenance->name = $request->name;
-        $maintenance->save();
-
-        foreach ($request->activities as $activity) {
-            foreach ($activity['sub_activities'] as $sub) {
-                $data = new MaintenanceProcessDetail();
-                $data->mp_id = $maintenance->id;
-                $data->activity_id = $activity['id'];
-                $data->sub_activity_id = $sub['id'];
-
-                $model[] = $data->toArray();
-            }
-        }
-
-        $detail = MaintenanceProcessDetail::insert($model);
-
-        return response()->json([
-            'message' => 'Observation Form has been created successfullty'
-        ]);
+        $model = Activity::create($request->all());
+        return new Result($model);
     }
 
     /**
@@ -74,7 +54,7 @@ class MaintenanceProcessController extends Controller
      */
     public function show($id)
     {
-        $model = MaintenanceProcess::find($id);
+        $model = Activity::find($id);
         return new Result($model);
     }
 
@@ -96,9 +76,9 @@ class MaintenanceProcessController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update(Request $request, $id)
     {
-        $model = MaintenanceProcess::find($id);
+        $model = Activity::find($id);
         $result = new Result($model);
 
         if ($model != null)
@@ -109,7 +89,7 @@ class MaintenanceProcessController extends Controller
         }
             else
         {
-            $result->additional(['message' => 'failed to update, uic not found!']);
+            $result->additional(['message' => 'failed to update, activity not found!']);
             return $result;
         }
     }
@@ -122,7 +102,7 @@ class MaintenanceProcessController extends Controller
      */
     public function destroy($id)
     {
-        $model = MaintenanceProcess::find($id);
+        $model = Activity::find($id);
         $result = new Result($model);
 
         if ($model != null)
@@ -133,14 +113,8 @@ class MaintenanceProcessController extends Controller
         }
             else
         {
-            $result->additional(['message' => 'failed to delete, maintenance process not found!']);
+            $result->additional(['message' => 'failed to delete, activity not found!']);
             return $result;
         }
-    }
-
-    public function form()
-    {
-        $model = MaintenanceProcess::with('activities')->get();
-        return new Result($model);
     }
 }

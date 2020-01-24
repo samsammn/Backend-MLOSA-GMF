@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $model = User::with('uic')->uicId($request->uic_id)->get();
+        $model = User::with('uic')->uicId($request->uic_id)->search($request->search)->get();
         return new ResultCollection($model);
     }
 
@@ -184,6 +184,8 @@ class UserController extends Controller
                     // dilakukan pengubahan apabila ada update data dari soe
                     $isExists->update($dataUser);
                 }
+
+                $data['id'] = $isExists->id;
 
                 $request->session()->put('username', $username);
             }

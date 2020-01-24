@@ -29,6 +29,8 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
 
     Route::resource('observation', 'ObservationController');
+    Route::resource('activity', 'ActivityController');
+    Route::resource('sub_activity', 'SubActivityController');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
 
     Route::get('risk', 'RiskController@risk');
