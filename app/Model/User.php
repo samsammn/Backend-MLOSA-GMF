@@ -27,4 +27,10 @@ class User extends Model
         if ($q == null) return $query;
         return $query->where('uic_id', '=', $q);
     }
+
+    public function scopeSearch($query, $q)
+    {
+        if ($q == null) return $query;
+        return $query->where('username', 'LIKE', '%'.$q.'%')->orWhere('fullname', 'LIKE', '%'.$q.'%');
+    }
 }

@@ -8,14 +8,17 @@ use App\Model\Activity;
 use App\Model\MaintenanceProcess;
 use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
+use App\Model\ObservationDetail;
 use App\Model\ObservationTeam;
 use App\Model\ThreatCode;
 use App\Model\UIC;
 use App\Model\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use stdClass;
 
 class ObservationController extends Controller
 {
@@ -79,7 +82,62 @@ class ObservationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $observation = $request->observation;
+        $activities = $request->activities;
+
+        $uic = UIC::find($observation['uic_id']);
+
+        if ($observation['no'] == null)
+        {
+            $model_observation = new Observation();
+            $model_observation->observation_no = $this->autoNumber($uic->uic_code);
+            $model_observation->mp_id = $observation['mp_id'];
+            $model_observation->uic_id = $observation['uic_id'];
+            $model_observation->observation_date = date('Y-m-d');
+            $model_observation->due_date = $observation['due_date'];
+            $model_observation->start_time = $observation['start_time'];
+            $model_observation->end_time = $observation['end_time'];
+            $model_observation->component_type = $observation['component_type'];
+            $model_observation->task_observed = $observation['task_observed'];
+            $model_observation->location = $observation['location'];
+            $model_observation->status = $observation['status'];
+            $model_observation->save();
+
+            foreach ($observation['team'] as $value) {
+                Arr::set($value, 'observation_id', $model_observation->id);
+                $observation_team[] = $value;
+            }
+
+            foreach ($activities as $value) {
+                foreach ($value['sub_activities'] as $item) {
+
+                    $detail = new ObservationDetail();
+                    $detail->observation_id = $model_observation->id;
+                    $detail->activity_id = $value['id'];
+                    $detail->sub_activity_id = $item['id'];
+                    $detail->safety_risk = $item['inputs']['safety_risk'];
+                    $detail->sub_threat_codes_id = $item['inputs']['sub_threat_codes_id'];
+                    $detail->risk_index = $item['inputs']['risk_index'];
+                    $detail->effectively_managed = $item['inputs']['effectively_managed'];
+                    $detail->error_outcome = $item['inputs']['error_outcome'];
+                    $detail->remark = $item['inputs']['remark'];
+
+                    $observation_detail[] = $detail->toArray();
+                }
+            }
+
+            ObservationTeam::insert($observation_team);
+            ObservationDetail::insert($observation_detail);
+
+            return response()->json([
+                'message' => 'Observation has been created successfully'
+            ]);
+
+        } else {
+            return response()->json([
+                'message' => 'changes not yet available'
+            ]);
+        }
     }
 
     /**
@@ -157,7 +215,7 @@ class ObservationController extends Controller
         $model->due_date = $request->due_date;
         $model->observation_date = date('Y-m-d');
         $model->uic_id = $request->uic_id;
-        $model->status = $request->status;
+        $model->status = "Open";
         $model->save();
 
         return new Result($model);
@@ -206,12 +264,28 @@ class ObservationController extends Controller
     {
         $user = User::where('username', '=', Session::get('username'))->with('uic')->firstOrFail();
         $uic = $user->uic->uic_code;
+        //return $this->autoNumber($uic);
 
         $observation_no = $this->autoNumber($uic);
         $maintenance = MaintenanceProcess::find($id);
         $threat_codes = ThreatCode::all();
         $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');//->select('activity_id')->get();
         $activities = Activity::with(['sub_activities'])->whereIn('id', $maintenance_detail)->get();
+
+        foreach ($activities as $item) {
+            $input = new stdClass;
+            $input->safety_risk = "";
+            $input->sub_threat_codes_id = "";
+            $input->risk_index = "";
+            $input->control_efectivenes = "";
+            $input->effectively_managed = "";
+            $input->error_outcome = "";
+            $input->remark = "";
+
+            foreach ($item->sub_activities as $value) {
+                $value->inputs = $input;
+            }
+        }
 
         return response()->json([
             'observation_no' => $observation_no,
@@ -226,12 +300,10 @@ class ObservationController extends Controller
         $year = date('Y');
         $month = date('m');
 
-        $filter[] = [DB::raw('year(observation_date)'), '=', $year];
-        $filter[] = [DB::raw('month(observation_date)'), '=', $month];
+        $observation = Observation::where(DB::raw('year(observation_date)'), '=', $year)->where(DB::raw('month(observation_date)'), '=', $month)->orderBy('observation_no', 'desc')->select(DB::raw('left(observation_no, 3) as no'))->first();
+        $no = $observation == null ? 1 : $observation->no + 1;
 
-        $observation = Observation::where($filter)->orderBy('id', 'desc')->select(DB::raw('left(observation_no, 3) as no'))->firstOrFail();
-
-        return str_pad($observation->no + 1, 3, 0, STR_PAD_LEFT) . '-' . date('m-Y') . '-' . $uic;
+        return str_pad($no, 3, 0, STR_PAD_LEFT) . '-' . date('m-Y') . '-' . $uic;
     }
 
     public function mlosa_implementation()

@@ -29,6 +29,15 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
 
     Route::resource('observation', 'ObservationController');
+    Route::resource('activity', 'ActivityController');
+    Route::resource('sub_activity', 'SubActivityController');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
+
+    Route::get('risk', 'RiskController@risk');
+    Route::get('threat_codes', 'ThreatCodeController@all_relation');
+    Route::get('probability', 'RiskController@get_probability');
+    Route::post('probability', 'RiskController@add_probability');
+    Route::get('severity', 'RiskController@get_severity');
+    Route::post('severity', 'RiskController@add_severity');
 
 });

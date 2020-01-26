@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 19/01/2020 10:26:11
+ Date: 23/01/2020 20:51:16
 */
 
 SET NAMES utf8mb4;
@@ -175,23 +175,26 @@ DROP TABLE IF EXISTS `observation_details`;
 CREATE TABLE `observation_details`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `observation_id` bigint(20) NOT NULL,
-  `mp_detail_id` bigint(20) NOT NULL,
-  `safety_risk_id` int(11) NOT NULL,
-  `sub_threat_code_id` int(11) NOT NULL,
-  `risk_index_id` int(11) NULL DEFAULT NULL,
+  `mp_detail_id` bigint(20) NULL DEFAULT NULL,
+  `activity_id` int(11) NULL DEFAULT NULL,
+  `sub_activity_id` int(11) NULL DEFAULT NULL,
+  `safety_risk` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sub_threat_codes_id` int(11) NOT NULL,
+  `risk_index` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `control_efectivenes` int(11) NULL DEFAULT NULL,
   `effectively_managed` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `error_outcome` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `error_outcome` int(2) NOT NULL,
+  `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_details
 -- ----------------------------
-INSERT INTO `observation_details` VALUES (1, 1, 49, 2, 7, NULL, NULL, 'Y', '1');
-INSERT INTO `observation_details` VALUES (2, 1, 48, 2, 7, NULL, NULL, 'Y', '1');
-INSERT INTO `observation_details` VALUES (3, 2, 47, 2, 10, NULL, NULL, 'Y', '1');
-INSERT INTO `observation_details` VALUES (4, 2, 46, 1, 5, NULL, NULL, 'Y', '1');
+INSERT INTO `observation_details` VALUES (1, 18, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (2, 18, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (3, 18, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (4, 18, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
 
 -- ----------------------------
 -- Table structure for observation_logs
@@ -215,15 +218,15 @@ CREATE TABLE `observation_teams`  (
   `observation_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_teams
 -- ----------------------------
-INSERT INTO `observation_teams` VALUES (1, 3, 1);
-INSERT INTO `observation_teams` VALUES (2, 3, 3);
-INSERT INTO `observation_teams` VALUES (3, 3, 7);
-INSERT INTO `observation_teams` VALUES (4, 3, 10);
+INSERT INTO `observation_teams` VALUES (1, 18, 1);
+INSERT INTO `observation_teams` VALUES (2, 18, 2);
+INSERT INTO `observation_teams` VALUES (3, 18, 4);
+INSERT INTO `observation_teams` VALUES (4, 18, 6);
 
 -- ----------------------------
 -- Table structure for observations
@@ -247,14 +250,56 @@ CREATE TABLE `observations`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
 -- ----------------------------
 INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00', '10:00:00', NULL, '2019-09-08', 9, 1, 'Baggage Towing Car', 'Changing the Battery', 'GSE Workshop', 'Open', NULL, '2020-01-08 15:55:19', '2020-01-08 15:55:19');
 INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-05-08', 6, 2, 'B 777 PK-GIA', 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', 'Open', NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
-INSERT INTO `observations` VALUES (3, 'vvJACdhl8Zhmrhsc', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-01-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
+INSERT INTO `observations` VALUES (3, '001-02-2020-TC', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-02-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
+INSERT INTO `observations` VALUES (18, '002-01-2020-TA', '2020-01-23', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-23 01:21:06', '2020-01-23 01:21:06');
+
+-- ----------------------------
+-- Table structure for risk_colors
+-- ----------------------------
+DROP TABLE IF EXISTS `risk_colors`;
+CREATE TABLE `risk_colors`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `severity_code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `probability_value` int(5) NULL DEFAULT NULL,
+  `color` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of risk_colors
+-- ----------------------------
+INSERT INTO `risk_colors` VALUES (1, 'A', 5, '#ff0000');
+INSERT INTO `risk_colors` VALUES (2, 'B', 5, '#ff0000');
+INSERT INTO `risk_colors` VALUES (3, 'C', 5, '#ed7d31');
+INSERT INTO `risk_colors` VALUES (4, 'D', 5, '#ffff00');
+INSERT INTO `risk_colors` VALUES (5, 'E', 5, '#ffff00');
+INSERT INTO `risk_colors` VALUES (6, 'A', 4, '#ff0000');
+INSERT INTO `risk_colors` VALUES (7, 'B', 4, '#ed7d31');
+INSERT INTO `risk_colors` VALUES (8, 'C', 4, '#ffff00');
+INSERT INTO `risk_colors` VALUES (9, 'D', 4, '#ffff00');
+INSERT INTO `risk_colors` VALUES (10, 'E', 4, '#ffff00');
+INSERT INTO `risk_colors` VALUES (11, 'A', 3, '#ed7d31');
+INSERT INTO `risk_colors` VALUES (12, 'B', 3, '#ffff00');
+INSERT INTO `risk_colors` VALUES (13, 'C', 3, '#ffff00');
+INSERT INTO `risk_colors` VALUES (14, 'D', 3, '#ffff00');
+INSERT INTO `risk_colors` VALUES (15, 'E', 3, '#92d050');
+INSERT INTO `risk_colors` VALUES (16, 'A', 2, '#ffff00');
+INSERT INTO `risk_colors` VALUES (17, 'B', 2, '#ffff00');
+INSERT INTO `risk_colors` VALUES (18, 'C', 2, '#ffff00');
+INSERT INTO `risk_colors` VALUES (19, 'D', 2, '#92d050');
+INSERT INTO `risk_colors` VALUES (20, 'E', 2, '#548235');
+INSERT INTO `risk_colors` VALUES (21, 'A', 1, '#ffff00');
+INSERT INTO `risk_colors` VALUES (22, 'B', 1, '#92d050');
+INSERT INTO `risk_colors` VALUES (23, 'C', 1, '#92d050');
+INSERT INTO `risk_colors` VALUES (24, 'D', 1, '#548235');
+INSERT INTO `risk_colors` VALUES (25, 'E', 1, '#548235');
 
 -- ----------------------------
 -- Table structure for risk_controls
@@ -288,11 +333,20 @@ CREATE TABLE `risk_indices`  (
 DROP TABLE IF EXISTS `risk_probabilities`;
 CREATE TABLE `risk_probabilities`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `code` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `qualitative` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `definition` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `meaning` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` int(2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of risk_probabilities
+-- ----------------------------
+INSERT INTO `risk_probabilities` VALUES (1, 'Almost Certain', 'a:3:{i:0;s:50:\"Will undoubtedly happen/occur, possibly frequently\";i:1;s:52:\"Likely to occur many times (has occurred frequently)\";i:2;s:14:\"Chance ≥ 90%\";}', 5);
+INSERT INTO `risk_probabilities` VALUES (2, 'Likely', 'a:3:{i:0;s:62:\"Will probably happen/occur , but it is not a persisting issue.\";i:1;s:53:\"Likely to occur sometimes (has occurred infrequently)\";i:2;s:25:\"Chance ≥ 65% , or < 90%\";}', 4);
+INSERT INTO `risk_probabilities` VALUES (3, 'Posible', 'a:3:{i:0;s:31:\"Might happen/occur ocassionally\";i:1;s:53:\"Unlikely to occur, but possible (has occurred rarely)\";i:2;s:25:\"Chance ≥ 30% , or < 65%\";}', 3);
+INSERT INTO `risk_probabilities` VALUES (4, 'Unlikely', 'a:3:{i:0;s:61:\"Expected to not happen /occur but it is possible it may do so\";i:1;s:51:\"Very unlikely to occur (not known to have occurred)\";i:2;s:24:\"Chance ≥ 5% , or < 30%\";}', 2);
+INSERT INTO `risk_probabilities` VALUES (5, 'Rare', 'a:3:{i:0;s:31:\"This will probably never happen\";i:1;s:46:\"Almost inconceivable that the event will occur\";i:2;s:11:\"Chance < 5%\";}', 1);
 
 -- ----------------------------
 -- Table structure for risk_severities
@@ -309,9 +363,17 @@ CREATE TABLE `risk_severities`  (
   `operational` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `it_system` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `reputational` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of risk_severities
+-- ----------------------------
+INSERT INTO `risk_severities` VALUES (1, 'A', 'Catastrophic', 'a:1:{i:0;s:19:\"Multiple Fatalities\";}', 'a:2:{i:0;s:55:\"Severe calamity, large pollution of water , soil or air\";i:1;s:28:\"Severe danger to environment\";}', 'a:1:{i:0;s:72:\"Loss of A/C due to successful attack, terrorist activity or civil unrest\";}', 'a:2:{i:0;s:60:\"Multiple A/C damage resulting in serious network disruptions\";i:1;s:51:\"BER (Beyond Economical Repair) > 65% of asset value\";}', 'a:1:{i:0;s:16:\"Loss of aircraft\";}', 'a:1:{i:0;s:126:\"The entire system fail, or major subsystem stop working, or other devices on the network to be disrupted. No workaround exist.\";}', 'a:3:{i:0;s:49:\"Sustained negative global (social) media coverage\";i:1;s:55:\"Sustained long-term negative financial / revenue impact\";i:2;s:59:\"Long term inability to attract customers & generate revenue\";}');
+INSERT INTO `risk_severities` VALUES (2, 'B', 'Hazardous', 'a:2:{i:0;s:12:\"One Fatality\";i:1;s:43:\"Serious Injury resulting in hospitalization\";}', 'a:1:{i:0;s:39:\"Medium pollution to water , soil or air\";}', 'a:1:{i:0;s:104:\"Security threat assessment is genuine. Situation is only resolve by handling control to outside agencies\";}', 'a:2:{i:0;s:27:\"Aircraft out of use > 24Hrs\";i:1;s:43:\"Cost of repair >50%  or <65% of asset value\";}', 'a:3:{i:0;s:46:\"Practically no operational safety margins left\";i:1;s:74:\"Phsycal distress / high workload impairing accuracy and completion of task\";i:2;s:53:\"Damage out of limits and not recognized before flight\";}', 'a:1:{i:0;s:127:\"Important functions are unusable and workaround do not exist. other functions and the rest of the network is operating normally\";}', 'a:3:{i:0;s:56:\"Sustained negative international (social) media coverage\";i:1;s:38:\"Significant financial / revenue impact\";i:2;s:60:\"Short term inability to attract customers & generate revenue\";}');
+INSERT INTO `risk_severities` VALUES (3, 'C', 'Major', 'a:1:{i:0;s:70:\"Injury / ill health resulting in absence not requiring hospitalization\";}', 'a:1:{i:0;s:36:\"Small pollution to water soil or air\";}', 'a:1:{i:0;s:119:\"Security threat assessment is genuine. Situation is only mitigate and / or resolved with assistance of outside agencies\";}', 'a:2:{i:0;s:29:\"Aircraft out of use 2 - 24Hrs\";i:1;s:44:\"Cost of repair > 10%  or <50% of asset value\";}', 'a:3:{i:0;s:45:\"Large reduction in operational safety margins\";i:1;s:82:\"Reduction in ability to cope with adverse operating conditions / increase work loa\";i:2;s:52:\"Damage within limits and not recognized before fligh\";}', 'a:1:{i:0;s:133:\"Failures occur in unusual circumstances, or minor features do not work at all, or other failure occur but low impact workaround exist\";}', 'a:3:{i:0;s:51:\"Sustained negative national (social) media coverage\";i:1;s:32:\"Major financial / revenue impact\";i:2;s:68:\"Inability to attract customers in specific region & generate revenue\";}');
+INSERT INTO `risk_severities` VALUES (4, 'D', 'Minor', 'a:1:{i:0;s:37:\"Minor Injury not resulting in absence\";}', 'a:1:{i:0;s:28:\"Small spill and no pollution\";}', 'a:1:{i:0;s:90:\"Security threat assessment is genuine. Situation is only mitigate and / or resolved by GMF\";}', 'a:2:{i:0;s:26:\"Aircraft out of use < 2Hrs\";i:1;s:33:\"Cost of repair 10% of asset value\";}', 'a:2:{i:0;s:21:\"Operating limitations\";i:1;s:24:\"Damage timely recognized\";}', 'a:1:{i:0;s:184:\"Failures occur under very unusual circumstances , but operation essentially. recovers without intervention. User did not need install any workaround and performance impact is tolerable\";}', 'a:3:{i:0;s:27:\"Local (social) media impact\";i:1;s:21:\"Short - lived effects\";i:2;s:22:\"Minor financial impact\";}');
+INSERT INTO `risk_severities` VALUES (5, 'E', 'Negligible', 'a:1:{i:0;s:9:\"No Injury\";}', 'a:1:{i:0;s:23:\"No pollution , no spill\";}', 'a:1:{i:0;s:27:\"Security threatment is hoax\";}', 'a:2:{i:0;s:22:\"No delay due to damage\";i:1;s:18:\"No Facility damage\";}', 'a:1:{i:0;s:39:\"No adverse effect to operational safety\";}', 'a:1:{i:0;s:67:\"Defects do not cause any detrimental effect on system functionality\";}', 'a:1:{i:0;s:9:\"No effect\";}');
 
 -- ----------------------------
 -- Table structure for risk_values
@@ -405,93 +467,128 @@ CREATE TABLE `sub_threat_codes`  (
   `code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `description` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 118 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_threat_codes
 -- ----------------------------
-INSERT INTO `sub_threat_codes` VALUES (1, 1, 'A4', 'Inadequate (e.g., missing graphics)');
-INSERT INTO `sub_threat_codes` VALUES (2, 1, 'A9', '');
-INSERT INTO `sub_threat_codes` VALUES (3, 1, 'A1', 'Not understandable');
-INSERT INTO `sub_threat_codes` VALUES (4, 1, 'A2', 'Unavailable or inaccessible');
-INSERT INTO `sub_threat_codes` VALUES (5, 1, 'A3', 'Incorrect');
-INSERT INTO `sub_threat_codes` VALUES (6, 1, 'A5', 'Uncontrolled (e.g., missing graphics)');
-INSERT INTO `sub_threat_codes` VALUES (7, 1, 'A9', 'Information not used');
-INSERT INTO `sub_threat_codes` VALUES (8, 2, 'B1', 'Defective');
-INSERT INTO `sub_threat_codes` VALUES (9, 2, 'B13', 'Incorrectly used (including unsafely)');
-INSERT INTO `sub_threat_codes` VALUES (10, 2, 'B15', 'Not used');
-INSERT INTO `sub_threat_codes` VALUES (11, 2, 'B16', 'Other');
-INSERT INTO `sub_threat_codes` VALUES (12, 2, 'B6', 'Unavailable');
-INSERT INTO `sub_threat_codes` VALUES (13, 2, 'B7', 'Incomplete');
-INSERT INTO `sub_threat_codes` VALUES (14, 3, 'C4', 'Parts Unavailable');
-INSERT INTO `sub_threat_codes` VALUES (15, 3, 'C5', 'Parts incorrectly labeled/certified');
-INSERT INTO `sub_threat_codes` VALUES (16, 3, 'C8', 'C8.');
-INSERT INTO `sub_threat_codes` VALUES (17, 4, 'D5', 'Other');
-INSERT INTO `sub_threat_codes` VALUES (18, 5, 'E5', 'Task Knowledge');
-INSERT INTO `sub_threat_codes` VALUES (19, 5, 'E6', 'Task Planning');
-INSERT INTO `sub_threat_codes` VALUES (20, 6, 'F13', 'Situational Awareness');
-INSERT INTO `sub_threat_codes` VALUES (21, 6, 'F2', 'Fatigue');
-INSERT INTO `sub_threat_codes` VALUES (22, 6, 'F3', 'Time Pressure');
-INSERT INTO `sub_threat_codes` VALUES (23, 6, 'F5', 'Complacency');
-INSERT INTO `sub_threat_codes` VALUES (24, 7, 'G12', 'Cleanliness');
-INSERT INTO `sub_threat_codes` VALUES (25, 7, 'G13', 'Hazardous or toxic subtances');
-INSERT INTO `sub_threat_codes` VALUES (26, 7, 'G17', 'Slippery');
-INSERT INTO `sub_threat_codes` VALUES (27, 7, 'G2', 'Hot');
-INSERT INTO `sub_threat_codes` VALUES (28, 7, 'G22', 'Labels / placards / signage');
-INSERT INTO `sub_threat_codes` VALUES (29, 7, 'G7', 'Lighting');
-INSERT INTO `sub_threat_codes` VALUES (30, 8, 'H1', 'Quality of internal support from technical organizations');
-INSERT INTO `sub_threat_codes` VALUES (31, 8, 'H10', 'Work group normal practice (norm)');
-INSERT INTO `sub_threat_codes` VALUES (32, 8, 'H3', 'Company policies');
-INSERT INTO `sub_threat_codes` VALUES (33, 8, 'H8', 'Work process / procedure not followed');
-INSERT INTO `sub_threat_codes` VALUES (34, 9, 'I1', 'Planning / organization of task');
-INSERT INTO `sub_threat_codes` VALUES (35, 9, 'I5', 'Availibility of supervision');
-INSERT INTO `sub_threat_codes` VALUES (36, 10, 'J1', 'Between department');
-INSERT INTO `sub_threat_codes` VALUES (37, 10, 'J2', 'Between mechanics');
-INSERT INTO `sub_threat_codes` VALUES (38, 10, 'J3', 'Between shifts');
-INSERT INTO `sub_threat_codes` VALUES (39, 10, 'J4', 'Between maintenance crew and lead');
-INSERT INTO `sub_threat_codes` VALUES (40, 10, 'J7', 'Other');
-INSERT INTO `sub_threat_codes` VALUES (41, 11, 'K1', 'Missing proper documentation');
-INSERT INTO `sub_threat_codes` VALUES (42, 1, 'A4', 'Inadequate (eg , missing graphics)');
-INSERT INTO `sub_threat_codes` VALUES (43, 1, 'A9', '');
-INSERT INTO `sub_threat_codes` VALUES (44, 1, 'A1', 'Not understandable');
-INSERT INTO `sub_threat_codes` VALUES (45, 1, 'A2', 'Unavailable or inaccessible');
-INSERT INTO `sub_threat_codes` VALUES (46, 1, 'A3', 'Incorrect');
-INSERT INTO `sub_threat_codes` VALUES (47, 1, 'A5', 'Uncontrolled (eg , missing graphics)');
-INSERT INTO `sub_threat_codes` VALUES (48, 1, 'A9', 'Information not used');
-INSERT INTO `sub_threat_codes` VALUES (49, 2, 'B1', 'Defective');
-INSERT INTO `sub_threat_codes` VALUES (50, 2, 'B13', 'Incorrectly used (including unsafely)');
-INSERT INTO `sub_threat_codes` VALUES (51, 2, 'B15', 'Not used');
-INSERT INTO `sub_threat_codes` VALUES (52, 2, 'B16', 'Other');
-INSERT INTO `sub_threat_codes` VALUES (53, 2, 'B6', 'Unavailable');
-INSERT INTO `sub_threat_codes` VALUES (54, 2, 'B7', 'Incomplete');
-INSERT INTO `sub_threat_codes` VALUES (55, 3, 'C4', 'Parts Unavailable');
-INSERT INTO `sub_threat_codes` VALUES (56, 3, 'C5', 'Parts incorrectly labeled/certified');
-INSERT INTO `sub_threat_codes` VALUES (57, 3, 'C8', 'C8');
-INSERT INTO `sub_threat_codes` VALUES (58, 4, 'D5', 'Other');
-INSERT INTO `sub_threat_codes` VALUES (59, 5, 'E5', 'Task Knowledge');
-INSERT INTO `sub_threat_codes` VALUES (60, 5, 'E6', 'Task Planning');
-INSERT INTO `sub_threat_codes` VALUES (61, 6, 'F13', 'Situational Awareness');
-INSERT INTO `sub_threat_codes` VALUES (62, 6, 'F2', 'Fatigue');
-INSERT INTO `sub_threat_codes` VALUES (63, 6, 'F3', 'Time Pressure');
-INSERT INTO `sub_threat_codes` VALUES (64, 6, 'F5', 'Complacency');
-INSERT INTO `sub_threat_codes` VALUES (65, 7, 'G12', 'Cleanliness');
-INSERT INTO `sub_threat_codes` VALUES (66, 7, 'G13', 'Hazardous or toxic subtances');
-INSERT INTO `sub_threat_codes` VALUES (67, 7, 'G17', 'Slippery');
-INSERT INTO `sub_threat_codes` VALUES (68, 7, 'G2', 'Hot');
-INSERT INTO `sub_threat_codes` VALUES (69, 7, 'G22', 'Labels / placards / signage');
-INSERT INTO `sub_threat_codes` VALUES (70, 7, 'G7', 'Lighting');
-INSERT INTO `sub_threat_codes` VALUES (71, 8, 'H1', 'Quality of internal support from technical organizations');
-INSERT INTO `sub_threat_codes` VALUES (72, 8, 'H10', 'Work group normal practice (norm)');
-INSERT INTO `sub_threat_codes` VALUES (73, 8, 'H3', 'Company policies');
-INSERT INTO `sub_threat_codes` VALUES (74, 8, 'H8', 'Work process / procedure not followed');
-INSERT INTO `sub_threat_codes` VALUES (75, 9, 'I1', 'Planning / organization of task');
-INSERT INTO `sub_threat_codes` VALUES (76, 9, 'I5', 'Availibility of supervision');
-INSERT INTO `sub_threat_codes` VALUES (77, 10, 'J1', 'Between department');
-INSERT INTO `sub_threat_codes` VALUES (78, 10, 'J2', 'Between mechanics');
-INSERT INTO `sub_threat_codes` VALUES (79, 10, 'J3', 'Between shifts');
-INSERT INTO `sub_threat_codes` VALUES (80, 10, 'J4', 'Between maintenance crew and lead');
-INSERT INTO `sub_threat_codes` VALUES (81, 10, 'J7', 'Other');
-INSERT INTO `sub_threat_codes` VALUES (82, 11, 'K1', 'Missing proper documentation');
+INSERT INTO `sub_threat_codes` VALUES (1, 1, 'A1', 'Not understandable');
+INSERT INTO `sub_threat_codes` VALUES (2, 1, 'A2', 'Unavailable or inaccessible');
+INSERT INTO `sub_threat_codes` VALUES (3, 1, 'A3', 'Incorrect');
+INSERT INTO `sub_threat_codes` VALUES (4, 1, 'A4', 'Inadequate (e.g., missing graphics) ');
+INSERT INTO `sub_threat_codes` VALUES (5, 1, 'A5', 'Uncontrolled (e.g., outdated)');
+INSERT INTO `sub_threat_codes` VALUES (6, 1, 'A6', 'Too much conflicting information');
+INSERT INTO `sub_threat_codes` VALUES (7, 1, 'A7', 'Update process is too long or complicated');
+INSERT INTO `sub_threat_codes` VALUES (8, 1, 'A8', 'Incorrectly modified manufacturer’s Maintenance Manual/Service Bulletin');
+INSERT INTO `sub_threat_codes` VALUES (9, 1, 'A9', 'Information not used');
+INSERT INTO `sub_threat_codes` VALUES (10, 1, 'A10', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (11, 2, 'B1', 'Defective');
+INSERT INTO `sub_threat_codes` VALUES (12, 2, 'B2', 'Unsafe');
+INSERT INTO `sub_threat_codes` VALUES (13, 2, 'B3', 'Unreliable');
+INSERT INTO `sub_threat_codes` VALUES (14, 2, 'B4', 'Layout of controls or displays');
+INSERT INTO `sub_threat_codes` VALUES (15, 2, 'B5', 'Miscalibrated');
+INSERT INTO `sub_threat_codes` VALUES (16, 2, 'B6', 'Unavailable');
+INSERT INTO `sub_threat_codes` VALUES (17, 2, 'B7', 'Incomplete');
+INSERT INTO `sub_threat_codes` VALUES (18, 2, 'B8', 'Inappropriate for the task');
+INSERT INTO `sub_threat_codes` VALUES (19, 2, 'B9', 'Cannot use in intended environment');
+INSERT INTO `sub_threat_codes` VALUES (20, 2, 'B10', 'No instructions');
+INSERT INTO `sub_threat_codes` VALUES (21, 2, 'B11', 'Too complicated');
+INSERT INTO `sub_threat_codes` VALUES (22, 2, 'B12', 'Incorrectly labeled');
+INSERT INTO `sub_threat_codes` VALUES (23, 2, 'B13', 'Incorrectly used (including unsafely)');
+INSERT INTO `sub_threat_codes` VALUES (24, 2, 'B14', 'Inadequate');
+INSERT INTO `sub_threat_codes` VALUES (25, 2, 'B15', 'Not used (e.g., personal protection equipment)');
+INSERT INTO `sub_threat_codes` VALUES (26, 2, 'B16', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (27, 3, 'C1', 'Complex');
+INSERT INTO `sub_threat_codes` VALUES (28, 3, 'C2', 'Inaccessible');
+INSERT INTO `sub_threat_codes` VALUES (29, 3, 'C3', 'Aircraft configuration variability');
+INSERT INTO `sub_threat_codes` VALUES (30, 3, 'C4', 'Parts unavailable');
+INSERT INTO `sub_threat_codes` VALUES (31, 3, 'C5', 'Parts incorrectly labeled/certified');
+INSERT INTO `sub_threat_codes` VALUES (32, 3, 'C6', 'Easy to install incorrectly');
+INSERT INTO `sub_threat_codes` VALUES (33, 3, 'C7', 'Parts not used');
+INSERT INTO `sub_threat_codes` VALUES (34, 3, 'C8', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (35, 4, 'D1', 'Repetitive/monotonous');
+INSERT INTO `sub_threat_codes` VALUES (36, 4, 'D2', 'Complex/confusing');
+INSERT INTO `sub_threat_codes` VALUES (37, 4, 'D3', 'New task or task change');
+INSERT INTO `sub_threat_codes` VALUES (38, 4, 'D4', 'Different from other similar tasks');
+INSERT INTO `sub_threat_codes` VALUES (39, 4, 'D5', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (40, 5, 'E1', 'Technical skills');
+INSERT INTO `sub_threat_codes` VALUES (41, 5, 'E2', 'Computer skills');
+INSERT INTO `sub_threat_codes` VALUES (42, 5, 'E3', 'Teamwork skills');
+INSERT INTO `sub_threat_codes` VALUES (43, 5, 'E4', 'English proficiency');
+INSERT INTO `sub_threat_codes` VALUES (44, 5, 'E5', 'Task knowledge');
+INSERT INTO `sub_threat_codes` VALUES (45, 5, 'E6', 'Task planning');
+INSERT INTO `sub_threat_codes` VALUES (46, 5, 'E7', 'Company process knowledge');
+INSERT INTO `sub_threat_codes` VALUES (47, 5, 'E8', 'Aircraft system knowledge');
+INSERT INTO `sub_threat_codes` VALUES (48, 5, 'E9', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (49, 6, 'F1', 'Physical health (including hearing and sight)');
+INSERT INTO `sub_threat_codes` VALUES (50, 6, 'F2', 'Fatigue');
+INSERT INTO `sub_threat_codes` VALUES (51, 6, 'F3', 'Time pressure');
+INSERT INTO `sub_threat_codes` VALUES (52, 6, 'F4', 'Peer pressure');
+INSERT INTO `sub_threat_codes` VALUES (53, 6, 'F5', 'Complacency');
+INSERT INTO `sub_threat_codes` VALUES (54, 6, 'F6', 'Body size/strength');
+INSERT INTO `sub_threat_codes` VALUES (55, 6, 'F7', 'Personal event (e.g., family problem, car accident)');
+INSERT INTO `sub_threat_codes` VALUES (56, 6, 'F8', 'Workplace distractions or interruptions during task performance');
+INSERT INTO `sub_threat_codes` VALUES (57, 6, 'F9', 'Memory lapse (forgot)');
+INSERT INTO `sub_threat_codes` VALUES (58, 6, 'F10', 'Visual perception');
+INSERT INTO `sub_threat_codes` VALUES (59, 6, 'F11', 'Assertiveness');
+INSERT INTO `sub_threat_codes` VALUES (60, 6, 'F12', 'Stress');
+INSERT INTO `sub_threat_codes` VALUES (61, 6, 'F13', 'Situational awareness');
+INSERT INTO `sub_threat_codes` VALUES (62, 6, 'F14', 'Not properly dressed (e.g., for weather)');
+INSERT INTO `sub_threat_codes` VALUES (63, 6, 'F15', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (64, 7, 'G1', 'High noise levels');
+INSERT INTO `sub_threat_codes` VALUES (65, 7, 'G2', 'Hot');
+INSERT INTO `sub_threat_codes` VALUES (66, 7, 'G3', 'Cold');
+INSERT INTO `sub_threat_codes` VALUES (67, 7, 'G4', 'Humidity');
+INSERT INTO `sub_threat_codes` VALUES (68, 7, 'G5', 'Rain');
+INSERT INTO `sub_threat_codes` VALUES (69, 7, 'G6', 'Snow');
+INSERT INTO `sub_threat_codes` VALUES (70, 7, 'G7', 'Lightning');
+INSERT INTO `sub_threat_codes` VALUES (71, 7, 'G8', 'Illumination');
+INSERT INTO `sub_threat_codes` VALUES (72, 7, 'G9', 'Wind');
+INSERT INTO `sub_threat_codes` VALUES (73, 7, 'G10', 'Jet blast');
+INSERT INTO `sub_threat_codes` VALUES (74, 7, 'G11', 'Vibrations');
+INSERT INTO `sub_threat_codes` VALUES (75, 7, 'G12', 'Cleanliness');
+INSERT INTO `sub_threat_codes` VALUES (76, 7, 'G13', 'Hazardous or toxic substances');
+INSERT INTO `sub_threat_codes` VALUES (77, 7, 'G14', 'Contaminated surfaces');
+INSERT INTO `sub_threat_codes` VALUES (78, 7, 'G15', 'Power sources');
+INSERT INTO `sub_threat_codes` VALUES (79, 7, 'G16', 'Inadequate ventilation');
+INSERT INTO `sub_threat_codes` VALUES (80, 7, 'G17', 'Slippery');
+INSERT INTO `sub_threat_codes` VALUES (81, 7, 'G18', 'Uneven work surface');
+INSERT INTO `sub_threat_codes` VALUES (82, 7, 'G19', 'Restricted/confined work area');
+INSERT INTO `sub_threat_codes` VALUES (83, 7, 'G20', 'Elevated work space');
+INSERT INTO `sub_threat_codes` VALUES (84, 7, 'G21', 'Marking');
+INSERT INTO `sub_threat_codes` VALUES (85, 7, 'G22', 'Labels/placards/signage');
+INSERT INTO `sub_threat_codes` VALUES (86, 7, 'G23', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (87, 8, 'H1', 'Quality of internal support from technical organizations (e.g., engineering, planning, technical pubs)');
+INSERT INTO `sub_threat_codes` VALUES (88, 8, 'H2', 'Quality of external support from technical organizations (e.g., manufacturer)');
+INSERT INTO `sub_threat_codes` VALUES (89, 8, 'H3', 'Company policies');
+INSERT INTO `sub_threat_codes` VALUES (90, 8, 'H4', 'Not enough staff');
+INSERT INTO `sub_threat_codes` VALUES (91, 8, 'H5', 'Corporate change / restructuring');
+INSERT INTO `sub_threat_codes` VALUES (92, 8, 'H6', 'Labor action');
+INSERT INTO `sub_threat_codes` VALUES (93, 8, 'H7', 'Work process / procedure');
+INSERT INTO `sub_threat_codes` VALUES (94, 8, 'H8', 'Work process / procedure not followed');
+INSERT INTO `sub_threat_codes` VALUES (95, 8, 'H9', 'Work process / procedure not documented');
+INSERT INTO `sub_threat_codes` VALUES (96, 8, 'H10', 'Work group normal practice (norm)');
+INSERT INTO `sub_threat_codes` VALUES (97, 8, 'H11', 'Team building');
+INSERT INTO `sub_threat_codes` VALUES (98, 8, 'H12', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (99, 9, 'I1', 'Planning / organization of tasks');
+INSERT INTO `sub_threat_codes` VALUES (100, 9, 'I2', 'Prioritization of work');
+INSERT INTO `sub_threat_codes` VALUES (101, 9, 'I3', 'Delegation / assignment of task');
+INSERT INTO `sub_threat_codes` VALUES (102, 9, 'I4', 'Unrealistic attitude / expectations');
+INSERT INTO `sub_threat_codes` VALUES (103, 9, 'I5', 'Availability of supervision');
+INSERT INTO `sub_threat_codes` VALUES (104, 9, 'I6', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (105, 10, 'J1', 'Between departments');
+INSERT INTO `sub_threat_codes` VALUES (106, 10, 'J2', 'Between mechanics');
+INSERT INTO `sub_threat_codes` VALUES (107, 10, 'J3', 'Between shifts');
+INSERT INTO `sub_threat_codes` VALUES (108, 10, 'J4', 'Between maintenance crew and lead');
+INSERT INTO `sub_threat_codes` VALUES (109, 10, 'J5', 'Between lead and management');
+INSERT INTO `sub_threat_codes` VALUES (110, 10, 'J6', 'Between flight crew and maintenance');
+INSERT INTO `sub_threat_codes` VALUES (111, 10, 'J7', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (112, 11, 'K1', 'Missing proper documentation');
+INSERT INTO `sub_threat_codes` VALUES (113, 11, 'K2', 'NDT (non destructive test) processes, specify ___________________');
+INSERT INTO `sub_threat_codes` VALUES (114, 11, 'K3', 'RII (required inspection) / designee');
+INSERT INTO `sub_threat_codes` VALUES (115, 11, 'K4', 'Improper inspection procedures');
+INSERT INTO `sub_threat_codes` VALUES (116, 11, 'K5', 'Other (explain below)');
+INSERT INTO `sub_threat_codes` VALUES (117, 12, 'L1', 'Explain below...............');
 
 -- ----------------------------
 -- Table structure for threat_codes
@@ -604,7 +701,7 @@ INSERT INTO `users` VALUES (22, 'fransisca', 'Fransisca Tiur', 'ASSOCIATE QUALIT
 INSERT INTO `users` VALUES (23, 'yogi', 'Yogi Maulana Malik', 'ASSOCIATE QUALITY AUDITOR', 11, 'UIC', 1, '', '', NULL, NULL);
 INSERT INTO `users` VALUES (24, 'fitry', 'Fitry Nurlaily Ghozali', 'ASSOCIATE QUALITY AUDITOR', 11, 'UIC', 1, '', '', NULL, NULL);
 INSERT INTO `users` VALUES (25, 'wahyu', 'Wahyu Rachmad Wildan', 'ASSOCIATE QUALITY AUDITOR', 11, 'UIC', 1, '', '', NULL, NULL);
-INSERT INTO `users` VALUES (35, '580440', 'TEGUH RAHMADANI PAMUNGKAS', 'ASSOCIATE QUALITY AUDITOR', 6, 'Engineer', 1, 'LOSA OBSERVER TRAINING', 'https://talentlead.gmf-aeroasia.co.id/images/avatar/580440.jpg', '2020-01-19 01:52:55', '2020-01-19 01:53:10');
+INSERT INTO `users` VALUES (35, '580440', 'TEGUH RAHMADANI PAMUNGKAS', 'ASSOCIATE QUALITY AUDITOR', 16, 'Engineer Observer', 1, 'LOSA OBSERVER TRAINING', 'https://talentlead.gmf-aeroasia.co.id/images/avatar/580440.jpg', '2020-01-19 01:52:55', '2020-01-23 13:50:30');
 
 -- ----------------------------
 -- View structure for vwuser
