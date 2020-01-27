@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::resource('sub_activity', 'SubActivityController');
     Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
+    Route::resource('report', 'ReportController');
 
     Route::get('risk', 'RiskController@risk');
     Route::get('threat_codes', 'ThreatCodeController@all_relation');
