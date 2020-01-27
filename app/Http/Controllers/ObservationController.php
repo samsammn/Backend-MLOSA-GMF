@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ObservationLogExport;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
 use App\Model\Activity;
@@ -9,7 +10,9 @@ use App\Model\MaintenanceProcess;
 use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
 use App\Model\ObservationDetail;
+use App\Model\ObservationLog;
 use App\Model\ObservationTeam;
+use App\Model\SubActivity;
 use App\Model\ThreatCode;
 use App\Model\UIC;
 use App\Model\User;
@@ -18,6 +21,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
 
 class ObservationController extends Controller
@@ -128,6 +132,21 @@ class ObservationController extends Controller
 
             ObservationTeam::insert($observation_team);
             ObservationDetail::insert($observation_detail);
+
+            if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
+            {
+                $link_download = "api/observation/download/logs?observation_id=".$model_observation->id;
+            } else {
+                $link_download = "";
+            }
+
+            $log = new ObservationLog();
+            $log->observation_id = $model_observation->id;
+            $log->activity = $request->action;
+            $log->date_log = date('Y-m-d');
+            $log->status = $observation['status'];
+            $log->link_download = $link_download;
+            $log->save();
 
             return response()->json([
                 'message' => 'Observation has been created successfully'
@@ -264,13 +283,14 @@ class ObservationController extends Controller
     {
         $user = User::where('username', '=', Session::get('username'))->with('uic')->firstOrFail();
         $uic = $user->uic->uic_code;
-        //return $this->autoNumber($uic);
 
         $observation_no = $this->autoNumber($uic);
         $maintenance = MaintenanceProcess::find($id);
         $threat_codes = ThreatCode::all();
-        $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');//->select('activity_id')->get();
-        $activities = Activity::with(['sub_activities'])->whereIn('id', $maintenance_detail)->get();
+        $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');
+        $activities = Activity::with(['sub_activities' => function ($query) use ($id){
+            $query->where('mp_id','=', $id);
+        }])->whereIn('id', $maintenance_detail)->get();
 
         foreach ($activities as $item) {
             $input = new stdClass;
@@ -283,7 +303,13 @@ class ObservationController extends Controller
             $input->remark = "";
 
             foreach ($item->sub_activities as $value) {
+                $sub_activities = SubActivity::find($value->sub_activity_id);
+                $value->id = $sub_activities->id;
+                $value->description = $sub_activities->description;
                 $value->inputs = $input;
+                unset($value->mp_id);
+                unset($value->activity_id);
+                unset($value->sub_activity_id);
             }
         }
 
@@ -316,6 +342,18 @@ class ObservationController extends Controller
     {
         $model = Observation::select(DB::raw('year(due_date) as year'))->distinct('due_date')->pluck('year');
         return $model;
+    }
+
+    public function logs($id)
+    {
+        $model = ObservationLog::where('observation_id', '=', $id)->get();
+        return new Result($model);
+    }
+
+    public function download(Request $request)
+    {
+        $now = date('Ymd');
+        return Excel::download(new ObservationLogExport($request), 'observation_logs_'. $now .'.xlsx');
     }
 
 }

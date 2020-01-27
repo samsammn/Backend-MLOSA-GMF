@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 27/01/2020 09:14:58
+ Date: 27/01/2020 23:15:33
 */
 
 SET NAMES utf8mb4;
@@ -199,7 +199,7 @@ CREATE TABLE `observation_details`  (
   `error_outcome` int(2) NULL DEFAULT NULL,
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_details
@@ -212,6 +212,34 @@ INSERT INTO `observation_details` VALUES (5, 19, NULL, 1, 18, 'S', 2, '5D', NULL
 INSERT INTO `observation_details` VALUES (6, 19, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
 INSERT INTO `observation_details` VALUES (7, 19, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
 INSERT INTO `observation_details` VALUES (8, 19, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (9, 20, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (10, 20, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (11, 20, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (12, 20, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (13, 21, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (14, 21, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (15, 21, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (16, 21, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (17, 22, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (18, 22, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (19, 22, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (20, 22, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (21, 23, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (22, 23, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (23, 23, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (24, 23, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (25, 24, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (26, 24, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (27, 24, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (28, 24, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (29, 25, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (30, 25, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (31, 25, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (32, 25, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (33, 26, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (34, 26, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (35, 26, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (36, 26, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
 
 -- ----------------------------
 -- Table structure for observation_logs
@@ -223,6 +251,7 @@ CREATE TABLE `observation_logs`  (
   `activity` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `date_log` datetime(0) NOT NULL,
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `link_download` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -235,7 +264,7 @@ CREATE TABLE `observation_teams`  (
   `observation_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_teams
@@ -248,6 +277,27 @@ INSERT INTO `observation_teams` VALUES (5, 19, 1);
 INSERT INTO `observation_teams` VALUES (6, 19, 2);
 INSERT INTO `observation_teams` VALUES (7, 19, 4);
 INSERT INTO `observation_teams` VALUES (8, 19, 6);
+INSERT INTO `observation_teams` VALUES (9, 20, 35);
+INSERT INTO `observation_teams` VALUES (10, 20, 4);
+INSERT INTO `observation_teams` VALUES (11, 20, 6);
+INSERT INTO `observation_teams` VALUES (12, 21, 35);
+INSERT INTO `observation_teams` VALUES (13, 21, 4);
+INSERT INTO `observation_teams` VALUES (14, 21, 6);
+INSERT INTO `observation_teams` VALUES (15, 22, 35);
+INSERT INTO `observation_teams` VALUES (16, 22, 4);
+INSERT INTO `observation_teams` VALUES (17, 22, 6);
+INSERT INTO `observation_teams` VALUES (18, 23, 35);
+INSERT INTO `observation_teams` VALUES (19, 23, 4);
+INSERT INTO `observation_teams` VALUES (20, 23, 6);
+INSERT INTO `observation_teams` VALUES (21, 24, 35);
+INSERT INTO `observation_teams` VALUES (22, 24, 4);
+INSERT INTO `observation_teams` VALUES (23, 24, 6);
+INSERT INTO `observation_teams` VALUES (24, 25, 35);
+INSERT INTO `observation_teams` VALUES (25, 25, 4);
+INSERT INTO `observation_teams` VALUES (26, 25, 6);
+INSERT INTO `observation_teams` VALUES (27, 26, 35);
+INSERT INTO `observation_teams` VALUES (28, 26, 4);
+INSERT INTO `observation_teams` VALUES (29, 26, 6);
 
 -- ----------------------------
 -- Table structure for observations
@@ -271,7 +321,7 @@ CREATE TABLE `observations`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
@@ -281,6 +331,13 @@ INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00'
 INSERT INTO `observations` VALUES (3, '001-02-2020-TC', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-02-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
 INSERT INTO `observations` VALUES (18, '002-01-2020-TA', '2020-01-23', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-23 01:21:06', '2020-01-23 01:21:06');
 INSERT INTO `observations` VALUES (19, '003-01-2020-TA', '2020-01-23', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-23 14:28:52', '2020-01-23 14:28:52');
+INSERT INTO `observations` VALUES (20, '004-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-27 14:52:51', '2020-01-27 14:52:51');
+INSERT INTO `observations` VALUES (21, '005-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-27 14:54:08', '2020-01-27 14:54:08');
+INSERT INTO `observations` VALUES (22, '006-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-27 15:46:57', '2020-01-27 15:46:57');
+INSERT INTO `observations` VALUES (23, '007-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-27 15:47:26', '2020-01-27 15:47:26');
+INSERT INTO `observations` VALUES (24, '008-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-27 16:01:14', '2020-01-27 16:01:14');
+INSERT INTO `observations` VALUES (25, '009-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Verified', NULL, '2020-01-27 16:02:08', '2020-01-27 16:02:08');
+INSERT INTO `observations` VALUES (26, '010-01-2020-TA', '2020-01-27', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Verified', NULL, '2020-01-27 16:11:45', '2020-01-27 16:11:45');
 
 -- ----------------------------
 -- Table structure for risk_colors
@@ -701,10 +758,10 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (3, 'agung', 'Agung Setiawan', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
-INSERT INTO `users` VALUES (4, 'julian', 'Julian Akbar', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
-INSERT INTO `users` VALUES (5, 'norman', 'Norman Hadi', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
-INSERT INTO `users` VALUES (6, 'andi', 'M. Andi Arifin', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (3, 'agung', 'Agung Setiawan', 'ASSOCIATE QUALITY AUDITOR', 16, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (4, 'julian', 'Julian Akbar', 'ASSOCIATE QUALITY AUDITOR', 16, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (5, 'norman', 'Norman Hadi', 'ASSOCIATE QUALITY AUDITOR', 16, 'UIC', 1, '', '', NULL, NULL);
+INSERT INTO `users` VALUES (6, 'andi', 'M. Andi Arifin', 'ASSOCIATE QUALITY AUDITOR', 16, 'UIC', 1, '', '', NULL, NULL);
 INSERT INTO `users` VALUES (7, 'isna', 'Isna Habibie', 'ASSOCIATE QUALITY AUDITOR', 20, 'UIC', 1, '', '', NULL, NULL);
 INSERT INTO `users` VALUES (8, 'gede', 'I Gede Agung Wibawa', 'ASSOCIATE QUALITY AUDITOR', 24, 'UIC', 1, '', '', NULL, NULL);
 INSERT INTO `users` VALUES (9, 'imar', 'Imar Masriyah', 'ASSOCIATE QUALITY AUDITOR', 24, 'UIC', 1, '', '', NULL, NULL);
