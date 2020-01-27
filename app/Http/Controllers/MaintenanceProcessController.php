@@ -8,6 +8,8 @@ use App\Model\Activity;
 use App\Model\MaintenanceProcess;
 use App\Model\MaintenanceProcessDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class MaintenanceProcessController extends Controller
 {
@@ -98,20 +100,30 @@ class MaintenanceProcessController extends Controller
      */
     public function update($id, Request $request)
     {
-        $model = MaintenanceProcess::find($id);
-        $result = new Result($model);
+        $maintenance = MaintenanceProcess::find($id);
+        $maintenance->name = $request->name;
+        $maintenance->save();
 
-        if ($model != null)
-        {
-            $model->update($request->all());
-            $result->additional(['message' => 'update successfully']);
-            return $result;
+        $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id);
+        $maintenance_detail->delete();
+
+        foreach ($request->activities as $activity) {
+            foreach ($activity['sub_activities'] as $sub) {
+                $data = new MaintenanceProcessDetail();
+                $data->mp_id = $maintenance->id;
+                $data->activity_id = $activity['id'];
+                $data->sub_activity_id = $sub['id'];
+
+                $model[] = $data->toArray();
+            }
         }
-            else
-        {
-            $result->additional(['message' => 'failed to update, uic not found!']);
-            return $result;
-        }
+
+        MaintenanceProcessDetail::insert($model);
+        $result = new Result([
+            'message' => 'update successfully'
+        ]);
+
+        return $result;
     }
 
     /**
@@ -128,19 +140,31 @@ class MaintenanceProcessController extends Controller
         if ($model != null)
         {
             $model->delete();
+
+            $detail = MaintenanceProcessDetail::where('mp_id', '=', $id);
+            if ($detail != null){
+                $detail->delete();
+            }
+
             $result->additional(['message' => 'delete successfully']);
             return $result;
         }
             else
         {
-            $result->additional(['message' => 'failed to delete, maintenance process not found!']);
+            $result->additional(['message' => 'failed to delete, observation form not found!']);
             return $result;
         }
     }
 
-    public function form()
+    public function form($id)
     {
-        $model = MaintenanceProcess::with('activities')->get();
-        return new Result($model);
+        $maintenance = MaintenanceProcess::find($id);
+        $model = DB::select('select activity, sub_activity_id, sub_activity from vw_maintenance_process_relation where id="'.$id.'"');
+        $data = collect($model)->groupBy('activity');
+
+        return new Result([
+            'maintenance' => $maintenance,
+            'detail' => $data
+        ]);
     }
 }

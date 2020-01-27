@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
     Route::resource('sub_activity', 'SubActivityController');
+    Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
 
     Route::get('risk', 'RiskController@risk');
