@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 23/01/2020 20:51:16
+ Date: 27/01/2020 09:14:58
 */
 
 SET NAMES utf8mb4;
@@ -25,7 +25,7 @@ CREATE TABLE `activities`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of activities
@@ -42,6 +42,7 @@ INSERT INTO `activities` VALUES (10, 'Hazard (Threat ) Management');
 INSERT INTO `activities` VALUES (11, 'Parts & Materials');
 INSERT INTO `activities` VALUES (12, 'Research & Preparation');
 INSERT INTO `activities` VALUES (13, 'Technical Data');
+INSERT INTO `activities` VALUES (16, 'Test Activity Aja 2');
 
 -- ----------------------------
 -- Table structure for maintenance_process_details
@@ -53,7 +54,7 @@ CREATE TABLE `maintenance_process_details`  (
   `activity_id` bigint(20) NOT NULL,
   `sub_activity_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 96 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of maintenance_process_details
@@ -106,6 +107,16 @@ INSERT INTO `maintenance_process_details` VALUES (46, 6, 6, 20);
 INSERT INTO `maintenance_process_details` VALUES (47, 6, 1, 1);
 INSERT INTO `maintenance_process_details` VALUES (48, 9, 12, 35);
 INSERT INTO `maintenance_process_details` VALUES (49, 9, 13, 36);
+INSERT INTO `maintenance_process_details` VALUES (68, 15, 5, 1);
+INSERT INTO `maintenance_process_details` VALUES (69, 15, 5, 3);
+INSERT INTO `maintenance_process_details` VALUES (70, 15, 5, 5);
+INSERT INTO `maintenance_process_details` VALUES (71, 15, 7, 2);
+INSERT INTO `maintenance_process_details` VALUES (72, 15, 7, 4);
+INSERT INTO `maintenance_process_details` VALUES (73, 15, 8, 6);
+INSERT INTO `maintenance_process_details` VALUES (92, 16, 5, 1);
+INSERT INTO `maintenance_process_details` VALUES (93, 16, 5, 2);
+INSERT INTO `maintenance_process_details` VALUES (94, 16, 5, 3);
+INSERT INTO `maintenance_process_details` VALUES (95, 16, 7, 8);
 
 -- ----------------------------
 -- Table structure for maintenance_processes
@@ -115,7 +126,7 @@ CREATE TABLE `maintenance_processes`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of maintenance_processes
@@ -129,6 +140,8 @@ INSERT INTO `maintenance_processes` VALUES (6, 'Test');
 INSERT INTO `maintenance_processes` VALUES (7, 'Maintenance Plan');
 INSERT INTO `maintenance_processes` VALUES (8, 'Close up / Restore');
 INSERT INTO `maintenance_processes` VALUES (9, 'Troubleshooting');
+INSERT INTO `maintenance_processes` VALUES (15, 'Test MP Aja');
+INSERT INTO `maintenance_processes` VALUES (16, 'Test OKE');
 
 -- ----------------------------
 -- Table structure for migrations
@@ -178,15 +191,15 @@ CREATE TABLE `observation_details`  (
   `mp_detail_id` bigint(20) NULL DEFAULT NULL,
   `activity_id` int(11) NULL DEFAULT NULL,
   `sub_activity_id` int(11) NULL DEFAULT NULL,
-  `safety_risk` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sub_threat_codes_id` int(11) NOT NULL,
+  `safety_risk` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `sub_threat_codes_id` int(11) NULL DEFAULT NULL,
   `risk_index` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `control_efectivenes` int(11) NULL DEFAULT NULL,
-  `effectively_managed` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `error_outcome` int(2) NOT NULL,
+  `effectively_managed` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `error_outcome` int(2) NULL DEFAULT NULL,
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_details
@@ -195,6 +208,10 @@ INSERT INTO `observation_details` VALUES (1, 18, NULL, 1, 18, 'S', 2, '5D', NULL
 INSERT INTO `observation_details` VALUES (2, 18, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
 INSERT INTO `observation_details` VALUES (3, 18, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
 INSERT INTO `observation_details` VALUES (4, 18, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (5, 19, NULL, 1, 18, 'S', 2, '5D', NULL, 'Y', 1, NULL);
+INSERT INTO `observation_details` VALUES (6, 19, NULL, 1, 26, 'AR', 3, '3E', NULL, 'N', 1, NULL);
+INSERT INTO `observation_details` VALUES (7, 19, NULL, 1, 17, 'S', 6, '2C', NULL, 'N', 3, NULL);
+INSERT INTO `observation_details` VALUES (8, 19, NULL, 1, 10, 'S', 8, '5A', NULL, 'N', 3, NULL);
 
 -- ----------------------------
 -- Table structure for observation_logs
@@ -218,7 +235,7 @@ CREATE TABLE `observation_teams`  (
   `observation_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observation_teams
@@ -227,6 +244,10 @@ INSERT INTO `observation_teams` VALUES (1, 18, 1);
 INSERT INTO `observation_teams` VALUES (2, 18, 2);
 INSERT INTO `observation_teams` VALUES (3, 18, 4);
 INSERT INTO `observation_teams` VALUES (4, 18, 6);
+INSERT INTO `observation_teams` VALUES (5, 19, 1);
+INSERT INTO `observation_teams` VALUES (6, 19, 2);
+INSERT INTO `observation_teams` VALUES (7, 19, 4);
+INSERT INTO `observation_teams` VALUES (8, 19, 6);
 
 -- ----------------------------
 -- Table structure for observations
@@ -250,7 +271,7 @@ CREATE TABLE `observations`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of observations
@@ -259,6 +280,7 @@ INSERT INTO `observations` VALUES (1, '001-08-2019-TZ', '2019-08-09', '09:00:00'
 INSERT INTO `observations` VALUES (2, '003-05-2019-TB', '2019-05-24', '09:25:00', '10:20:00', NULL, '2020-05-08', 6, 2, 'B 777 PK-GIA', 'PRSOV and HPSOV Inspection and Test (LH Engine)', 'Hangar 1', 'Open', NULL, '2020-01-08 15:59:12', '2020-01-08 15:59:12');
 INSERT INTO `observations` VALUES (3, '001-02-2020-TC', '2020-01-05', '06:00:00', '15:00:00', 'test mlosa plan', '2020-02-15', 1, 1, 'A 330', 'Removal Sliding Window', 'Hangar 2', 'On Progress', NULL, '2020-01-15 00:39:24', '2020-01-15 02:01:47');
 INSERT INTO `observations` VALUES (18, '002-01-2020-TA', '2020-01-23', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-23 01:21:06', '2020-01-23 01:21:06');
+INSERT INTO `observations` VALUES (19, '003-01-2020-TA', '2020-01-23', '06:00:00', '10:00:00', NULL, NULL, 1, 1, NULL, NULL, NULL, 'Open', NULL, '2020-01-23 14:28:52', '2020-01-23 14:28:52');
 
 -- ----------------------------
 -- Table structure for risk_colors
@@ -413,7 +435,7 @@ CREATE TABLE `sub_activities`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_activities
@@ -729,6 +751,25 @@ INNER JOIN activities ac
 INNER JOIN sub_activities sac
 	ON mpd.sub_activity_id = sac.id
 ORDER BY mpd.id DESC ;
+
+-- ----------------------------
+-- View structure for vw_maintenance_process_relation
+-- ----------------------------
+DROP VIEW IF EXISTS `vw_maintenance_process_relation`;
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `vw_maintenance_process_relation` AS SELECT mp.id, act.id as activity_id, act.`name` as activity, sb.id as sub_activity_id, sb.description as sub_activity FROM
+	maintenance_processes as mp 
+		INNER JOIN
+	maintenance_process_details as mpd
+		on mp.id=mpd.mp_id
+	
+		INNER JOIN 
+	activities as act
+		on mpd.activity_id=act.id
+		INNER JOIN 
+	sub_activities sb 
+		on mpd.sub_activity_id=sb.id
+		
+ORDER BY mp.id  desc ;
 
 -- ----------------------------
 -- Procedure structure for sp_User
