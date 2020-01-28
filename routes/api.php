@@ -29,11 +29,13 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
     Route::get('/observation/{id}/logs', 'ObservationController@logs');
     Route::get('/observation/download/logs', 'ObservationController@download');
+    Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
+
+    Route::get('/chart/safety', 'ChartController@safety');
 
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
     Route::resource('sub_activity', 'SubActivityController');
-    Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
     Route::resource('report', 'ReportController');
 

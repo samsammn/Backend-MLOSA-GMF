@@ -95,68 +95,83 @@ class ObservationController extends Controller
         {
             $model_observation = new Observation();
             $model_observation->observation_no = $this->autoNumber($uic->uic_code);
-            $model_observation->mp_id = $observation['mp_id'];
-            $model_observation->uic_id = $observation['uic_id'];
-            $model_observation->observation_date = date('Y-m-d');
-            $model_observation->due_date = $observation['due_date'];
-            $model_observation->start_time = $observation['start_time'];
-            $model_observation->end_time = $observation['end_time'];
-            $model_observation->component_type = $observation['component_type'];
-            $model_observation->task_observed = $observation['task_observed'];
-            $model_observation->location = $observation['location'];
-            $model_observation->status = $observation['status'];
-            $model_observation->save();
 
-            foreach ($observation['team'] as $value) {
-                Arr::set($value, 'observation_id', $model_observation->id);
-                $observation_team[] = $value;
-            }
-
-            foreach ($activities as $value) {
-                foreach ($value['sub_activities'] as $item) {
-
-                    $detail = new ObservationDetail();
-                    $detail->observation_id = $model_observation->id;
-                    $detail->activity_id = $value['id'];
-                    $detail->sub_activity_id = $item['id'];
-                    $detail->safety_risk = $item['inputs']['safety_risk'];
-                    $detail->sub_threat_codes_id = $item['inputs']['sub_threat_codes_id'];
-                    $detail->risk_index = $item['inputs']['risk_index'];
-                    $detail->effectively_managed = $item['inputs']['effectively_managed'];
-                    $detail->error_outcome = $item['inputs']['error_outcome'];
-                    $detail->remark = $item['inputs']['remark'];
-
-                    $observation_detail[] = $detail->toArray();
-                }
-            }
-
-            ObservationTeam::insert($observation_team);
-            ObservationDetail::insert($observation_detail);
-
-            if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
-            {
-                $link_download = "api/observation/download/logs?observation_id=".$model_observation->id;
-            } else {
-                $link_download = "";
-            }
-
-            $log = new ObservationLog();
-            $log->observation_id = $model_observation->id;
-            $log->activity = $request->action;
-            $log->date_log = date('Y-m-d');
-            $log->status = $observation['status'];
-            $log->link_download = $link_download;
-            $log->save();
-
-            return response()->json([
-                'message' => 'Observation has been created successfully'
-            ]);
-
+            $message = 'Observation has been created successfully';
         } else {
-            return response()->json([
-                'message' => 'changes not yet available'
-            ]);
+
+            $obs_team = ObservationTeam::where('observation_id', '=', $observation['id']);
+            if ($obs_team != null)
+            {
+                $obs_team->delete();
+            }
+
+            $obs_detail = ObservationDetail::where('observation_id', '=', $observation['id']);
+            if ($obs_detail != null)
+            {
+                $obs_detail->delete();
+            }
+
+            $model_observation = Observation::find($observation['id']);
+
+            $message = 'Observation has been updated successfully';
         }
+
+        $model_observation->mp_id = $observation['mp_id'];
+        $model_observation->uic_id = $observation['uic_id'];
+        $model_observation->observation_date = date('Y-m-d');
+        $model_observation->due_date = $observation['due_date'];
+        $model_observation->start_time = $observation['start_time'];
+        $model_observation->end_time = $observation['end_time'];
+        $model_observation->component_type = $observation['component_type'];
+        $model_observation->task_observed = $observation['task_observed'];
+        $model_observation->location = $observation['location'];
+        $model_observation->status = $observation['status'];
+        $model_observation->save();
+
+        foreach ($observation['team'] as $value) {
+            Arr::set($value, 'observation_id', $model_observation->id);
+            $observation_team[] = $value;
+        }
+
+        foreach ($activities as $value) {
+            foreach ($value['sub_activities'] as $item) {
+
+                $detail = new ObservationDetail();
+                $detail->observation_id = $model_observation->id;
+                $detail->activity_id = $value['id'];
+                $detail->sub_activity_id = $item['id'];
+                $detail->safety_risk = $item['inputs']['safety_risk'];
+                $detail->sub_threat_codes_id = $item['inputs']['sub_threat_codes_id'];
+                $detail->risk_index = $item['inputs']['risk_index'];
+                $detail->effectively_managed = $item['inputs']['effectively_managed'];
+                $detail->error_outcome = $item['inputs']['error_outcome'];
+                $detail->remark = $item['inputs']['remark'];
+
+                $observation_detail[] = $detail->toArray();
+            }
+        }
+
+        ObservationTeam::insert($observation_team);
+        ObservationDetail::insert($observation_detail);
+
+        if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
+        {
+            $link_download = "api/observation/download/logs?observation_id=".$model_observation->id;
+        } else {
+            $link_download = "";
+        }
+
+        $log = new ObservationLog();
+        $log->observation_id = $model_observation->id;
+        $log->activity = $request->action;
+        $log->date_log = date('Y-m-d');
+        $log->status = $observation['status'];
+        $log->link_download = $link_download;
+        $log->save();
+
+        return response()->json([
+            'message' => $message
+        ]);
     }
 
     /**
@@ -221,7 +236,14 @@ class ObservationController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Observation::where('id', '=', $id)->delete();
+        ObservationLog::where('observation_id', '=', $id)->delete();
+        ObservationTeam::where('observation_id', '=', $id)->delete();
+        ObservationDetail::where('observation_id', '=', $id)->delete();
+
+        return response()->json([
+            'message' => 'Observation has been deleted successfully'
+        ]);
     }
 
     public function new_mlosa_plan(Request $request)
