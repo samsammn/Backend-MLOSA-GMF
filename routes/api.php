@@ -32,6 +32,9 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
 
     Route::get('/chart/safety', 'ChartController@safety');
+    Route::get('/chart/threat', 'ChartController@threat');
+    Route::get('/chart/equipment', 'ChartController@equipment');
+    Route::get('/chart/pareto', 'ChartController@pareto');
 
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
