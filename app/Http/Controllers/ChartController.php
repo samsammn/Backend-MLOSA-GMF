@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\MaintenanceProcess;
+use App\Model\SafetyRisk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class ChartController extends Controller
 {
@@ -12,7 +15,7 @@ class ChartController extends Controller
     {
         $filter = [];
         // $group = [DB::raw('mp.id'), DB::raw('mp.name'), DB::raw('od.safety_risk')];
-        $group = [DB::raw('mp.name'), DB::raw('od.safety_risk')];
+        $group = [DB::raw('mp.id'), DB::raw('mp.name'), DB::raw('od.safety_risk')];
 
         if ($request->year != null){
             $group[] = DB::raw('year(o.observation_date)');
@@ -39,6 +42,7 @@ class ChartController extends Controller
 
         $model = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
+                        mp.id,
                         mp.name,
                         od.safety_risk,
                         count(*) as total
@@ -47,14 +51,32 @@ class ChartController extends Controller
                     ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
                     ->groupBy($group)
                     ->where($filter)
+                    ->orderBy('safety_risk')
                     ->get();
 
-        $result = [];
+        $mp_id = $model->pluck('id');
+        $safety = SafetyRisk::orderBy('code')->get();
+        $mp = MaintenanceProcess::whereIn('id', $mp_id)->get();
+
+        $temp = [];
         foreach ($model->groupBy('name') as $key => $val) {
            foreach ($val as $value) {
-               $result[$key][$value->safety_risk] = $value->total;
+                $temp[$key][$value->safety_risk] = $value->total;
            }
         }
+
+        $result = [];
+        foreach ($mp as $key) {
+            foreach ($safety as $keys) {
+                if (isset($temp[$key->name][$keys->code]) && $temp[$key->name][$keys->code] != 0)
+                {
+                    $result[$key->name][$keys->code] = $temp[$key->name][$keys->code];
+                } else {
+                    $result[$key->name][$keys->code] = 0;
+                }
+            }
+        }
+
 
         return $result;
     }
