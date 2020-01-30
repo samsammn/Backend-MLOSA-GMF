@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class ChartController extends Controller
@@ -10,7 +11,8 @@ class ChartController extends Controller
     public function safety(Request $request)
     {
         $filter = [];
-        $group = [DB::raw('mp.id'), DB::raw('mp.name'), DB::raw('od.safety_risk')];
+        // $group = [DB::raw('mp.id'), DB::raw('mp.name'), DB::raw('od.safety_risk')];
+        $group = [DB::raw('mp.name'), DB::raw('od.safety_risk')];
 
         if ($request->year != null){
             $group[] = DB::raw('year(o.observation_date)');
@@ -37,8 +39,7 @@ class ChartController extends Controller
 
         $model = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
-                        mp.id,
-                        mp.name as maintenance,
+                        mp.name,
                         od.safety_risk,
                         count(*) as total
                     ')
@@ -48,7 +49,14 @@ class ChartController extends Controller
                     ->where($filter)
                     ->get();
 
-        return $model;
+        $result = [];
+        foreach ($model->groupBy('name') as $key => $val) {
+           foreach ($val as $value) {
+               $result[$key][$value->safety_risk] = $value->total;
+           }
+        }
+
+        return $result;
     }
 
     public function threat(Request $request)
@@ -94,7 +102,16 @@ class ChartController extends Controller
                     ->where($filter)
                     ->get();
 
-        return $model;
+        // return $model;
+
+        $result = [];
+        foreach ($model->groupBy('threat') as $key => $val) {
+           foreach ($val as $value) {
+               $result[$key][$value->maintenance] = $value->total;
+           }
+        }
+
+        return $result;
     }
 
     public function equipment(Request $request)
