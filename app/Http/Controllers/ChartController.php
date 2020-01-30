@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\MaintenanceProcess;
 use App\Model\SafetyRisk;
+use App\Model\ThreatCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -77,7 +78,6 @@ class ChartController extends Controller
             }
         }
 
-
         return $result;
     }
 
@@ -121,16 +121,34 @@ class ChartController extends Controller
                     ->join(DB::raw('sub_threat_codes as stc'), 'stc.id', '=', 'od.sub_threat_codes_id')
                     ->join(DB::raw('threat_codes as tc'), 'tc.id', '=', 'stc.threat_codes_id')
                     ->groupBy($group)
+                    ->orderBy('maintenance')
                     ->where($filter)
                     ->get();
 
-        // return $model;
 
-        $result = [];
+        $main_name = $model->pluck('maintenance');
+        $threat_dec = $model->pluck('threat');
+
+        $threat = ThreatCode::whereIn('description', $threat_dec)->get();
+        $maintenances = MaintenanceProcess::whereIn('name', $main_name)->orderBy('name')->get();
+
+        $temp = [];
         foreach ($model->groupBy('threat') as $key => $val) {
            foreach ($val as $value) {
-               $result[$key][$value->maintenance] = $value->total;
+               $temp[$key][$value->maintenance] = $value->total;
            }
+        }
+
+        $result = [];
+        foreach ($threat as $key) {
+            foreach ($maintenances as $keys) {
+                if (isset($temp[$key->description][$keys->name]) && $temp[$key->description][$keys->name] != 0)
+                {
+                    $result[$key->description][$keys->name] = $temp[$key->description][$keys->name];
+                } else {
+                    $result[$key->description][$keys->name] = 0;
+                }
+            }
         }
 
         return $result;
