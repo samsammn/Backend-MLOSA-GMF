@@ -50,6 +50,7 @@ class ReportController extends Controller
         $model_report->title = $request->title;
         $model_report->subject = $request->subject;
         $model_report->report_no = $request->report_no;
+        $model_report->status = $request->status;
         $model_report->date = $request->date;
         $model_report->attention = $request->attention;
         $model_report->issued = $request->issued;
