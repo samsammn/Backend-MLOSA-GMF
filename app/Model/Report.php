@@ -37,4 +37,8 @@ class Report extends Model
     {
         return $this->hasMany('App\Model\Distribution', 'report_id');
     }
+    public function recommendation()
+    {
+        return $this->hasMany('App\Model\Recommendation', 'report_id');
+    }
 }

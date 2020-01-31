@@ -16,6 +16,7 @@ class CreateRecommendationsTable extends Migration
         Schema::create('recommendations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('uic_id');
+            $table->integer('report_id');
             $table->string("recommendation");
             $table->date("due_date");
             $table->string("status")->default("Open");

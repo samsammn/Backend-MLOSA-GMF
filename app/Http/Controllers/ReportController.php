@@ -22,7 +22,21 @@ class ReportController extends Controller
     public function index()
     {
         $model = Report::all();
-        return new ResultCollection($model);
+        foreach($model as $report){
+            $list_uic = array();
+            $model_uic = ReportUIC::where('report_id',$report->id)->get();
+            foreach($model_uic as $uic){
+                $uics = UIC::find($uic->uic_id);
+                $list_uic[] = $uics->getAttribute("uic_code");
+            }
+            $report->uic = $list_uic;
+
+            $list_recommendation = array();
+            $model_recommendation = Recommendation::where('report_id',$report->id)->get();
+            $report->recommendation = $model_recommendation;
+
+        }
+        return new Result($model);
     }
 
     /**
@@ -76,6 +90,7 @@ class ReportController extends Controller
             $model_recommendation->recommendation = $recom["recommendation"];
             $model_recommendation->due_date = $recom["due_date"];
             $model_recommendation->status = $recom["status"];
+            $model_recommendation->report_id = $model_report->id;
             $model_recommendation->save();
 
             $model_temp = new ReportUIC();
@@ -96,6 +111,16 @@ class ReportController extends Controller
     public function show($id)
     {
         $model = Report::find($id);
+        $list_uic = array();
+        $model_uic = ReportUIC::where('report_id',$id)->get();
+        foreach($model_uic as $uic){
+            $uics = UIC::find($uic->uic_id);
+            $list_uic[] = $uics->getAttribute("uic_code");
+        }
+        $model->uic = $list_uic;
+
+        $recommendation = Recommendation::where('report_id',$id)->get();
+        $model->recommendation = $recommendation;
         return new Result($model);
     }
 
