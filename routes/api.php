@@ -17,7 +17,6 @@ Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
 Route::get('/check_auth', 'UserController@check_auth');
 
-Route::get('/observation/attachments', 'ObservationController@display_attachment');
 Route::group(['middleware' => 'auth_api'], function () {
 
     Route::resource('user', 'UserController');
@@ -31,7 +30,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
     Route::get('/observation/{id}/logs', 'ObservationController@logs');
     Route::get('/observation/download/logs', 'ObservationController@download');
-    // Route::get('/observation/{id}/attachments', 'ObservationController@display_attachment');
+    Route::get('/observation/{id}/attachments', 'ObservationController@display_attachment');
     Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
 
     Route::get('/chart/safety', 'ChartController@safety');

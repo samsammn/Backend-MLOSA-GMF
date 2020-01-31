@@ -274,6 +274,18 @@ class ObservationController extends Controller
         ]);
     }
 
+    public function display_attachment($id)
+    {
+        $data = ObservationAttachments::where('observation_id', '=', $id)->get();
+
+        $images = [];
+        foreach ($data as $key) {
+            $images[] = url('') . $key->file;
+        }
+
+        return $images;
+    }
+
     public function new_mlosa_plan(Request $request)
     {
         $uic = UIC::find($request->uic_id);
