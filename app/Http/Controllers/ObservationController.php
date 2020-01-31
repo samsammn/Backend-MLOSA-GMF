@@ -9,6 +9,8 @@ use App\Model\Activity;
 use App\Model\MaintenanceProcess;
 use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
+use App\Model\ObservationAttachments;
+use App\Model\ObservationDescribes;
 use App\Model\ObservationDetail;
 use App\Model\ObservationLog;
 use App\Model\ObservationTeam;
@@ -19,7 +21,10 @@ use App\Model\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
@@ -111,6 +116,12 @@ class ObservationController extends Controller
                 $obs_detail->delete();
             }
 
+            $obs_describe = ObservationDescribes::where('observation_id', '=', $observation['id']);
+            if ($obs_describe != null)
+            {
+                $obs_describe->delete();
+            }
+
             $model_observation = Observation::find($observation['id']);
 
             $message = 'Observation has been updated successfully';
@@ -133,6 +144,20 @@ class ObservationController extends Controller
             $observation_team[] = $value;
         }
 
+        $new_threat = [];
+        foreach ($observation['describe_threat'] as $key) {
+            Arr::set($key, 'type', 'threat');
+            Arr::set($key, 'observation_id', $model_observation->id);
+            $new_threat[] = $key;
+        }
+
+        $new_crew_error = [];
+        foreach ($observation['describe_crew_error'] as $key) {
+            Arr::set($key, 'type', 'crew_error');
+            Arr::set($key, 'observation_id', $model_observation->id);
+            $new_crew_error[] = $key;
+        }
+
         foreach ($activities as $value) {
             foreach ($value['sub_activities'] as $item) {
 
@@ -153,6 +178,9 @@ class ObservationController extends Controller
 
         ObservationTeam::insert($observation_team);
         ObservationDetail::insert($observation_detail);
+
+        ObservationDescribes::insert($new_threat);
+        ObservationDescribes::insert($new_crew_error);
 
         if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
         {
@@ -340,6 +368,31 @@ class ObservationController extends Controller
             'maintenance_process' => $maintenance,
             'threat_codes' => $threat_codes,
             'activities' => $activities
+        ]);
+    }
+
+    public function upload(Request $request, $id)
+    {
+        $data = $request->file('file');
+        $observation = Observation::find($id);
+
+        if ($data == null){
+            return response()->json([
+                'message' => 'Upload gagal, file tidak ada!'
+            ]);
+        }
+
+        $filename = date('Ymd_His') . '.' . $data->getClientOriginalExtension();
+        $path = "/attachments" . "/" . $observation->observation_no;
+        $data->move(public_path($path), $filename);
+
+        $attachments = new ObservationAttachments();
+        $attachments->observation_id = $id;
+        $attachments->file = $path . "/" . $filename;
+        $attachments->save();
+
+        return response()->json([
+            'message' => 'Upload berhasil!'
         ]);
     }
 
