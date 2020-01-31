@@ -50,7 +50,6 @@ class ReportController extends Controller
         $model_report->title = $request->title;
         $model_report->subject = $request->subject;
         $model_report->report_no = $request->report_no;
-        $model_report->status = $request->status;
         $model_report->date = $request->date;
         $model_report->attention = $request->attention;
         $model_report->issued = $request->issued;
@@ -75,6 +74,7 @@ class ReportController extends Controller
             $model_recommendation->uic_id = $model_uic[0]->getKey();
             $model_recommendation->recommendation = $recom["recommendation"];
             $model_recommendation->due_date = $recom["due_date"];
+            $model_recommendation->status = $recom["status"];
             $model_recommendation->save();
 
             $model_temp = new ReportUIC();
