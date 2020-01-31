@@ -32,4 +32,9 @@ class Report extends Model
     {
         return $this->belongsToMany('App\Model\UIC', 'report_uic', 'uic_id', 'report_id');
     }
+
+    public function distribution()
+    {
+        return $this->hasMany('App\Model\Distribution', 'report_id');
+    }
 }

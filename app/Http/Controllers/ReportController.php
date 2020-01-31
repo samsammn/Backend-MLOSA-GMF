@@ -9,6 +9,7 @@ use App\Http\Resources\ResultCollection;
 use App\Model\Report;
 use App\Model\ReportUIC;
 use App\Model\UIC;
+use App\Model\Distribution;
 use App\Model\Recommendation;
 
 class ReportController extends Controller
@@ -52,12 +53,19 @@ class ReportController extends Controller
         $model_report->date = $request->date;
         $model_report->attention = $request->attention;
         $model_report->issued = $request->issued;
-        $model_report->distribution = $request->distribution;
         $model_report->introduction = $request->introduction;
         $model_report->brief_summary = $request->brief_summary;
         $model_report->regression_analysis = $request->regression_analysis;
         $model_report->threat_error = $request->threat_error;
         $model_report->save();
+
+        foreach($request->distribution as $dist){
+            $model_report_dist = new Distribution();
+
+            $model_report_dist->name = $dist["name"];
+            $model_report_dist->report_id = $model_report->id;
+            $model_report_dist->save();
+        }
 
         foreach($request->recommendations as $recom){
             $model_uic = UIC::where('uic_code',$recom["uic"])->get();
