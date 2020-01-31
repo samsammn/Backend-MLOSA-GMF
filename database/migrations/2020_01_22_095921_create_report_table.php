@@ -25,6 +25,7 @@ class CreateReportTable extends Migration
             $table->date('date');
             $table->string('attention');
             $table->string('issued');
+            $table->string('distribution')->nullable()->change();
             $table->text('introduction');
             $table->text('brief_summary');
             $table->text('regression_analysis');
