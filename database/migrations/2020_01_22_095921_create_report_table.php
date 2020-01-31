@@ -18,7 +18,7 @@ class CreateReportTable extends Migration
             $table->string('prepared_by');
             $table->string('checked_by');
             $table->string('approved_by');
-            $table->string('status')->default("Need Checking")->change();
+            $table->string('status')->default("Need Checking");
             $table->text('title');
             $table->text('subject');
             $table->string('report_no');
@@ -27,7 +27,7 @@ class CreateReportTable extends Migration
             $table->string('issued');
             $table->text('introduction');
             $table->text('brief_summary');
-            $table->text('regression_analysis')->nullable()->change();
+            $table->text('regression_analysis')->nullable();
             $table->text('threat_error');
             $table->timestamps();
         });

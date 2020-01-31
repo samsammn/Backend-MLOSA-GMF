@@ -18,8 +18,8 @@ class CreateRecommendationsTable extends Migration
             $table->integer('uic_id');
             $table->string("recommendation");
             $table->date("due_date");
-            $table->string("status")->default("Open")->change();
-            $table->string("file")->nullable()->change();
+            $table->string("status")->default("Open");
+            $table->string("file")->nullable();
             $table->timestamps();
         });
     }
