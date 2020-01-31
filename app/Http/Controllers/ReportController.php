@@ -47,6 +47,7 @@ class ReportController extends Controller
         $model_report->prepared_by = $request->prepared_by;
         $model_report->approved_by = $request->approved_by;
         $model_report->checked_by = $request->checked_by;
+        $model_report->status = $request->status;
         $model_report->title = $request->title;
         $model_report->subject = $request->subject;
         $model_report->report_no = $request->report_no;
