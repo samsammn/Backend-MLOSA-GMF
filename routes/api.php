@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('severity', 'RiskController@get_severity');
     Route::post('severity', 'RiskController@add_severity');
 
-    Route::get('filteroption','ReportController@filterOption');
-    Route::get('filter','ReportController@filter');
+    Route::get('/report/filter/filteroption','ReportController@filterOption');
+    Route::get('/report/filter/filterreport','ReportController@filter');
 
 });
