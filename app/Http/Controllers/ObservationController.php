@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
+use Symfony\Component\Console\Input\Input;
 
 class ObservationController extends Controller
 {
@@ -136,6 +137,7 @@ class ObservationController extends Controller
         $model_observation->component_type = $observation['component_type'];
         $model_observation->task_observed = $observation['task_observed'];
         $model_observation->location = $observation['location'];
+        $model_observation->comment = $observation['comment'];
         $model_observation->status = $observation['status'];
         $model_observation->save();
 
@@ -198,6 +200,7 @@ class ObservationController extends Controller
         $log->save();
 
         return response()->json([
+            'observation_id' => $model_observation->id,
             'message' => $message
         ]);
     }
@@ -388,22 +391,29 @@ class ObservationController extends Controller
         $data = $request->file('file');
         $observation = Observation::find($id);
 
-        if ($data == null){
+        if ($request->file('file') == null){
             return response()->json([
+                'url_files' => [],
                 'message' => 'Upload gagal, file tidak ada!'
             ]);
         }
 
-        $filename = date('Ymd_His') . '.' . $data->getClientOriginalExtension();
-        $path = "/attachments" . "/" . $observation->observation_no;
-        $data->move(public_path($path), $filename);
+        $loc = [];
+        foreach ($data as $file) {
+            $filename = date('Ymd_His') . $file->getClientOriginalName();
+            $path = "/attachments" . "/" . $observation->observation_no;
+            $file->move(public_path($path), $filename);
 
-        $attachments = new ObservationAttachments();
-        $attachments->observation_id = $id;
-        $attachments->file = $path . "/" . $filename;
-        $attachments->save();
+            $attachments = new ObservationAttachments();
+            $attachments->observation_id = $id;
+            $attachments->file = $path . "/" . $filename;
+            $attachments->save();
+
+            $loc[] = url('') . '/attachments/' . $observation->observation_no . "/" . $filename;
+        }
 
         return response()->json([
+            'url_files' => $loc,
             'message' => 'Upload berhasil!'
         ]);
     }
