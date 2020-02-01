@@ -11,6 +11,7 @@ use App\Model\ReportUIC;
 use App\Model\UIC;
 use App\Model\Distribution;
 use App\Model\Recommendation;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -30,13 +31,37 @@ class ReportController extends Controller
                 $list_uic[] = $uics->getAttribute("uic_code");
             }
             $report->uic = $list_uic;
-
-            $list_recommendation = array();
             $model_recommendation = Recommendation::where('report_id',$report->id)->get();
-            $report->recommendation = $model_recommendation;
-
+            $count = 0;
+            $overdue = false;
+            $on_progress = false;
+            foreach ($model_recommendation as $recom){
+                if ($recom->status == "Closed"){
+                    $count = $count + 1;
+                }
+                if ($recom->status == "On Progress"){
+                    $on_progress = true;
+                }
+                if ($recom->status == "Overdue"){
+                    $overdue = true;
+                }
+            }
+            if ($count == sizeof($model_recommendation)){
+                $status = "Closed";
+            }else if($overdue){
+                $status = "Overdue";
+            }else if($on_progress){
+                $status = "On Progress";
+            }else{
+                $status = "Open";
+            }
+            $report->recom_status = $status;
+            
         }
-        return new Result($model);
+        
+        return response()->json([
+            "data" => $model,
+        ]);
     }
 
     /**
@@ -182,6 +207,102 @@ class ReportController extends Controller
             $result->additional(['message' => 'failed to delete, Report not found!']);
             return $result;
         }
+    }
+
+    public function filterOption(Request $request){
+        $year = Report::select(DB::raw('year(date) as year'))->distinct('date')->pluck('year');
+        $month = Report::select(DB::raw('month(date) as month'))->distinct('date')->pluck('month');
+        $uic = UIC::select(DB::raw('uic_code as year'))->distinct('uic_code')->pluck('year');
+        $status = Report::select(DB::raw('status as year'))->distinct('status')->pluck('year');
+        $report = ReportController::index();
+        $recom_status = array();
+        foreach($report->getData() as $rep){
+            foreach($rep as $r){
+                if(!in_array($r->recom_status,$recom_status)){
+                    $recom_status[] = $r->recom_status;
+                }
+            }
+        }
+        return response()->json([
+            "year" => $year,
+            "month" => $month,
+            "uic" => $uic,
+            "status" => $status,
+            "recom_status" => $recom_status
+        ]);
+    }
+
+    public function filter(Request $request){
+        $model = ReportController::index();
+        $result = array();
+        if ($request->year != null)
+        {
+            $temp1 = array();
+            foreach ($model->getData() as $r){
+                foreach($r as $rep){
+                    if (date('Y', strtotime($rep->date)) == $request->year){
+                        $temp1[] = $rep;
+                    }
+                }
+            }
+            $result = $temp1;
+        }else{
+            foreach ($model->getData() as $r){
+                $result = $r;
+            }
+        }
+        if ($request->month != null)
+        {
+            $temp2 = array();
+            foreach($result as $rep){
+                if (date('m', strtotime($rep->date)) == $request->month){
+                    $temp2[] = $rep;
+                }
+            }
+            $result = $temp2;
+        }
+        if ($request->uic_code != null)
+        {
+            $temp3 = array();
+            foreach($result as $rep){
+                if (in_array($request->uic_code,$rep->uic)){
+                    $temp3[] = $rep;
+                }
+            }
+            $result = $temp3;
+        }
+        if ($request->status != null)
+        {
+            $temp4 = array();
+            foreach($result as $rep){
+                if ($rep->status == $request->status){
+                    $temp4[] = $rep;
+                }
+            }
+            $result = $temp4;
+        }
+        if ($request->recom_status != null)
+        {
+            $temp5 = array();
+            foreach($result as $rep){
+                if ($rep->recom_status == $request->recom_status){
+                    $temp5[] = $rep;
+                }
+            }
+            $result = $temp5;
+        }
+
+        if ($request->search != null){
+            $temp6 = array();
+            foreach($result as $rep){
+                if (strpos($rep->date, $request->search) !== false || strpos($rep->report_no, $request->search) !== false || strpos($rep->prepared_by, $request->search) !== false  || strpos($rep->approved_by, $request->search) !== false || strpos($rep->checked_by, $request->search) !== false ||strpos($rep->status, $request->search) !== false || in_array($request->search,$rep->uic) || strpos($rep->recom_status, $request->search) !== false ){
+                    $temp6[] = $rep;
+                }
+            }
+            $result = $temp6;
+        }
+
+        return new Result($result);
     }
     
 }
