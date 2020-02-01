@@ -9,6 +9,8 @@ use App\Model\Activity;
 use App\Model\MaintenanceProcess;
 use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
+use App\Model\ObservationAttachments;
+use App\Model\ObservationDescribes;
 use App\Model\ObservationDetail;
 use App\Model\ObservationLog;
 use App\Model\ObservationTeam;
@@ -19,10 +21,14 @@ use App\Model\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
+use Symfony\Component\Console\Input\Input;
 
 class ObservationController extends Controller
 {
@@ -111,6 +117,12 @@ class ObservationController extends Controller
                 $obs_detail->delete();
             }
 
+            $obs_describe = ObservationDescribes::where('observation_id', '=', $observation['id']);
+            if ($obs_describe != null)
+            {
+                $obs_describe->delete();
+            }
+
             $model_observation = Observation::find($observation['id']);
 
             $message = 'Observation has been updated successfully';
@@ -125,12 +137,27 @@ class ObservationController extends Controller
         $model_observation->component_type = $observation['component_type'];
         $model_observation->task_observed = $observation['task_observed'];
         $model_observation->location = $observation['location'];
+        $model_observation->comment = $observation['comment'];
         $model_observation->status = $observation['status'];
         $model_observation->save();
 
         foreach ($observation['team'] as $value) {
             Arr::set($value, 'observation_id', $model_observation->id);
             $observation_team[] = $value;
+        }
+
+        $new_threat = [];
+        foreach ($observation['describe_threat'] as $key) {
+            Arr::set($key, 'type', 'threat');
+            Arr::set($key, 'observation_id', $model_observation->id);
+            $new_threat[] = $key;
+        }
+
+        $new_crew_error = [];
+        foreach ($observation['describe_crew_error'] as $key) {
+            Arr::set($key, 'type', 'crew_error');
+            Arr::set($key, 'observation_id', $model_observation->id);
+            $new_crew_error[] = $key;
         }
 
         foreach ($activities as $value) {
@@ -154,6 +181,9 @@ class ObservationController extends Controller
         ObservationTeam::insert($observation_team);
         ObservationDetail::insert($observation_detail);
 
+        ObservationDescribes::insert($new_threat);
+        ObservationDescribes::insert($new_crew_error);
+
         if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
         {
             $link_download = "api/observation/download/logs?observation_id=".$model_observation->id;
@@ -170,6 +200,7 @@ class ObservationController extends Controller
         $log->save();
 
         return response()->json([
+            'observation_id' => $model_observation->id,
             'message' => $message
         ]);
     }
@@ -244,6 +275,18 @@ class ObservationController extends Controller
         return response()->json([
             'message' => 'Observation has been deleted successfully'
         ]);
+    }
+
+    public function display_attachment($id)
+    {
+        $data = ObservationAttachments::where('observation_id', '=', $id)->get();
+
+        $images = [];
+        foreach ($data as $key) {
+            $images[] = url('') . $key->file;
+        }
+
+        return $images;
     }
 
     public function new_mlosa_plan(Request $request)
@@ -340,6 +383,38 @@ class ObservationController extends Controller
             'maintenance_process' => $maintenance,
             'threat_codes' => $threat_codes,
             'activities' => $activities
+        ]);
+    }
+
+    public function upload(Request $request, $id)
+    {
+        $data = $request->file('file');
+        $observation = Observation::find($id);
+
+        if ($request->file('file') == null){
+            return response()->json([
+                'url_files' => [],
+                'message' => 'Upload gagal, file tidak ada!'
+            ]);
+        }
+
+        $loc = [];
+        foreach ($data as $file) {
+            $filename = date('Ymd_His') . $file->getClientOriginalName();
+            $path = "/attachments" . "/" . $observation->observation_no;
+            $file->move(public_path($path), $filename);
+
+            $attachments = new ObservationAttachments();
+            $attachments->observation_id = $id;
+            $attachments->file = $path . "/" . $filename;
+            $attachments->save();
+
+            $loc[] = url('') . '/attachments/' . $observation->observation_no . "/" . $filename;
+        }
+
+        return response()->json([
+            'url_files' => $loc,
+            'message' => 'Upload berhasil!'
         ]);
     }
 

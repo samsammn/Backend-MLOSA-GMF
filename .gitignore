@@ -1,4 +1,5 @@
 /node_modules
+/public/attachments
 /public/hot
 /public/storage
 /resource/views/test

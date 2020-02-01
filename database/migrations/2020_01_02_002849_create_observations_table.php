@@ -15,20 +15,20 @@ class CreateObservationsTable extends Migration
     {
         Schema::create('observations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('observation_no', 50);
-            $table->date('observation_date');
-            $table->time('start_time');
-            $table->time('end_time');
-            $table->text('subtitle');
-            $table->date('due_date');
-            $table->integer('mp_id');
-            $table->integer('uic_id');
-            $table->string('component_type', 50);
-            $table->string('observer_team', 50);
-            $table->string('task_observed', 50);
-            $table->text('location');
-            $table->string('status', 20);
-            $table->string('action', 30);
+            $table->string('observation_no', 50)->nullable();
+            $table->date('observation_date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
+            $table->text('subtitle')->nullable();
+            $table->date('due_date')->nullable();
+            $table->integer('mp_id')->nullable();
+            $table->integer('uic_id')->nullable();
+            $table->string('component_type', 50)->nullable();
+            $table->string('task_observed', 50)->nullable();
+            $table->text('location')->nullable();
+            $table->string('status', 20)->nullable();
+            $table->string('action', 30)->nullable();
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }
