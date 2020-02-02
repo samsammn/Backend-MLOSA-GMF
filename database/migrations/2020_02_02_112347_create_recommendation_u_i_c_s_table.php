@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRecommendationsTable extends Migration
+class CreateRecommendationUICSTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateRecommendationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('recommendations', function (Blueprint $table) {
+        Schema::create('recommendation_uic', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('report_id');
-            $table->string("recommendation");
-            $table->date("date");
-            $table->date("due_date");
-            $table->string("status")->default("Open");
-            $table->string("file")->nullable();
+            $table->integer("recommendation_id");
+            $table->integer("uic_id");
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateRecommendationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('recommendations');
+        Schema::dropIfExists('recommendation_uic');
     }
 }

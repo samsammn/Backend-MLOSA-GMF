@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::resource('sub_activity', 'SubActivityController');
     Route::resource('maintenance_process', 'MaintenanceProcessController');
     Route::resource('report', 'ReportController');
+    Route::resource('recommendation', 'RecommendationController');
 
     Route::get('risk', 'RiskController@risk');
     Route::get('threat_codes', 'ThreatCodeController@all_relation');
@@ -53,5 +54,8 @@ Route::group(['middleware' => 'auth_api'], function () {
 
     Route::get('/report/filter/filteroption','ReportController@filterOption');
     Route::get('/report/filter/filterreport','ReportController@filter');
+
+    Route::get('/recommendation/filter/filteroption','RecommendationController@filterOption');
+    Route::get('/recommendation/filter/filterrecommendation','RecommendationController@filter');
 
 });

@@ -11,6 +11,7 @@ use App\Model\ReportUIC;
 use App\Model\UIC;
 use App\Model\Distribution;
 use App\Model\Recommendation;
+use App\Model\RecommendationUIC;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
@@ -107,21 +108,30 @@ class ReportController extends Controller
             $model_report_dist->save();
         }
 
+        $uics = array();
         foreach($request->recommendations as $recom){
-            $model_uic = UIC::where('uic_code',$recom["uic"])->get();
             $model_recommendation = new Recommendation();
-            
-            $model_recommendation->uic_id = $model_uic[0]->getKey();
             $model_recommendation->recommendation = $recom["recommendation"];
+            $model_recommendation->date = now();
             $model_recommendation->due_date = $recom["due_date"];
             $model_recommendation->status = $recom["status"];
             $model_recommendation->report_id = $model_report->id;
             $model_recommendation->save();
 
-            $model_temp = new ReportUIC();
-            $model_temp->uic_id = $model_uic[0]->getKey();
-            $model_temp->report_id = $model_report->id;
-            $model_temp->save();
+            foreach($recom["uic"] as $uic){
+                $model_uic = UIC::where('uic_code',$uic)->get();
+                $model_rec_uic = new RecommendationUIC();
+                $model_rec_uic->recommendation_id = $model_recommendation->id;
+                $model_rec_uic->uic_id = $model_uic[0]->getKey();
+                $model_rec_uic->save();
+                if (!in_array($uic,$uics)){
+                    $model_temp = new ReportUIC();
+                    $model_temp->uic_id = $model_uic[0]->getKey();
+                    $model_temp->report_id = $model_report->id;
+                    $model_temp->save();
+                    $uics[] = $uic;
+                }
+            }
         }
         
         return "Store Success";
