@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
 Route::get('/check_auth', 'UserController@check_auth');
+Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
 
 Route::group(['middleware' => 'auth_api'], function () {
 
@@ -29,7 +30,8 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/global_mlosa_plan', 'ObservationController@global_mlosa_plan');
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
     Route::get('/observation/{id}/logs', 'ObservationController@logs');
-    Route::get('/observation/download/logs', 'ObservationController@download');
+    Route::get('/observation/download/logs', 'ObservationController@download_log');
+    // Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
     Route::get('/observation/{id}/attachments', 'ObservationController@display_attachment');
     Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
 

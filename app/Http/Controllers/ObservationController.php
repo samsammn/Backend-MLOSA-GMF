@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ObservationExport;
 use App\Exports\ObservationLogExport;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
@@ -400,7 +401,7 @@ class ObservationController extends Controller
 
         $loc = [];
         foreach ($data as $file) {
-            $filename = date('Ymd_His') . $file->getClientOriginalName();
+            $filename = date('Ymd_His') . "/" .  $file->getClientOriginalName();
             $path = "/attachments" . "/" . $observation->observation_no;
             $file->move(public_path($path), $filename);
 
@@ -447,10 +448,15 @@ class ObservationController extends Controller
         return new Result($model);
     }
 
-    public function download(Request $request)
+    public function download_log(Request $request)
     {
         $now = date('Ymd');
         return Excel::download(new ObservationLogExport($request), 'observation_logs_'. $now .'.xlsx');
     }
 
+    public function download_mlosa()
+    {
+        $now = date('Ymd');
+        return Excel::download(new ObservationExport(), 'mlosa_database_'. $now .'.xlsx');
+    }
 }
