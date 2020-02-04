@@ -29,8 +29,8 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/observation/{id}/form', 'ObservationController@form');
     Route::get('/global_mlosa_plan', 'ObservationController@global_mlosa_plan');
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
-    Route::get('/observation/{id}/logs', 'ObservationController@logs');
     Route::get('/observation/download/logs', 'ObservationController@download_log');
+    Route::get('/observation/{id}/logs', 'ObservationController@logs');
     // Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
     Route::get('/observation/{id}/attachments', 'ObservationController@display_attachment');
     Route::get('/maintenance_process/{id}/relation', 'MaintenanceProcessController@form');
