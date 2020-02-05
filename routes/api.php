@@ -17,6 +17,7 @@ Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
 Route::get('/check_auth', 'UserController@check_auth');
 Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
+Route::get('/risk/index', 'RiskController@index');
 
 Route::group(['middleware' => 'auth_api'], function () {
 

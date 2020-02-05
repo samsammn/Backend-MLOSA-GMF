@@ -749,6 +749,8 @@ class ComposerStaticInit933ddc5d0c6408995085d301dfe8341e
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\RecommendationReplies' => __DIR__ . '/../..' . '/app/Model/RecommendationReplies.php',
+        'App\\RiskAcceptability' => __DIR__ . '/../..' . '/app/RiskAcceptability.php',
+        'App\\RiskAceptability' => __DIR__ . '/../..' . '/app/RiskAceptability.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
         'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',

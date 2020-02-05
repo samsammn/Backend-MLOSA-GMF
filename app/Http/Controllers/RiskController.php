@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use App\Model\RiskColor;
 use App\Model\RiskProbability;
 use App\Model\RiskSeverity;
@@ -9,6 +10,30 @@ use Illuminate\Http\Request;
 
 class RiskController extends Controller
 {
+    public function index()
+    {
+        $client = new Client();
+        $headers = [
+            'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImVtYWlsIjoia2lraWsuZGV2QGdtYWlsLmNvbSJ9fQ.bFBBep7EDAwjIioDWsQHt2_mHFnUPy3ea6ocRVxNcm4'
+        ];
+
+        $response = $client->get('http://172.16.40.164/API/Risk_Index', [
+            'headers' => $headers
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+
+        if ($body == [])
+        {
+            $data = [];
+        } else {
+            $data = $body[0];
+        }
+
+        return $data;
+    }
+
+    // method-method dummy
     public function risk()
     {
         $probability = RiskProbability::all();

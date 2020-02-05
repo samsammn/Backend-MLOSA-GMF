@@ -20,6 +20,11 @@ class Observation extends Model
         'location',
     ];
 
+    public function details()
+    {
+        return $this->hasMany('App\Model\ObservationDetail', 'observation_id');
+    }
+
     public function users()
     {
         return $this->belongsToMany('App\Model\User', 'observation_teams', 'observation_id', 'user_id');
