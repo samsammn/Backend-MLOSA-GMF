@@ -154,7 +154,18 @@ class ReportController extends Controller
         }
         $model->uic = $list_uic;
 
+        $list_uic = array();
         $recommendation = Recommendation::where('report_id',$id)->get();
+        foreach($recommendation as $rec){
+            $model_uic = RecommendationUIC::where('recommendation_id',$rec->id)->get();
+                foreach($model_uic as $uic){
+                    $uics = UIC::find($uic->uic_id);
+                    $list_uic[] = $uics->getAttribute("uic_code");
+                }
+                $rec->uic = $list_uic;
+                $model_report = Report::find($rec->report_id);
+                $rec->report_no = $model_report->getAttribute("report_no");
+        }
         $model->recommendation = $recommendation;
         return new Result($model);
     }
