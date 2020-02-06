@@ -247,4 +247,50 @@ class ChartController extends Controller
 
         return $model;
     }
+
+    public function risk_register(Request $request)
+    {
+
+        $filter = [];
+        $group = [DB::raw('ra.tolerability'), DB::raw('ra.index')];
+
+        if ($request->year != null){
+            $group[] = DB::raw('year(o.observation_date)');
+            $filter[] = [DB::raw('year(o.observation_date)'), '=', $request->year];
+        }
+
+        if ($request->start_month != null){
+            $group[] = DB::raw('MONTH(o.observation_date)');
+            $filter[] = [DB::raw('month(o.observation_date)'), '>=', $request->start_month];
+        }
+
+        if ($request->end_month != null){
+            $group[] = DB::raw('MONTH(o.observation_date)');
+            $filter[] = [DB::raw('month(o.observation_date)'), '<=', $request->end_month];
+        }
+
+        if ($request->maintenance_process != null){
+            $filter[] = [DB::raw('mp.name'), '=', $request->maintenance_process];
+        }
+
+        if ($request->risk_value != null){
+            $filter[] = [DB::raw('ra.tolerability'), '=', $request->risk_value];
+        }
+
+        $model = DB::table(DB::raw('observations as o'))
+                    ->selectRaw('
+                        ra.tolerability as category,
+                        ra.index as risk_value,
+                        count(*) as count
+                    ')
+                    ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
+                    ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
+                    ->join(DB::raw('risk_indices as ri'), 'ri.value', '=', 'od.risk_index')
+                    ->join(DB::raw('risk_acceptabilities as ra'), 'ra.id', '=', 'ri.risk_acceptability_id')
+                    ->groupBy($group)
+                    ->where($filter)
+                    ->get();
+
+        return $model;
+    }
 }

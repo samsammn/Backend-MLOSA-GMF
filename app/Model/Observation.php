@@ -49,4 +49,12 @@ class Observation extends Model
                     ->orWhere('task_observed', 'LIKE', '%'.$q.'%')
                     ->orWhere('location', 'LIKE', '%'.$q.'%');
     }
+
+    public function scopeRangeMonth($query, $q1, $q2)
+    {
+        if ($q == null) return $query;
+        return $query
+                    ->where('MONTH(o.observation_date)', '>=', $q1)
+                    ->where('MONTH(o.observation_date)', '<=', $q2);
+    }
 }

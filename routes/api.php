@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/chart/threat', 'ChartController@threat');
     Route::get('/chart/equipment', 'ChartController@equipment');
     Route::get('/chart/pareto', 'ChartController@pareto');
+    Route::get('/chart/risk_register', 'ChartController@risk_register');
 
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
