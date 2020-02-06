@@ -11,6 +11,7 @@ use App\Model\ReportUIC;
 use App\Model\UIC;
 use App\Model\Distribution;
 use App\Model\Recommendation;
+use App\Model\RecommendationReplies;
 use App\Model\RecommendationUIC;
 use Illuminate\Support\Facades\DB;
 
@@ -162,10 +163,13 @@ class ReportController extends Controller
                     $uics = UIC::find($uic->uic_id);
                     $list_uic[] = $uics->getAttribute("uic_code");
                 }
-                $rec->uic = $list_uic;
-                $model_report = Report::find($rec->report_id);
-                $rec->report_no = $model_report->getAttribute("report_no");
+            $rec->uic = $list_uic;
+            $model_report = Report::find($rec->report_id);
+            $rec->report_no = $model_report->getAttribute("report_no");
+            $model_replies = RecommendationReplies::where('recommendation_id',$rec->id)->get();
+            $rec->replies = $model_replies;
         }
+        
         $model->recommendation = $recommendation;
         return new Result($model);
     }

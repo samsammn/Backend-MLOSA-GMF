@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::resource('maintenance_process', 'MaintenanceProcessController');
     Route::resource('report', 'ReportController');
     Route::resource('recommendation', 'RecommendationController');
+    Route::resource('recommendation_replies', 'RecommendationRepliesController');
 
     Route::get('risk', 'RiskController@risk');
     Route::get('/risk/index', 'RiskController@index');
