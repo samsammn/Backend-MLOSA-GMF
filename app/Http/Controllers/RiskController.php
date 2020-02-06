@@ -6,7 +6,10 @@ use GuzzleHttp\Client;
 use App\Model\RiskColor;
 use App\Model\RiskProbability;
 use App\Model\RiskSeverity;
+use App\RiskAcceptability;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use stdClass;
 
 class RiskController extends Controller
 {
@@ -22,15 +25,37 @@ class RiskController extends Controller
         ]);
 
         $body = json_decode($response->getBody(), true);
+        $severity = collect($body['severity_of_occurence'])->groupBy('aviation')->toArray();
 
-        if ($body == [])
-        {
+        $data_probability = $body['probability_of_occurence'];
+        $data_color = $body['color_risk_index'];
+
+        $data_severity = [];
+        foreach ($severity as $key => $item) {
             $data = [];
-        } else {
-            $data = $body[0];
+            foreach ($item as $val) {
+                $occurance = strtolower(str_replace( ' ', '_', $val['occurance']));
+
+                $data['code'] = $val['value'];
+                $data['aviation'] = $val['aviation'];
+                $data[$occurance] = $val['ket'];
+            }
+            $data_severity[] = $data;
         }
 
-        return $data;
+        $data_color_risk_index = [];
+        foreach ($data_color as $key) {
+            $acceptability = RiskAcceptability::where('tolerability','=', $key['severity'])->first();
+            // $key['risk_index'] = $acceptability->risk_index;
+            Arr::set($key, 'risk_index', $acceptability->risk_index);
+            $data_color_risk_index[] = $key;
+        }
+
+        return response()->json([
+            'probability_of_occurence' => $data_probability,
+            'severity_of_occurence' => $data_severity,
+            'color_risk_index' => $data_color_risk_index
+        ]);
     }
 
     // method-method dummy
@@ -81,6 +106,7 @@ class RiskController extends Controller
 
         return $data;
     }
+
     public function get_severity()
     {
         $data = RiskSeverity::all();

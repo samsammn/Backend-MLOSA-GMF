@@ -17,7 +17,6 @@ Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
 Route::get('/check_auth', 'UserController@check_auth');
 Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
-Route::get('/risk/index', 'RiskController@index');
 
 Route::group(['middleware' => 'auth_api'], function () {
 
@@ -49,6 +48,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::resource('recommendation', 'RecommendationController');
 
     Route::get('risk', 'RiskController@risk');
+    Route::get('/risk/index', 'RiskController@index');
     Route::get('threat_codes', 'ThreatCodeController@all_relation');
     Route::get('probability', 'RiskController@get_probability');
     Route::post('probability', 'RiskController@add_probability');
