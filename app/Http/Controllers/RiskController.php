@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use GuzzleHttp\Client;
 use App\Model\RiskColor;
+use App\Model\RiskIndex;
 use App\Model\RiskProbability;
 use App\Model\RiskSeverity;
 use App\RiskAcceptability;
@@ -46,8 +47,9 @@ class RiskController extends Controller
         $data_color_risk_index = [];
         foreach ($data_color as $key) {
             $acceptability = RiskAcceptability::where('tolerability','=', $key['severity'])->first();
-            // $key['risk_index'] = $acceptability->risk_index;
-            Arr::set($key, 'risk_index', $acceptability->risk_index);
+            $risk_index = RiskIndex::where('risk_acceptability_id','=', $acceptability->id)->pluck('value');
+
+            Arr::set($key, 'risk_index', $risk_index);
             $data_color_risk_index[] = $key;
         }
 

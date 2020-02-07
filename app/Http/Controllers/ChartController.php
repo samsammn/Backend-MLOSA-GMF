@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Model\MaintenanceProcess;
 use App\Model\SafetyRisk;
 use App\Model\ThreatCode;
+use App\Model\UIC;
+use App\RiskAcceptability;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -250,9 +252,11 @@ class ChartController extends Controller
 
     public function risk_register(Request $request)
     {
-
         $filter = [];
         $group = [DB::raw('ra.tolerability'), DB::raw('ra.index')];
+        $group_risk_dimension = [DB::raw('maintenance')];
+        $group_rvd = [DB::raw('ra.tolerability'), DB::raw('ra.index'), DB::raw('tc.description')];
+        $group_ts = [DB::raw('ra.tolerability'), DB::raw('ra.index'), DB::raw('uic.uic_code')];
 
         if ($request->year != null){
             $group[] = DB::raw('year(o.observation_date)');
@@ -277,7 +281,8 @@ class ChartController extends Controller
             $filter[] = [DB::raw('ra.tolerability'), '=', $request->risk_value];
         }
 
-        $model = DB::table(DB::raw('observations as o'))
+        // model corporate_current_risk
+        $ccr = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
                         ra.tolerability as category,
                         ra.index as risk_value,
@@ -291,6 +296,113 @@ class ChartController extends Controller
                     ->where($filter)
                     ->get();
 
-        return $model;
+        // model risk_dimension_distribution
+        $rdd = DB::table(DB::raw('observations as o'))
+                    ->selectRaw('
+                        mp.name as maintenance,
+                        count(*) as count
+                    ')
+                    ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
+                    ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
+                    ->join(DB::raw('risk_indices as ri'), 'ri.value', '=', 'od.risk_index')
+                    ->join(DB::raw('risk_acceptabilities as ra'), 'ra.id', '=', 'ri.risk_acceptability_id')
+                    ->groupBy($group_risk_dimension)
+                    ->where($filter)
+                    ->get();
+
+        $mp = MaintenanceProcess::all();
+
+        $temp_rdd = [];
+        foreach ($rdd as $key) {
+            $temp_rdd[$key->maintenance] = $key->count;
+        }
+
+        $result_rdd = [];
+        foreach ($mp as $key) {
+            foreach ($temp_rdd as $keys) {
+                if (isset($temp_rdd[$key->name]) && $temp_rdd[$key->name] != 0)
+                {
+                    $result_rdd[$key->name] = $temp_rdd[$key->name];
+                } else {
+                    $result_rdd[$key->name] = 0;
+                }
+            }
+        }
+
+        // model risk_value_dist
+        $rvd = DB::table(DB::raw('observations as o'))
+                    ->selectRaw('
+                        ra.tolerability as category,
+                        ra.index as risk_value,
+                        tc.description,
+                        count(*) as count
+                    ')
+                    ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
+                    ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
+                    ->join(DB::raw('sub_threat_codes as stc'), 'stc.id', '=', 'od.sub_threat_codes_id')
+                    ->join(DB::raw('threat_codes as tc'), 'tc.id', '=', 'stc.threat_codes_id')
+                    ->join(DB::raw('risk_indices as ri'), 'ri.value', '=', 'od.risk_index')
+                    ->join(DB::raw('risk_acceptabilities as ra'), 'ra.id', '=', 'ri.risk_acceptability_id')
+                    ->groupBy($group_rvd)
+                    ->where($filter)
+                    ->get();
+
+        $tc = ThreatCode::all();
+        $ra = RiskAcceptability::all();
+
+        $result_rvd = [];
+        foreach ($tc as $key) {
+            $key_rvd = [];
+            foreach ($ra as $keys) {
+                $key_rvd[$keys->tolerability] = 0;
+            }
+            $result_rvd[$key->description] = $key_rvd;
+        }
+
+        foreach ($rvd as $key) {
+            $result_rvd[$key->description][$key->category] = $key->count;
+        }
+
+        // model threat_subject
+        $ts = DB::table(DB::raw('observations as o'))
+                    ->selectRaw('
+                        ra.tolerability as category,
+                        ra.index as risk_value,
+                        uic.uic_code,
+                        count(*) as count
+                    ')
+                    ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
+                    ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
+                    ->join(DB::raw('uics as uic'), 'uic.id', '=', 'o.uic_id')
+                    ->join(DB::raw('sub_threat_codes as stc'), 'stc.id', '=', 'od.sub_threat_codes_id')
+                    ->join(DB::raw('threat_codes as tc'), 'tc.id', '=', 'stc.threat_codes_id')
+                    ->join(DB::raw('risk_indices as ri'), 'ri.value', '=', 'od.risk_index')
+                    ->join(DB::raw('risk_acceptabilities as ra'), 'ra.id', '=', 'ri.risk_acceptability_id')
+                    ->groupBy($group_ts)
+                    ->where($filter)
+                    ->get();
+
+        $uic = UIC::all();
+        $ra = RiskAcceptability::all();
+
+        $result_ts = [];
+        foreach ($uic as $key) {
+            $key_ts = [];
+            foreach ($ra as $keys) {
+                $key_ts[$keys->tolerability] = 0;
+            }
+            $result_ts[$key->uic_code] = $key_ts;
+        }
+
+        foreach ($ts as $key) {
+            $result_ts[$key->uic_code][$key->category] = $key->count;
+        }
+
+        return response()->json([
+            'corporate_current_risk' => $ccr,
+            'risk_dimension_distribution' => $result_rdd,
+            'risk_value_dist' => $result_rvd,
+            'theat_subject' => $result_ts
+        ]);
     }
 }

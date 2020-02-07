@@ -15,8 +15,8 @@ class CreateRiskAcceptabilitiesTable extends Migration
     {
         Schema::create('risk_acceptabilities', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('index', 20)->nullable();
             $table->string('tolerability', 30)->nullable();
-            $table->text('risk_index')->nullable();
             $table->string('color', 10)->nullable();
         });
     }
