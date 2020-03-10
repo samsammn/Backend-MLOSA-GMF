@@ -253,6 +253,7 @@ class ChartController extends Controller
     public function risk_register(Request $request)
     {
         $filter = [];
+        $filter_corporate = [];
         $group = [DB::raw('ra.tolerability'), DB::raw('ra.index')];
         $group_risk_dimension = [DB::raw('maintenance')];
         $group_rvd = [DB::raw('ra.tolerability'), DB::raw('ra.index'), DB::raw('tc.description')];
@@ -261,20 +262,24 @@ class ChartController extends Controller
         if ($request->year != null){
             $group[] = DB::raw('year(o.observation_date)');
             $filter[] = [DB::raw('year(o.observation_date)'), '=', $request->year];
+            $filter_corporate[] = [DB::raw('year(o.observation_date)'), '=', $request->year];
         }
 
         if ($request->start_month != null){
             $group[] = DB::raw('MONTH(o.observation_date)');
             $filter[] = [DB::raw('month(o.observation_date)'), '>=', $request->start_month];
+            $filter_corporate[] = [DB::raw('month(o.observation_date)'), '>=', $request->start_month];
         }
 
         if ($request->end_month != null){
             $group[] = DB::raw('MONTH(o.observation_date)');
             $filter[] = [DB::raw('month(o.observation_date)'), '<=', $request->end_month];
+            $filter_corporate[] = [DB::raw('month(o.observation_date)'), '<=', $request->end_month];
         }
 
         if ($request->maintenance_process != null){
             $filter[] = [DB::raw('mp.name'), '=', $request->maintenance_process];
+            $filter_corporate[] = [DB::raw('mp.name'), '=', $request->maintenance_process];
         }
 
         if ($request->risk_value != null){
@@ -284,17 +289,34 @@ class ChartController extends Controller
         // model corporate_current_risk
         $ccr = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
-                        ra.tolerability as category,
-                        ra.index as risk_value,
-                        count(*) as count
+                        SUM(case when od.risk_value >= 1 and od.risk_value <= 174 then 1 else 0 end) as "1-174 Negligible Risk",
+                        SUM(case when od.risk_value >= 175 and od.risk_value <= 349 then 1 else 0 end) as "175-349 Low Risk",
+                        SUM(case when od.risk_value >= 350 and od.risk_value <= 549 then 1 else 0 end) as "350-549 Medium Risk",
+                        SUM(case when od.risk_value >= 550 and od.risk_value <= 749 then 1 else 0 end) as "550-749 High Risk",
+                        SUM(case when od.risk_value >= 750 and od.risk_value <= 1000 then 1 else 0 end) as "750-1000 Extreme Risk"
                     ')
                     ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
                     ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
                     ->join(DB::raw('risk_indices as ri'), 'ri.value', '=', 'od.risk_index')
                     ->join(DB::raw('risk_acceptabilities as ra'), 'ra.id', '=', 'ri.risk_acceptability_id')
-                    ->groupBy($group)
-                    ->where($filter)
-                    ->get();
+                    ->where($filter_corporate)
+                    ->first();
+
+        // model corporate_proposed_risk
+        $cpr = DB::table(DB::raw('observations as o'))
+                    ->selectRaw('
+                        SUM(case when od.propose_risk_value >= 1 and od.propose_risk_value <= 174 then 1 else 0 end) as "1-174 Negligible Risk",
+                        SUM(case when od.propose_risk_value >= 175 and od.propose_risk_value <= 349 then 1 else 0 end) as "175-349 Low Risk",
+                        SUM(case when od.propose_risk_value >= 350 and od.propose_risk_value <= 549 then 1 else 0 end) as "350-549 Medium Risk",
+                        SUM(case when od.propose_risk_value >= 550 and od.propose_risk_value <= 749 then 1 else 0 end) as "550-749 High Risk",
+                        SUM(case when od.propose_risk_value >= 750 and od.propose_risk_value <= 1000 then 1 else 0 end) as "750-1000 Extreme Risk"
+                    ')
+                    ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
+                    ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
+                    ->join(DB::raw('risk_indices as ri'), 'ri.value', '=', 'od.risk_index_actual')
+                    ->join(DB::raw('risk_acceptabilities as ra'), 'ra.id', '=', 'ri.risk_acceptability_id')
+                    ->where($filter_corporate)
+                    ->first();
 
         // model risk_dimension_distribution
         $rdd = DB::table(DB::raw('observations as o'))
@@ -400,6 +422,7 @@ class ChartController extends Controller
 
         return response()->json([
             'corporate_current_risk' => $ccr,
+            'corporate_proposed_risk' => $cpr,
             'risk_dimension_distribution' => $result_rdd,
             'risk_value_dist' => $result_rvd,
             'theat_subject' => $result_ts

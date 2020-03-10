@@ -164,6 +164,18 @@ class ObservationController extends Controller
         foreach ($activities as $value) {
             foreach ($value['sub_activities'] as $item) {
 
+                $array_severity = ['A' => 10, 'B' => 5, 'C' => 3, 'D' => 2, 'E' => 1];
+                $severity = $array_severity[substr($item['inputs']['risk_index'], 1)];
+                $probability = substr($item['inputs']['risk_index'], 0, 1);
+
+                if ($item['inputs']['risk_index_actual'] != null) {
+                    $revised_severity = $array_severity[substr($item['inputs']['risk_index_actual'], 1)];
+                    $revised_probability = substr($item['inputs']['risk_index'], 0, 1);
+                } else {
+                    $revised_severity = 0;
+                    $revised_probability = 0;
+                }
+
                 $detail = new ObservationDetail();
                 $detail->observation_id = $model_observation->id;
                 $detail->activity_id = $value['id'];
@@ -171,9 +183,21 @@ class ObservationController extends Controller
                 $detail->safety_risk = $item['inputs']['safety_risk'];
                 $detail->sub_threat_codes_id = $item['inputs']['sub_threat_codes_id'];
                 $detail->risk_index = $item['inputs']['risk_index'];
+                $detail->severity = $severity;
+                $detail->probability = $probability;
+                $detail->control_effectiveness = $item['inputs']['control_effectiveness'];
+                $detail->risk_value = $item['inputs']['risk_value'];
                 $detail->effectively_managed = $item['inputs']['effectively_managed'];
                 $detail->error_outcome = $item['inputs']['error_outcome'];
                 $detail->remark = $item['inputs']['remark'];
+                $detail->risk_index_actual = $item['inputs']['risk_index_actual'];
+                $detail->risk_index_proposed = $item['inputs']['risk_index_proposed'];
+                $detail->revised_risk_index = $item['inputs']['revised_risk_index'];
+                $detail->revised_severity = $revised_severity;
+                $detail->revised_probability = $revised_probability;
+                $detail->revised_control_effectiveness = $item['inputs']['revised_control_effectiveness'];
+                $detail->propose_risk_value = $item['inputs']['propose_risk_value'];
+                $detail->accept_or_treat = $item['inputs']['accept_or_treat'];
 
                 $observation_detail[] = $detail->toArray();
             }
@@ -458,5 +482,17 @@ class ObservationController extends Controller
     {
         $now = date('Ymd');
         return Excel::download(new ObservationExport(), 'mlosa_database_'. $now .'.xlsx');
+    }
+
+    public function calculate_risk_value(Request $request)
+    {
+        $array_severity = ['A' => 10, 'B' => 5, 'C' => 3, 'D' => 2, 'E' => 1];
+        $severity = substr($request->risk_index, 1);
+        $probability = substr($request->risk_index, 0, 1);
+        $risk_value = ($array_severity[$severity] * 50) + ($probability * 25) + ($request->control_effectiveness * 25);
+
+        return response()->json([
+            'risk_value' =>  $risk_value
+        ]);
     }
 }
