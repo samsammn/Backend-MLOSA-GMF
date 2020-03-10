@@ -38,9 +38,22 @@ class ObservationExport implements FromCollection, WithHeadings, ShouldAutoSize,
                         od.safety_risk,
                         concat(tc. code, '. ', tc.description) threat,
                         concat(stc. code, '. ', stc.description) as sub_threat,
+                        od.risk_index,
+                        od.severity,
+                        od.probability,
+                        od.control_effectiveness,
+                        od.risk_value,
                         od.effectively_managed,
                         if(od.error_outcome = 1, 'Insequential', if(od.error_outcome = 2, 'Undesired state', 'Additional error')) as error_outcome,
-                        od.remark
+                        od.remark,
+                        od.risk_index_actual,
+                        od.risk_index_proposed,
+                        od.revised_risk_index,
+                        od.revised_severity,
+                        od.revised_probability,
+                        od.revised_control_effectiveness,
+                        od.propose_risk_value,
+                        od.accept_or_treat
                     "))
                     ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
                     ->join(DB::raw('maintenance_processes as mp'), 'mp.id', '=', 'o.mp_id')
@@ -65,9 +78,22 @@ class ObservationExport implements FromCollection, WithHeadings, ShouldAutoSize,
                         'safety_risk',
                         'threat',
                         'sub_threat',
+                        'risk_index',
+                        'severity',
+                        'probability',
+                        'control_effectiveness',
+                        'risk_value',
                         'effectively_managed',
                         'error_outcome',
                         'remark',
+                        'risk_index_actual',
+                        'risk_index_proposed',
+                        'revised_risk_index',
+                        'revised_severity',
+                        'revised_probability',
+                        'revised_control_effectiveness',
+                        'propose_risk_value',
+                        'accept_or_treat'
                     ])
                     ->get();
     }
@@ -89,9 +115,22 @@ class ObservationExport implements FromCollection, WithHeadings, ShouldAutoSize,
             'Safety Risk',
             'Threat Code',
             'Sub Threat Code',
+            'Risk Index',
+            'Severity',
+            'Probability',
+            'Control Effectiveness',
+            'Risk Value',
             'Threat Effectively managed? (Y/N)',
             'Error Outcome',
-            'Remark'
+            'Remark',
+            'Risk Index Actual',
+            'Risk Index Proposed',
+            'Revised Risk Index',
+            'Revised Severity',
+            'Revised Probability',
+            'Revised Control Effectiveness',
+            'Propose Risk Value',
+            'Accept or Treat'
         ];
     }
 

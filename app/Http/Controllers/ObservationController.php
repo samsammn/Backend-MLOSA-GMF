@@ -170,7 +170,7 @@ class ObservationController extends Controller
 
                 if ($item['inputs']['risk_index_actual'] != null) {
                     $revised_severity = $array_severity[substr($item['inputs']['risk_index_actual'], 1)];
-                    $revised_probability = substr($item['inputs']['risk_index'], 0, 1);
+                    $revised_probability = substr($item['inputs']['risk_index_actual'], 0, 1);
                 } else {
                     $revised_severity = 0;
                     $revised_probability = 0;
