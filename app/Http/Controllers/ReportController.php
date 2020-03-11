@@ -58,9 +58,9 @@ class ReportController extends Controller
                 $status = "Open";
             }
             $report->recom_status = $status;
-            
+
         }
-        
+
         return response()->json([
             "data" => $model,
         ]);
@@ -134,7 +134,7 @@ class ReportController extends Controller
                 }
             }
         }
-        
+
         return "Store Success";
     }
 
@@ -169,7 +169,7 @@ class ReportController extends Controller
             $model_replies = RecommendationReplies::where('recommendation_id',$rec->id)->get();
             $rec->replies = $model_replies;
         }
-        
+
         $model->recommendation = $recommendation;
         return new Result($model);
     }
@@ -329,5 +329,25 @@ class ReportController extends Controller
 
         return new Result($result);
     }
-    
+
+    public function upload_file_editor(Request $request)
+    {
+        $file = $request->file('file');
+
+        if ($request->file('file') == null){
+            return response()->json([
+                'message' => 'Upload gagal, file tidak ada!'
+            ]);
+        }
+
+        $path = "/reports/";
+        $file->move(public_path($path),  $file->getClientOriginalName());
+
+        $loc = url('') . $path . $file->getClientOriginalName();
+        return response()->json([
+            'message' => 'Upload berhasil!',
+            'image_url' => $loc
+        ]);
+    }
+
 }

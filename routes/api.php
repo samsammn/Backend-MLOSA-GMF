@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/chart/risk_register', 'ChartController@risk_register');
 
     Route::get('/risk_value/calculate', 'ObservationController@calculate_risk_value');
+    Route::post('/report/upload_file_editor', 'ReportController@upload_file_editor');
 
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
