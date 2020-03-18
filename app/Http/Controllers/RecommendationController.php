@@ -21,23 +21,6 @@ class RecommendationController extends Controller
      */
     public function index()
     {
-        //
-        $model = Recommendation::all();
-        foreach($model as $rec){
-            $list_uic = array();
-            $model_uic = RecommendationUIC::where('recommendation_id',$rec->id)->get();
-            foreach($model_uic as $uic){
-                $uics = UIC::find($uic->uic_id);
-                $list_uic[] = $uics->getAttribute("uic_code");
-            }
-            $rec->uic = $list_uic;
-            $model_report = Report::find($rec->report_id);
-            $rec->report_no = $model_report->getAttribute("report_no");
-        }
-        return response()->json([
-            "data" => $model,
-        ]);
-
     }
 
     /**
@@ -118,65 +101,47 @@ class RecommendationController extends Controller
         ]);
     }
     public function filter(Request $request){
-        $model = RecommendationController::index();
-        $result = array();
-        if ($request->year != null)
-        {
-            $temp1 = array();
-            foreach ($model->getData() as $r){
-                foreach($r as $rep){
-                    if (date('Y', strtotime($rep->date)) == $request->year){
-                        $temp1[] = $rep;
-                    }
-                }
-            }
-            $result = $temp1;
-        }else{
-            foreach ($model->getData() as $r){
-                $result = $r;
-            }
+        $filter = [];
+        $search1 = [];
+        $search2 = [];
+
+        if ($request->year !== null) {
+            $filter[] = [DB::raw('year(rec.date)'), '=', $request->year];
         }
-        if ($request->month != null)
-        {
-            $temp2 = array();
-            foreach($result as $rep){
-                if (date('m', strtotime($rep->date)) == $request->month){
-                    $temp2[] = $rep;
-                }
-            }
-            $result = $temp2;
+
+        if ($request->month != null){
+            $filter[] = [DB::raw('month(rec.date)'), '=', $request->month];
         }
-        if ($request->uic_code != null)
-        {
-            $temp3 = array();
-            foreach($result as $rep){
-                if (in_array($request->uic_code,$rep->uic)){
-                    $temp3[] = $rep;
-                }
-            }
-            $result = $temp3;
+
+        if ($request->uic_code != null){
+            $filter[] = [DB::raw('uics.uic_code'), '=', $request->uic_code];
         }
-        if ($request->status != null)
-        {
-            $temp4 = array();
-            foreach($result as $rep){
-                if ($rep->status == $request->status){
-                    $temp4[] = $rep;
-                }
-            }
-            $result = $temp4;
+
+        if ($request->status != null){
+            $filter[] = [DB::raw('rec.status'), '=', $request->status];
         }
 
         if ($request->search != null){
-            $temp6 = array();
-            foreach($result as $rep){
-                if (strpos($rep->date, $request->search) !== false || strpos($rep->due_date, $request->search) !== false || strpos($rep->report_no, $request->search) !== false || strpos($rep->recommendation, $request->search) !== false  || strpos($rep->status, $request->search) !== false || in_array($request->search,$rep->uic) ){
-                    $temp6[] = $rep;
-                }
-            }
-            $result = $temp6;
+            $search1[] = [DB::raw('rep.report_no'), 'LIKE', '%'.$request->search.'%'];
+            $search2[] = [DB::raw('rec.recommendation'), 'LIKE', '%'.$request->search.'%'];
         }
 
-        return new Result($result);
+        $model = DB::table(DB::raw('recommendations as rec'))
+                    ->selectRaw('
+                        rep.report_no,
+                        rec.*,
+                        uics.uic_code
+                    ')
+                    ->join(DB::raw('report rep'), 'rec.report_id', '=', 'rep.id')
+                    ->join(DB::raw('recommendation_uic recu'), 'rec.id', '=', 'recu.recommendation_id')
+                    ->join(DB::raw('uics'), 'recu.uic_id', '=', 'uics.id')
+                    ->where($filter)
+                    ->orWhere($search1)
+                    ->orWhere($search2)
+                    ->get();
+
+        return response()->json([
+            "data" => $model,
+        ]);
     }
 }

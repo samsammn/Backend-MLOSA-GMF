@@ -12,7 +12,6 @@ use App\Model\MaintenanceProcess;
 use App\Model\MaintenanceProcessDetail;
 use App\Model\Observation;
 use App\Model\ObservationAttachments;
-use App\Model\ObservationDescribes;
 use App\Model\ObservationDetail;
 use App\Model\ObservationLog;
 use App\Model\ObservationTeam;
@@ -119,12 +118,6 @@ class ObservationController extends Controller
                 $obs_detail->delete();
             }
 
-            $obs_describe = ObservationDescribes::where('observation_id', '=', $observation['id']);
-            if ($obs_describe != null)
-            {
-                $obs_describe->delete();
-            }
-
             $model_observation = Observation::find($observation['id']);
 
             $message = 'Observation has been updated successfully';
@@ -139,6 +132,8 @@ class ObservationController extends Controller
         $model_observation->component_type = $observation['component_type'];
         $model_observation->task_observed = $observation['task_observed'];
         $model_observation->location = $observation['location'];
+        $model_observation->describe_threat = $observation['describe_threat'];
+        $model_observation->describe_crew_error = $observation['describe_crew_error'];
         $model_observation->comment = $observation['comment'];
         $model_observation->status = $observation['status'];
         $model_observation->save();
@@ -146,20 +141,6 @@ class ObservationController extends Controller
         foreach ($observation['team'] as $value) {
             Arr::set($value, 'observation_id', $model_observation->id);
             $observation_team[] = $value;
-        }
-
-        $new_threat = [];
-        foreach ($observation['describe_threat'] as $key) {
-            Arr::set($key, 'type', 'threat');
-            Arr::set($key, 'observation_id', $model_observation->id);
-            $new_threat[] = $key;
-        }
-
-        $new_crew_error = [];
-        foreach ($observation['describe_crew_error'] as $key) {
-            Arr::set($key, 'type', 'crew_error');
-            Arr::set($key, 'observation_id', $model_observation->id);
-            $new_crew_error[] = $key;
         }
 
         foreach ($activities as $value) {
@@ -206,9 +187,6 @@ class ObservationController extends Controller
 
         ObservationTeam::insert($observation_team);
         ObservationDetail::insert($observation_detail);
-
-        ObservationDescribes::insert($new_threat);
-        ObservationDescribes::insert($new_crew_error);
 
         if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
         {
