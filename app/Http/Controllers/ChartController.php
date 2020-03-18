@@ -156,7 +156,7 @@ class ChartController extends Controller
         return $result;
     }
 
-    public function equipment(Request $request)
+    public function breakdown(Request $request)
     {
         $filter = [];
         $filterThreat = [];
@@ -188,7 +188,7 @@ class ChartController extends Controller
         $threat = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
                         tc.id,
-                        tc.description as threat,
+                        tc.description as name,
                         count(*) as total
                     ')
                     ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
@@ -206,8 +206,7 @@ class ChartController extends Controller
         $model = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
                         stc.id,
-                        tc.description,
-                        stc.description as threat,
+                        stc.description as sub_threat,
                         count(*) as total
                     ')
                     ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
@@ -218,7 +217,10 @@ class ChartController extends Controller
                     ->where($filter)
                     ->get();
 
-        return $model;
+        return response()->json([
+            'data' => $model,
+            'threat' => $threat->name . ' Breakdown'
+        ]);
     }
 
     public function pareto(Request $request)
