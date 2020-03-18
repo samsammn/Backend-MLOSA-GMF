@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ObservationExport;
+use App\Exports\ObservationExportAdmin;
 use App\Exports\ObservationLogExport;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
@@ -478,10 +479,16 @@ class ObservationController extends Controller
         return Excel::download(new ObservationLogExport($request), 'observation_logs_'. $now .'.xlsx');
     }
 
-    public function download_mlosa()
+    public function download_mlosa(Request $request)
     {
         $now = date('Ymd');
-        return Excel::download(new ObservationExport(), 'mlosa_database_'. $now .'.xlsx');
+        return Excel::download(new ObservationExport($request), 'mlosa_database_'. $now .'.xlsx');
+    }
+
+    public function download_mlosa_admin(Request $request)
+    {
+        $now = date('Ymd');
+        return Excel::download(new ObservationExportAdmin($request), 'mlosa_database_'. $now .'.xlsx');
     }
 
     public function calculate_risk_value(Request $request)
