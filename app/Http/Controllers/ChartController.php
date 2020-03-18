@@ -159,30 +159,54 @@ class ChartController extends Controller
     public function equipment(Request $request)
     {
         $filter = [];
+        $filterThreat = [];
         $group = [DB::raw('stc.id'), DB::raw('stc.description')];
+        $groupThreat = [DB::raw('tc.id'), DB::raw('tc.description')];
 
         if ($request->year != null){
             $group[] = DB::raw('year(o.observation_date)');
             $filter[] = [DB::raw('year(o.observation_date)'), '=', $request->year];
+            $filterThreat[] = [DB::raw('year(o.observation_date)'), '=', $request->year];
         }
 
         if ($request->start_month != null){
             $group[] = DB::raw('MONTH(o.observation_date)');
             $filter[] = [DB::raw('month(o.observation_date)'), '>=', $request->start_month];
+            $filterThreat[] = [DB::raw('month(o.observation_date)'), '>=', $request->start_month];
         }
 
         if ($request->end_month != null){
             $group[] = DB::raw('MONTH(o.observation_date)');
             $filter[] = [DB::raw('month(o.observation_date)'), '<=', $request->end_month];
+            $filterThreat[] = [DB::raw('month(o.observation_date)'), '<=', $request->end_month];
         }
 
         if ($request->maintenance_process != null){
             $filter[] = [DB::raw('mp.name'), '=', $request->maintenance_process];
         }
 
+        $threat = DB::table(DB::raw('observations as o'))
+                    ->selectRaw('
+                        tc.id,
+                        tc.description as threat,
+                        count(*) as total
+                    ')
+                    ->join(DB::raw('observation_details as od'), 'od.observation_id', '=', 'o.id')
+                    ->join(DB::raw('sub_threat_codes as stc'), 'stc.id', '=', 'od.sub_threat_codes_id')
+                    ->join(DB::raw('threat_codes as tc'), 'tc.id', '=', 'stc.threat_codes_id')
+                    ->groupBy($groupThreat)
+                    ->orderBy('total', 'desc')
+                    ->where($filterThreat)
+                    ->first();
+
+        if ($threat !== null) {
+            $filter[] = [DB::raw('stc.threat_codes_id'), '=', $threat->id];
+        }
+
         $model = DB::table(DB::raw('observations as o'))
                     ->selectRaw('
                         stc.id,
+                        tc.description,
                         stc.description as threat,
                         count(*) as total
                     ')
