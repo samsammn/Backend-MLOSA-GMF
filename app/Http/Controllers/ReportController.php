@@ -13,7 +13,9 @@ use App\Model\Distribution;
 use App\Model\Recommendation;
 use App\Model\RecommendationReplies;
 use App\Model\RecommendationUIC;
+use App\Model\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class ReportController extends Controller
 {
@@ -84,21 +86,71 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
+        // get user
+        $user = User::where('username', '=', Session::get('username'))->firstOrFail();
+
+        // get role user
+        // $role = $user->role;
+        $role = $request->role;
+
+        // get recommendations remarks acummulate
+        $recommendation_remarks = '';
+        foreach($request->recommendations as $recom){
+            $recommendation_remarks .= $recom["recommendation_remarks"];
+        }
+
         $model_report = new Report();
+
+        // cek remarks condition for status
+        if ($request->action == 'Save') {
+            $status = 'Draft';
+        } else if ($request->action == 'Submit') {
+            if ($request->introduction_remarks !== null || $request->brief_summary_remarks !== null || $request->regression_analysis_remarks !== null || $request->threat_error_remarks !== null || $recommendation_remarks !== '') {
+                if ($role == 'Manager' || $role == 'General Manager') {
+                    $status = 'Revised';
+                } else {
+                    $status = 'Need Checking';
+                }
+            } else {
+                if ($role == 'Manager') {
+                    $status = 'Need Approval';
+                } else if ($role == 'General Manager') {
+                    $status = 'Approved';
+                } else {
+                    $status = 'Need Checking';
+                }
+            }
+        } else {
+            $status = '';
+        }
+
+        if ($request->report_id !== null) {
+            $model_report->exists = true;
+            $model_report->id = $request->report_id;
+            $msg = 'Report updated successfully';
+        } else {
+            $msg = 'Report inserted successfully';
+        }
+
+        $model_report->report_no = $request->report_no;
+        $model_report->user_id = $user->id;
         $model_report->prepared_by = $request->prepared_by;
         $model_report->approved_by = $request->approved_by;
         $model_report->checked_by = $request->checked_by;
-        $model_report->status = $request->status;
+        $model_report->status = $status;
         $model_report->title = $request->title;
         $model_report->subject = $request->subject;
-        $model_report->report_no = $request->report_no;
         $model_report->date = $request->date;
         $model_report->attention = $request->attention;
         $model_report->issued = $request->issued;
         $model_report->introduction = $request->introduction;
+        $model_report->introduction_remarks = $request->introduction_remarks;
         $model_report->brief_summary = $request->brief_summary;
+        $model_report->brief_summary_remarks = $request->brief_summary_remarks;
         $model_report->regression_analysis = $request->regression_analysis;
+        $model_report->regression_analysis_remarks = $request->regression_analysis_remarks;
         $model_report->threat_error = $request->threat_error;
+        $model_report->threat_error_remarks = $request->threat_error_remarks;
         $model_report->save();
 
         foreach($request->distribution as $dist){
@@ -109,33 +161,28 @@ class ReportController extends Controller
             $model_report_dist->save();
         }
 
-        $uics = array();
         foreach($request->recommendations as $recom){
-            $model_recommendation = new Recommendation();
-            $model_recommendation->recommendation = $recom["recommendation"];
-            $model_recommendation->date = now();
-            $model_recommendation->due_date = $recom["due_date"];
-            $model_recommendation->status = $recom["status"];
-            $model_recommendation->report_id = $model_report->id;
-            $model_recommendation->save();
-
-            foreach($recom["uic"] as $uic){
-                $model_uic = UIC::where('uic_code',$uic)->get();
-                $model_rec_uic = new RecommendationUIC();
-                $model_rec_uic->recommendation_id = $model_recommendation->id;
-                $model_rec_uic->uic_id = $model_uic[0]->getKey();
-                $model_rec_uic->save();
-                if (!in_array($uic,$uics)){
-                    $model_temp = new ReportUIC();
-                    $model_temp->uic_id = $model_uic[0]->getKey();
-                    $model_temp->report_id = $model_report->id;
-                    $model_temp->save();
-                    $uics[] = $uic;
+            foreach ($recom['uic_id'] as $uic_id) {
+                $model_recommendation = new Recommendation();
+                if ($recom['recommendation_id'] !== null) {
+                    $model_recommendation->exists = true;
+                    $model_recommendation->id = $recom['recommendation_id'];
                 }
+                $model_recommendation->recommendation = $recom["recommendation"];
+                $model_recommendation->recommendation_remarks = $recom["recommendation_remarks"];
+                $model_recommendation->date = now();
+                $model_recommendation->due_date = $recom["due_date"];
+                $model_recommendation->status = $recom["status"];
+                $model_recommendation->report_id = $model_report->id;
+                $model_recommendation->uic_id = $uic_id;
+                $model_recommendation->save();
             }
         }
 
-        return "Store Success";
+        return response()->json([
+            'message' => $msg,
+            'report_id' => $model_report->id
+        ]);
     }
 
     /**
@@ -147,30 +194,13 @@ class ReportController extends Controller
     public function show($id)
     {
         $model = Report::find($id);
-        $list_uic = array();
-        $model_uic = ReportUIC::where('report_id',$id)->get();
-        foreach($model_uic as $uic){
-            $uics = UIC::find($uic->uic_id);
-            $list_uic[] = $uics->getAttribute("uic_code");
-        }
-        $model->uic = $list_uic;
+        $model->uic = Recommendation::selectRaw('uics.*')
+                    ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
+                    ->where('report_id',$id)
+                    ->get();
 
-        $list_uic = array();
-        $recommendation = Recommendation::where('report_id',$id)->get();
-        foreach($recommendation as $rec){
-            $model_uic = RecommendationUIC::where('recommendation_id',$rec->id)->get();
-                foreach($model_uic as $uic){
-                    $uics = UIC::find($uic->uic_id);
-                    $list_uic[] = $uics->getAttribute("uic_code");
-                }
-            $rec->uic = $list_uic;
-            $model_report = Report::find($rec->report_id);
-            $rec->report_no = $model_report->getAttribute("report_no");
-            $model_replies = RecommendationReplies::where('recommendation_id',$rec->id)->get();
-            $rec->replies = $model_replies;
-        }
+        $model->recommendation = Recommendation::with('uic', 'replies')->where('report_id',$id)->get();
 
-        $model->recommendation = $recommendation;
         return new Result($model);
     }
 

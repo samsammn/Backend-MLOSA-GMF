@@ -28,6 +28,8 @@ class CreateObservationsTable extends Migration
             $table->text('location')->nullable();
             $table->string('status', 20)->nullable();
             $table->string('action', 30)->nullable();
+            $table->text('describe_threat')->nullable();
+            $table->text('describe_crew_error')->nullable();
             $table->text('comment')->nullable();
             $table->timestamps();
         });

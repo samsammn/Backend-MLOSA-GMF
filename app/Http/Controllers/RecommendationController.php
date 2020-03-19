@@ -100,6 +100,7 @@ class RecommendationController extends Controller
             "status" => $status,
         ]);
     }
+
     public function filter(Request $request){
         $filter = [];
         $search1 = [];
@@ -133,8 +134,7 @@ class RecommendationController extends Controller
                         uics.uic_code
                     ')
                     ->join(DB::raw('report rep'), 'rec.report_id', '=', 'rep.id')
-                    ->join(DB::raw('recommendation_uic recu'), 'rec.id', '=', 'recu.recommendation_id')
-                    ->join(DB::raw('uics'), 'recu.uic_id', '=', 'uics.id')
+                    ->join(DB::raw('uics'), 'rec.uic_id', '=', 'uics.id')
                     ->where($filter)
                     ->orWhere($search1)
                     ->orWhere($search2)

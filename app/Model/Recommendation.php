@@ -18,8 +18,14 @@ class Recommendation extends Model
         'created_at',
         'updated_at',
     ];
+
     public function uic()
     {
-        return $this->hasOne('App\Model\UIC', 'uic_id');
+        return $this->belongsTo('App\Model\UIC', 'uic_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany('App\Model\RecommendationReplies', 'recommendation_id');
     }
 }
