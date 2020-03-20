@@ -46,6 +46,14 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/risk_value/calculate', 'ObservationController@calculate_risk_value');
     Route::post('/report/upload_file_editor', 'ReportController@upload_file_editor');
 
+
+    Route::get('/report/filter/filteroption','ReportController@filterOption');
+    Route::get('/report/filter/filterreport','ReportController@filter');
+
+    Route::put('/recommendation/verify/{id}','RecommendationController@verify');
+    Route::get('/recommendation/filter/filteroption','RecommendationController@filterOption');
+    Route::get('/recommendation/filter/filterrecommendation','RecommendationController@filter');
+
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
     Route::resource('sub_activity', 'SubActivityController');
@@ -61,11 +69,5 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::post('probability', 'RiskController@add_probability');
     Route::get('severity', 'RiskController@get_severity');
     Route::post('severity', 'RiskController@add_severity');
-
-    Route::get('/report/filter/filteroption','ReportController@filterOption');
-    Route::get('/report/filter/filterreport','ReportController@filter');
-
-    Route::get('/recommendation/filter/filteroption','RecommendationController@filterOption');
-    Route::get('/recommendation/filter/filterrecommendation','RecommendationController@filter');
 
 });

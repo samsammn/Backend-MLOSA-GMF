@@ -26,7 +26,7 @@ class RecommendationRepliesController extends Controller
     public function create()
     {
         //
-            
+
 
     }
 
@@ -38,16 +38,25 @@ class RecommendationRepliesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $file = $request->file;
+        $filename = '';
+
+        if ($request->file('file') !== null){
+            $path = '/recommendation_replies/';
+            $filename = url('') . $path . $file->getClientOriginalName();
+            $file->move(public_path($path), $file->getClientOriginalName());
+        }
+
         $model = new RecommendationReplies();
         $model->recommendation_id = $request->recommendation_id;
         $model->user_id = $request->user_id;
         $model->reply = $request->reply;
-        $path = $request->file != NULL ? Storage::putFile('recommendation_replies', $request->file) : "";
-        $model->file = $path;
+        $model->file = $filename;
         $model->save();
+
         return response()->json([
-            "message" => "Store Success"
+            'message' => 'Store Success',
+            'data' => $model
         ]);
     }
 

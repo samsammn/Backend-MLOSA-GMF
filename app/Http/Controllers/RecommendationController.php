@@ -144,4 +144,13 @@ class RecommendationController extends Controller
             "data" => $model,
         ]);
     }
+
+    public function verify($id)
+    {
+        $data = Recommendation::find($id);
+        $data->status = 'Verify';
+        $data->save();
+
+        return $data;
+    }
 }
