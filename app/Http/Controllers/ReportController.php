@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
+use App\Mail\ReportMail;
 use App\Model\Report;
 use App\Model\ReportUIC;
 use App\Model\UIC;
@@ -15,6 +16,7 @@ use App\Model\RecommendationReplies;
 use App\Model\RecommendationUIC;
 use App\Model\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class ReportController extends Controller
@@ -378,6 +380,12 @@ class ReportController extends Controller
             'message' => 'Upload berhasil!',
             'image_url' => $loc
         ]);
+    }
+
+    public function test_email()
+    {
+        Mail::to('samsam.nursamsi02@gmail.com')->send(new ReportMail);
+        return 'Email Sent';
     }
 
 }

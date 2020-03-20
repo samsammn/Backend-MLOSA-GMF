@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::post('/report/upload_file_editor', 'ReportController@upload_file_editor');
 
 
+    Route::post('/report/test_email', 'ReportController@test_email');
     Route::get('/report/filter/filteroption','ReportController@filterOption');
     Route::get('/report/filter/filterreport','ReportController@filter');
 

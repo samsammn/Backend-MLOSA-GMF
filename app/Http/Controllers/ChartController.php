@@ -200,7 +200,10 @@ class ChartController extends Controller
                     ->first();
 
         if ($threat !== null) {
+            $threat_name = $threat->name . ' Breakdown';
             $filter[] = [DB::raw('stc.threat_codes_id'), '=', $threat->id];
+        } else {
+            $threat_name = 'No threat data yet';
         }
 
         $model = DB::table(DB::raw('observations as o'))
@@ -219,7 +222,7 @@ class ChartController extends Controller
 
         return response()->json([
             'data' => $model,
-            'threat' => $threat->name . ' Breakdown'
+            'threat' => $threat_name
         ]);
     }
 
