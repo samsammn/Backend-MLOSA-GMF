@@ -48,12 +48,13 @@ Route::group(['middleware' => 'auth_api'], function () {
 
 
     Route::post('/report/test_email', 'ReportController@test_email');
-    Route::get('/report/filter/filteroption','ReportController@filterOption');
-    Route::get('/report/filter/filterreport','ReportController@filter');
+    Route::get('/report/filter/filteroption', 'ReportController@filterOption');
+    Route::get('/report/filter/filterreport', 'ReportController@filter');
 
-    Route::put('/recommendation/verify/{id}','RecommendationController@verify');
-    Route::get('/recommendation/filter/filteroption','RecommendationController@filterOption');
-    Route::get('/recommendation/filter/filterrecommendation','RecommendationController@filter');
+    Route::put('/recommendation/verify/{id}', 'RecommendationController@verify');
+    Route::get('/recommendation/detail', 'RecommendationController@detail');
+    Route::get('/recommendation/filter/filteroption', 'RecommendationController@filterOption');
+    Route::get('/recommendation/filter/filterrecommendation', 'RecommendationController@filter');
 
     Route::resource('observation', 'ObservationController');
     Route::resource('activity', 'ActivityController');
@@ -70,5 +71,4 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::post('probability', 'RiskController@add_probability');
     Route::get('severity', 'RiskController@get_severity');
     Route::post('severity', 'RiskController@add_severity');
-
 });

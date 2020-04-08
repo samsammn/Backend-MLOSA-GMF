@@ -30,6 +30,11 @@ class Observation extends Model
         return $this->belongsToMany('App\Model\User', 'observation_teams', 'observation_id', 'user_id');
     }
 
+    public function team()
+    {
+        return $this->belongsToMany('App\Model\User', 'observation_teams', 'observation_id', 'user_id');
+    }
+
     public function uic()
     {
         return $this->belongsTo('App\Model\UIC', 'uic_id');
@@ -44,17 +49,17 @@ class Observation extends Model
     {
         if ($q == null) return $query;
         return $query
-                    ->where('subtitle', 'LIKE', '%'.$q.'%')
-                    ->orWhere('component_type', 'LIKE', '%'.$q.'%')
-                    ->orWhere('task_observed', 'LIKE', '%'.$q.'%')
-                    ->orWhere('location', 'LIKE', '%'.$q.'%');
+            ->where('subtitle', 'LIKE', '%' . $q . '%')
+            ->orWhere('component_type', 'LIKE', '%' . $q . '%')
+            ->orWhere('task_observed', 'LIKE', '%' . $q . '%')
+            ->orWhere('location', 'LIKE', '%' . $q . '%');
     }
 
     public function scopeRangeMonth($query, $q1, $q2)
     {
         if ($q == null) return $query;
         return $query
-                    ->where('MONTH(o.observation_date)', '>=', $q1)
-                    ->where('MONTH(o.observation_date)', '<=', $q2);
+            ->where('MONTH(o.observation_date)', '>=', $q1)
+            ->where('MONTH(o.observation_date)', '<=', $q2);
     }
 }

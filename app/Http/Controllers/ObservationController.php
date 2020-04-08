@@ -43,34 +43,29 @@ class ObservationController extends Controller
 
         $filter = [];
 
-        if ($request->year != null)
-        {
+        if ($request->year != null) {
             $filter[] = [DB::raw('year(due_date)'), '=', $request->year];
         }
 
-        if ($request->month != null)
-        {
+        if ($request->month != null) {
             $filter[] = [DB::raw('month(due_date)'), '=', $request->month];
         }
 
-        if ($request->mp_id != null)
-        {
+        if ($request->mp_id != null) {
             $filter[] = ['mp_id', '=', $request->mp_id];
         }
 
-        if ($request->uic_id != null)
-        {
+        if ($request->uic_id != null) {
             $filter[] = ['uic_id', '=', $request->uic_id];
         }
 
-        if ($request->status != null)
-        {
+        if ($request->status != null) {
             $filter[] = ['status', '=', $request->status];
         }
 
         $model = Observation::with(['uic', 'maintenance', 'users' => function ($query) {
-                    $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
-                }])->where($filter)->search($request->search)->get();
+            $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
+        }])->where($filter)->search($request->search)->get();
 
         return new Result($model);
     }
@@ -98,8 +93,7 @@ class ObservationController extends Controller
 
         $uic = UIC::find($observation['uic_id']);
 
-        if ($observation['no'] == null)
-        {
+        if ($observation['no'] == null) {
             $model_observation = new Observation();
             $model_observation->observation_no = $this->autoNumber($uic->uic_code);
 
@@ -107,14 +101,12 @@ class ObservationController extends Controller
         } else {
 
             $obs_team = ObservationTeam::where('observation_id', '=', $observation['id']);
-            if ($obs_team != null)
-            {
+            if ($obs_team != null) {
                 $obs_team->delete();
             }
 
             $obs_detail = ObservationDetail::where('observation_id', '=', $observation['id']);
-            if ($obs_detail != null)
-            {
+            if ($obs_detail != null) {
                 $obs_detail->delete();
             }
 
@@ -188,9 +180,8 @@ class ObservationController extends Controller
         ObservationTeam::insert($observation_team);
         ObservationDetail::insert($observation_detail);
 
-        if ($observation['status'] == "Closed" || $observation['status'] == "Verified")
-        {
-            $link_download = "api/observation/download/logs?observation_id=".$model_observation->id;
+        if ($observation['status'] == "Closed" || $observation['status'] == "Verified") {
+            $link_download = "api/observation/download/logs?observation_id=" . $model_observation->id;
         } else {
             $link_download = "";
         }
@@ -218,8 +209,8 @@ class ObservationController extends Controller
     public function show($id)
     {
         $model = Observation::with(['uic', 'maintenance', 'users' => function ($query) {
-                    $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
-                }])->find($id);
+            $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
+        }])->find($id);
 
         return new Result($model);
     }
@@ -313,33 +304,27 @@ class ObservationController extends Controller
     {
         $filter = [];
 
-        if ($request->year != null)
-        {
+        if ($request->year != null) {
             $filter[] = [DB::raw('year(due_date)'), '=', $request->year];
         }
 
-        if ($request->start_month != null)
-        {
+        if ($request->start_month != null) {
             $filter[] = [DB::raw('month(due_date)'), '>=', $request->start_month];
         }
 
-        if ($request->end_month != null)
-        {
+        if ($request->end_month != null) {
             $filter[] = [DB::raw('month(due_date)'), '<=', $request->end_month];
         }
 
-        if ($request->mp_id != null)
-        {
+        if ($request->mp_id != null) {
             $filter[] = ['mp_id', '=', $request->mp_id];
         }
 
-        if ($request->uic_id != null)
-        {
+        if ($request->uic_id != null) {
             $filter[] = ['uic_id', '=', $request->uic_id];
         }
 
-        if ($request->status != null)
-        {
+        if ($request->status != null) {
             $filter[] = ['status', '=', $request->status];
         }
 
@@ -348,30 +333,64 @@ class ObservationController extends Controller
         return new ResultCollection($model->groupBy('due_date'));
     }
 
-    public function form($id)
+    public function form(Request $request, $id)
     {
         $user = User::where('username', '=', Session::get('username'))->with('uic')->firstOrFail();
         $uic = $user->uic->uic_code;
 
-        $observation_no = $this->autoNumber($uic);
+        if ($request->observation_no !== null) {
+            $observation = Observation::selectRaw('
+                id,
+                mp_id,
+                observation_no as no,
+                uic_id,
+                subtitle,
+                due_date,
+                start_time,
+                end_time,
+                component_type,
+                task_observed,
+                location,
+                status,
+                describe_threat,
+                describe_crew_error,
+                comment
+            ')->where('observation_no', '=', $request->observation_no)->first();
+
+            $teams = ObservationTeam::selectRaw('observation_id, user_id')->where('observation_id', '=', $observation->id)->get();
+            $observation['team'] = $teams;
+            $id = $observation->mp_id;
+        } else {
+            $observation = ['no' => $this->autoNumber($uic), 'id' => -1];
+        }
+
         $maintenance = MaintenanceProcess::find($id);
         $threat_codes = ThreatCode::all();
         $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');
-        $activities = Activity::with(['sub_activities' => function ($query) use ($id){
-            $query->where('mp_id','=', $id);
+        $activities = Activity::with(['sub_activities' => function ($query) use ($id) {
+            $query->where('mp_id', '=', $id);
         }])->whereIn('id', $maintenance_detail)->get();
 
         foreach ($activities as $item) {
-            $input = new stdClass;
-            $input->safety_risk = "";
-            $input->sub_threat_codes_id = "";
-            $input->risk_index = "";
-            $input->control_efectivenes = "";
-            $input->effectively_managed = "";
-            $input->error_outcome = "";
-            $input->remark = "";
-
             foreach ($item->sub_activities as $value) {
+                $ob_detail = ObservationDetail::where('observation_id', '=', $observation['id'])->where('activity_id', '=', $item->id)->where('sub_activity_id', '=', $value->sub_activity_id)->first();
+                $input = new stdClass;
+                $input->safety_risk = $ob_detail === null ? "" : $ob_detail->safety_risk;
+                $input->sub_threat_codes_id = $ob_detail === null ? "" : $ob_detail->sub_threat_codes_id;
+                $input->risk_index = $ob_detail === null ? "" : $ob_detail->risk_index;
+                $input->control_effectiveness = $ob_detail === null ? "" : $ob_detail->control_effectiveness;
+                $input->effectively_managed = $ob_detail === null ? "" : $ob_detail->effectively_managed;
+                $input->error_outcome = $ob_detail === null ? "" : $ob_detail->error_outcome;
+                $input->remark = $ob_detail === null ? "" : $ob_detail->remark;
+                $input->risk_index_actual = $ob_detail === null ? "" : $ob_detail->risk_index_actual;
+                $input->risk_index_proposed = $ob_detail === null ? "" : $ob_detail->risk_index_proposed;
+                $input->revised_risk_index = $ob_detail === null ? "" : $ob_detail->revised_risk_index;
+                $input->revised_severity = $ob_detail === null ? "" : $ob_detail->revised_severity;
+                $input->revised_probability = $ob_detail === null ? "" : $ob_detail->revised_probability;
+                $input->revised_control_effectiveness = $ob_detail === null ? "" : $ob_detail->revised_control_effectiveness;
+                $input->propose_risk_value = $ob_detail === null ? "" : $ob_detail->propose_risk_value;
+                $input->accept_or_treat = $ob_detail === null ? "" : $ob_detail->accept_or_treat;
+
                 $sub_activities = SubActivity::find($value->sub_activity_id);
                 $value->id = $sub_activities->id;
                 $value->description = $sub_activities->description;
@@ -383,7 +402,7 @@ class ObservationController extends Controller
         }
 
         return response()->json([
-            'observation_no' => $observation_no,
+            'observation' => $observation,
             'maintenance_process' => $maintenance,
             'threat_codes' => $threat_codes,
             'activities' => $activities
@@ -395,7 +414,7 @@ class ObservationController extends Controller
         $data = $request->file('file');
         $observation = Observation::find($id);
 
-        if ($request->file('file') == null){
+        if ($request->file('file') == null) {
             return response()->json([
                 'url_files' => [],
                 'message' => 'Upload gagal, file tidak ada!'
@@ -454,19 +473,19 @@ class ObservationController extends Controller
     public function download_log(Request $request)
     {
         $now = date('Ymd');
-        return Excel::download(new ObservationLogExport($request), 'observation_logs_'. $now .'.xlsx');
+        return Excel::download(new ObservationLogExport($request), 'observation_logs_' . $now . '.xlsx');
     }
 
     public function download_mlosa(Request $request)
     {
         $now = date('Ymd');
-        return Excel::download(new ObservationExport($request), 'mlosa_database_'. $now .'.xlsx');
+        return Excel::download(new ObservationExport($request), 'mlosa_database_' . $now . '.xlsx');
     }
 
     public function download_mlosa_admin(Request $request)
     {
         $now = date('Ymd');
-        return Excel::download(new ObservationExportAdmin($request), 'mlosa_database_'. $now .'.xlsx');
+        return Excel::download(new ObservationExportAdmin($request), 'mlosa_database_' . $now . '.xlsx');
     }
 
     public function calculate_risk_value(Request $request)

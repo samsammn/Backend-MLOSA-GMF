@@ -28,46 +28,59 @@ class ReportController extends Controller
      */
     public function index()
     {
-        $model = Report::all();
-        foreach($model as $report){
-            $list_uic = array();
-            $model_uic = ReportUIC::where('report_id',$report->id)->get();
-            foreach($model_uic as $uic){
-                $uics = UIC::find($uic->uic_id);
-                $list_uic[] = $uics->getAttribute("uic_code");
-            }
-            $report->uic = $list_uic;
-            $model_recommendation = Recommendation::where('report_id',$report->id)->get();
-            $count = 0;
-            $overdue = false;
-            $on_progress = false;
-            foreach ($model_recommendation as $recom){
-                if ($recom->status == "Closed"){
-                    $count = $count + 1;
-                }
-                if ($recom->status == "On Progress"){
-                    $on_progress = true;
-                }
-                if ($recom->status == "Overdue"){
-                    $overdue = true;
-                }
-            }
-            if ($count == sizeof($model_recommendation)){
-                $status = "Closed";
-            }else if($overdue){
-                $status = "Overdue";
-            }else if($on_progress){
-                $status = "On Progress";
-            }else{
-                $status = "Open";
-            }
-            $report->recom_status = $status;
 
+        $model = Report::all();
+
+        foreach ($model as $report) {
+            $report->uic = Recommendation::selectRaw('uics.*')
+                        ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
+                        ->where('report_id',$report->id)
+                        ->get();
+            // $report->recommendation = Recommendation::with('uic', 'replies')->where('report_id', '=', $report->id)->get();
         }
 
-        return response()->json([
-            "data" => $model,
-        ]);
+        return new Result($model);
+
+        // $model = Report::all();
+        // foreach($model as $report){
+        //     $list_uic = array();
+        //     $model_uic = ReportUIC::where('report_id',$report->id)->get();
+        //     foreach($model_uic as $uic){
+        //         $uics = UIC::find($uic->uic_id);
+        //         $list_uic[] = $uics->getAttribute("uic_code");
+        //     }
+        //     $report->uic = $list_uic;
+        //     $model_recommendation = Recommendation::where('report_id',$report->id)->get();
+        //     $count = 0;
+        //     $overdue = false;
+        //     $on_progress = false;
+        //     foreach ($model_recommendation as $recom){
+        //         if ($recom->status == "Closed"){
+        //             $count = $count + 1;
+        //         }
+        //         if ($recom->status == "On Progress"){
+        //             $on_progress = true;
+        //         }
+        //         if ($recom->status == "Overdue"){
+        //             $overdue = true;
+        //         }
+        //     }
+        //     if ($count == sizeof($model_recommendation)){
+        //         $status = "Closed";
+        //     }else if($overdue){
+        //         $status = "Overdue";
+        //     }else if($on_progress){
+        //         $status = "On Progress";
+        //     }else{
+        //         $status = "Open";
+        //     }
+        //     $report->recom_status = $status;
+
+        // }
+
+        // return response()->json([
+        //     "data" => $model,
+        // ]);
     }
 
     /**
@@ -193,7 +206,7 @@ class ReportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $model = Report::find($id);
         $model->uic = Recommendation::selectRaw('uics.*')
@@ -201,7 +214,7 @@ class ReportController extends Controller
                     ->where('report_id',$id)
                     ->get();
 
-        $model->recommendation = Recommendation::with('uic', 'replies')->where('report_id',$id)->get();
+        $model->recommendation = Recommendation::with('uic', 'replies')->where('report_id', '=', $id)->where('uic_id', '=', $request->uic_id)->get();
 
         return new Result($model);
     }
