@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/risk_value/calculate', 'ObservationController@calculate_risk_value');
     Route::post('/report/upload_file_editor', 'ReportController@upload_file_editor');
 
+    Route::post('/license', 'UserController@list_obslicense');
 
     Route::post('/report/test_email', 'ReportController@test_email');
     Route::get('/report/filter/filteroption', 'ReportController@filterOption');

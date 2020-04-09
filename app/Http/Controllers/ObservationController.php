@@ -357,7 +357,10 @@ class ObservationController extends Controller
                 comment
             ')->where('observation_no', '=', $request->observation_no)->first();
 
-            $teams = ObservationTeam::selectRaw('observation_id, user_id')->where('observation_id', '=', $observation->id)->get();
+            $teams = ObservationTeam::selectRaw('observation_teams.observation_id, users.fullname, observation_teams.user_id')
+                ->join('users', 'users.id', '=', 'observation_teams.user_id')
+                ->where('observation_id', '=', $observation->id)
+                ->get();
             $observation['team'] = $teams;
             $id = $observation->mp_id;
         } else {

@@ -161,7 +161,14 @@ class UserController extends Controller
                         $uic_for_role = 'Admin';
                     }
                 } else {
-                    $uic_for_role = 'UIC';
+                    if ($data_soe['obslicense'] !== null) {
+                        $uic_for_role = 'UIC';
+                    } else {
+                        return response()->json([
+                            'data' => [],
+                            'result' => false
+                        ]);
+                    }
                 }
 
                 $data = [
@@ -267,4 +274,30 @@ class UserController extends Controller
             echo "LDAP Connection trouble, please try again 2/3 time";
         }
     }
+
+    // public function list_obslicense(Request $request)
+    // {
+    //     $res = [];
+    //     foreach ($request->data as $key) {
+    //         $client = new Client();
+    //         $headers = [
+    //             'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImVtYWlsIjoia2lraWsuZGV2QGdtYWlsLmNvbSJ9fQ.bFBBep7EDAwjIioDWsQHt2_mHFnUPy3ea6ocRVxNcm4',
+    //             'username' => $key['nopeg'],
+    //         ];
+
+    //         $response = $client->get('http://172.16.40.164/API/Observer', [
+    //             'headers' => $headers
+    //         ]);
+
+    //         $body = json_decode($response->getBody(), true);
+
+    //         if ($body !== []) {
+    //             $data_soe = $body[0];
+    //             if ($data_soe['obslicense'] !== null) {
+    //                 $res[] = $key['nopeg'];
+    //             }
+    //         }
+    //     }
+    //     return $res;
+    // }
 }
