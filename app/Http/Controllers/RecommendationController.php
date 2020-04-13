@@ -147,6 +147,9 @@ class RecommendationController extends Controller
             $query->orWhere(DB::raw('rec.recommendation'), 'LIKE', '%' . $request->search . '%');
         }
 
+        $notif = new NotificationController();
+        $notif->readAll('recommendation');
+
         return response()->json([
             "data" => $query->get(),
         ]);

@@ -16,6 +16,7 @@ use App\Model\ObservationDetail;
 use App\Model\ObservationLog;
 use App\Model\ObservationTeam;
 use App\Model\SubActivity;
+use App\Model\SubThreatCode;
 use App\Model\ThreatCode;
 use App\Model\UIC;
 use App\Model\User;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
+use PDF;
 use Symfony\Component\Console\Input\Input;
 
 class ObservationController extends Controller
@@ -67,6 +69,9 @@ class ObservationController extends Controller
             $query->select('users.id', 'username', 'fullname', 'position', 'role', 'obslicense');
         }])->where($filter)->search($request->search)->get();
 
+        $notif = new NotificationController();
+        $notif->readAll('observation');
+
         return new Result($model);
     }
 
@@ -92,8 +97,9 @@ class ObservationController extends Controller
         $activities = $request->activities;
 
         $uic = UIC::find($observation['uic_id']);
+        $user = User::where('username', '=', Session::get('username'))->with('uic')->first();
 
-        if ($observation['no'] == null) {
+        if ($observation['no'] === null) {
             $model_observation = new Observation();
             $model_observation->observation_no = $this->autoNumber($uic->uic_code);
 
@@ -101,12 +107,12 @@ class ObservationController extends Controller
         } else {
 
             $obs_team = ObservationTeam::where('observation_id', '=', $observation['id']);
-            if ($obs_team != null) {
+            if ($obs_team !== null) {
                 $obs_team->delete();
             }
 
             $obs_detail = ObservationDetail::where('observation_id', '=', $observation['id']);
-            if ($obs_detail != null) {
+            if ($obs_detail !== null) {
                 $obs_detail->delete();
             }
 
@@ -193,6 +199,15 @@ class ObservationController extends Controller
         $log->status = $observation['status'];
         $log->link_download = $link_download;
         $log->save();
+
+        if ($user->role === 'UIC' && $observation['status'] === 'Closed') {
+            $notif = new NotificationController();
+            $notif->addObservation([
+                'observation_id' => $model_observation->id,
+                'role' => strtolower($user->role),
+                'unit' => $uic->uic_code
+            ]);
+        }
 
         return response()->json([
             'observation_id' => $model_observation->id,
@@ -296,6 +311,13 @@ class ObservationController extends Controller
         $model->uic_id = $request->uic_id;
         $model->status = "Open";
         $model->save();
+
+        $notif = new NotificationController();
+        $notif->addObservation([
+            'observation_id' => $model->id,
+            'role' => 'admin',
+            'unit' => $uic->uic_code
+        ]);
 
         return new Result($model);
     }
@@ -483,6 +505,97 @@ class ObservationController extends Controller
     {
         $now = date('Ymd');
         return Excel::download(new ObservationExport($request), 'mlosa_database_' . $now . '.xlsx');
+    }
+
+    public function download_pdf(Request $request)
+    {
+        $observation = Observation::selectRaw('
+            id,
+            mp_id,
+            observation_no as no,
+            observation_date as date,
+            uic_id,
+            subtitle,
+            due_date,
+            start_time,
+            end_time,
+            component_type,
+            task_observed,
+            location,
+            status,
+            describe_threat,
+            describe_crew_error,
+            comment
+        ')->where('observation_no', '=', $request->observation_no)->first();
+
+        $teams = ObservationTeam::selectRaw('observation_teams.observation_id, users.fullname, observation_teams.user_id')
+            ->join('users', 'users.id', '=', 'observation_teams.user_id')
+            ->where('observation_id', '=', $observation->id)
+            ->get();
+
+        $observation['team'] = $teams;
+        $id = $observation->mp_id;
+
+        $maintenance = MaintenanceProcess::find($id);
+
+        $tc = ThreatCode::orderBy('code', 'asc');
+
+        $tc_count = $tc->count();
+        $threat_codes['left'] = $tc->skip(0)->limit($tc_count / 2)->get();
+        $threat_codes['right'] = $tc->skip($tc_count / 2)->limit($tc_count)->get();
+
+        $maintenance_detail = MaintenanceProcessDetail::where('mp_id', '=', $id)->pluck('activity_id');
+
+        $activities = Activity::with(['sub_activities' => function ($query) use ($id) {
+            $query->where('mp_id', '=', $id);
+        }])->whereIn('id', $maintenance_detail)->get();
+
+        foreach ($activities as $item) {
+            foreach ($item->sub_activities as $value) {
+                $ob_detail = ObservationDetail::where('observation_id', '=', $observation['id'])->where('activity_id', '=', $item->id)->where('sub_activity_id', '=', $value->sub_activity_id)->first();
+                $mp_detail = SubThreatCode::find($ob_detail === null ? -1 : $ob_detail->sub_threat_codes_id);
+
+                $input = new stdClass;
+                $input->safety_risk = $ob_detail === null ? "" : $ob_detail->safety_risk;
+                $input->sub_threat_codes_id = $ob_detail === null ? "" : $ob_detail->sub_threat_codes_id;
+                $input->threat_codes = $mp_detail === null ? "" : substr($mp_detail->code, 0, 1);
+                $input->risk_index = $ob_detail === null ? "" : $ob_detail->risk_index;
+                $input->control_effectiveness = $ob_detail === null ? "" : $ob_detail->control_effectiveness;
+                $input->effectively_managed = $ob_detail === null ? "" : $ob_detail->effectively_managed;
+                $input->error_outcome = $ob_detail === null ? "" : $ob_detail->error_outcome;
+                $input->remark = $ob_detail === null ? "" : $ob_detail->remark;
+                $input->risk_index_actual = $ob_detail === null ? "" : $ob_detail->risk_index_actual;
+                $input->risk_index_proposed = $ob_detail === null ? "" : $ob_detail->risk_index_proposed;
+                $input->revised_risk_index = $ob_detail === null ? "" : $ob_detail->revised_risk_index;
+                $input->revised_severity = $ob_detail === null ? "" : $ob_detail->revised_severity;
+                $input->revised_probability = $ob_detail === null ? "" : $ob_detail->revised_probability;
+                $input->revised_control_effectiveness = $ob_detail === null ? "" : $ob_detail->revised_control_effectiveness;
+                $input->propose_risk_value = $ob_detail === null ? "" : $ob_detail->propose_risk_value;
+                $input->accept_or_treat = $ob_detail === null ? "" : $ob_detail->accept_or_treat;
+
+                $sub_activities = SubActivity::find($value->sub_activity_id);
+                $value->id = $sub_activities->id;
+                $value->description = $sub_activities->description;
+                $value->inputs = $input;
+                unset($value->mp_id);
+                unset($value->activity_id);
+                unset($value->sub_activity_id);
+            }
+        }
+
+        $data = [
+            'observation' => $observation,
+            'maintenance_process' => $maintenance,
+            'threat_codes' => $threat_codes,
+            'activities' => $activities
+        ];
+
+        // return $data;
+        // return view('pdf.observations', ['data' => $data]);
+
+        set_time_limit(300);
+        $pdf = PDF::loadView('pdf.observations', ['data' => $data]);
+        return $pdf->download('observations.pdf');
     }
 
     public function download_mlosa_admin(Request $request)

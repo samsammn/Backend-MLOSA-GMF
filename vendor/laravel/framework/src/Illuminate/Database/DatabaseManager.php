@@ -256,8 +256,8 @@ class DatabaseManager implements ConnectionResolverInterface
         $fresh = $this->makeConnection($name);
 
         return $this->connections[$name]
-                                ->setPdo($fresh->getRawPdo())
-                                ->setReadPdo($fresh->getRawReadPdo());
+                                ->setPdo($fresh->getPdo())
+                                ->setReadPdo($fresh->getReadPdo());
     }
 
     /**

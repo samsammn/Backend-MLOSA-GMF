@@ -1,6 +1,6 @@
 <p>Dear Sir/Ms,</p>
 
-<p>We want to report the summary MLOSA report 2020 for this period</p>
+<p>We want to report the summary MLOSA report {{ date('Y') }} for this period</p>
 <p>If you have any further information, please don't hesitate to contact: example@gmf-aeroasia.co.id. <br>
 This email has been sent automatically. Replies to this e-mail will not be read</p>
 

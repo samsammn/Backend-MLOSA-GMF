@@ -1472,8 +1472,6 @@ class Builder
      * @param  array  $values
      * @param  string  $boolean
      * @return $this
-     *
-     * @throws \InvalidArgumentException
      */
     public function whereRowValues($columns, $operator, $values, $boolean = 'and')
     {
@@ -1947,7 +1945,7 @@ class Builder
      */
     public function forPage($page, $perPage = 15)
     {
-        return $this->offset(($page - 1) * $perPage)->limit($perPage);
+        return $this->skip(($page - 1) * $perPage)->take($perPage);
     }
 
     /**
@@ -1967,7 +1965,7 @@ class Builder
         }
 
         return $this->orderBy($column, 'desc')
-                    ->limit($perPage);
+                    ->take($perPage);
     }
 
     /**
@@ -1987,7 +1985,7 @@ class Builder
         }
 
         return $this->orderBy($column, 'asc')
-                    ->limit($perPage);
+                    ->take($perPage);
     }
 
     /**
@@ -2171,7 +2169,7 @@ class Builder
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        $this->offset(($page - 1) * $perPage)->limit($perPage + 1);
+        $this->skip(($page - 1) * $perPage)->take($perPage + 1);
 
         return $this->simplePaginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
@@ -2721,7 +2719,7 @@ class Builder
             return true;
         }
 
-        return (bool) $this->limit(1)->update($values);
+        return (bool) $this->take(1)->update($values);
     }
 
     /**
@@ -2731,8 +2729,6 @@ class Builder
      * @param  float|int  $amount
      * @param  array  $extra
      * @return int
-     *
-     * @throws \InvalidArgumentException
      */
     public function increment($column, $amount = 1, array $extra = [])
     {
@@ -2754,8 +2750,6 @@ class Builder
      * @param  float|int  $amount
      * @param  array  $extra
      * @return int
-     *
-     * @throws \InvalidArgumentException
      */
     public function decrement($column, $amount = 1, array $extra = [])
     {

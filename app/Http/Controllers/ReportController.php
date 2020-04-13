@@ -6,18 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
-use App\Mail\ReportMail;
 use App\Model\Report;
-use App\Model\ReportUIC;
 use App\Model\UIC;
 use App\Model\Distribution;
 use App\Model\Recommendation;
-use App\Model\RecommendationReplies;
-use App\Model\RecommendationUIC;
 use App\Model\User;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use GuzzleHttp\Client;
 
 class ReportController extends Controller
 {
@@ -28,59 +26,19 @@ class ReportController extends Controller
      */
     public function index()
     {
-
         $model = Report::all();
 
         foreach ($model as $report) {
             $report->uic = Recommendation::selectRaw('uics.*')
-                        ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
-                        ->where('report_id',$report->id)
-                        ->get();
-            // $report->recommendation = Recommendation::with('uic', 'replies')->where('report_id', '=', $report->id)->get();
+                ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
+                ->where('report_id', $report->id)
+                ->get();
         }
 
+        $notif = new NotificationController();
+        $notif->readAll('report');
+
         return new Result($model);
-
-        // $model = Report::all();
-        // foreach($model as $report){
-        //     $list_uic = array();
-        //     $model_uic = ReportUIC::where('report_id',$report->id)->get();
-        //     foreach($model_uic as $uic){
-        //         $uics = UIC::find($uic->uic_id);
-        //         $list_uic[] = $uics->getAttribute("uic_code");
-        //     }
-        //     $report->uic = $list_uic;
-        //     $model_recommendation = Recommendation::where('report_id',$report->id)->get();
-        //     $count = 0;
-        //     $overdue = false;
-        //     $on_progress = false;
-        //     foreach ($model_recommendation as $recom){
-        //         if ($recom->status == "Closed"){
-        //             $count = $count + 1;
-        //         }
-        //         if ($recom->status == "On Progress"){
-        //             $on_progress = true;
-        //         }
-        //         if ($recom->status == "Overdue"){
-        //             $overdue = true;
-        //         }
-        //     }
-        //     if ($count == sizeof($model_recommendation)){
-        //         $status = "Closed";
-        //     }else if($overdue){
-        //         $status = "Overdue";
-        //     }else if($on_progress){
-        //         $status = "On Progress";
-        //     }else{
-        //         $status = "Open";
-        //     }
-        //     $report->recom_status = $status;
-
-        // }
-
-        // return response()->json([
-        //     "data" => $model,
-        // ]);
     }
 
     /**
@@ -102,15 +60,15 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         // get user
-        $user = User::where('username', '=', Session::get('username'))->firstOrFail();
+        $user = User::where('username', '=', Session::get('username'))->first();
 
         // get role user
-        // $role = $user->role;
-        $role = $request->role;
+        $role = $user->role;
+        // $role = $request->role;
 
         // get recommendations remarks acummulate
         $recommendation_remarks = '';
-        foreach($request->recommendations as $recom){
+        foreach ($request->recommendations as $recom) {
             $recommendation_remarks .= $recom["recommendation_remarks"];
         }
 
@@ -121,15 +79,15 @@ class ReportController extends Controller
             $status = 'Draft';
         } else if ($request->action == 'Submit') {
             if ($request->introduction_remarks !== null || $request->brief_summary_remarks !== null || $request->regression_analysis_remarks !== null || $request->threat_error_remarks !== null || $recommendation_remarks !== '') {
-                if ($role == 'Manager' || $role == 'General Manager') {
+                if ($role == 'MGR' || $role == 'GM') {
                     $status = 'Revised';
                 } else {
                     $status = 'Need Checking';
                 }
             } else {
-                if ($role == 'Manager') {
+                if ($role == 'MGR') {
                     $status = 'Need Approval';
-                } else if ($role == 'General Manager') {
+                } else if ($role == 'GM') {
                     $status = 'Approved';
                 } else {
                     $status = 'Need Checking';
@@ -168,7 +126,7 @@ class ReportController extends Controller
         $model_report->threat_error_remarks = $request->threat_error_remarks;
         $model_report->save();
 
-        foreach($request->distribution as $dist){
+        foreach ($request->distribution as $dist) {
             $model_report_dist = new Distribution();
 
             $model_report_dist->name = $dist["name"];
@@ -176,7 +134,8 @@ class ReportController extends Controller
             $model_report_dist->save();
         }
 
-        foreach($request->recommendations as $recom){
+        $unit_id = [];
+        foreach ($request->recommendations as $recom) {
             foreach ($recom['uic_id'] as $uic_id) {
                 $model_recommendation = new Recommendation();
                 if ($recom['recommendation_id'] !== null) {
@@ -191,8 +150,19 @@ class ReportController extends Controller
                 $model_recommendation->report_id = $model_report->id;
                 $model_recommendation->uic_id = $uic_id;
                 $model_recommendation->save();
+                $unit_id[] = $uic_id;
             }
         }
+
+        $unit_code = UIC::whereIn('id', $unit_id)->pluck('uic_code')->toArray();
+
+        $notif = new NotificationController();
+        $notif->addReport([
+            'report_id' => $model_report->id,
+            'role' => strtolower($user->role),
+            'unit' => $unit_code,
+            'status' => $status
+        ]);
 
         return response()->json([
             'message' => $msg,
@@ -210,9 +180,9 @@ class ReportController extends Controller
     {
         $model = Report::find($id);
         $model->uic = Recommendation::selectRaw('uics.*')
-                    ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
-                    ->where('report_id',$id)
-                    ->get();
+            ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
+            ->where('report_id', $id)
+            ->get();
 
         $model->recommendation = Recommendation::with('uic', 'replies')->where('report_id', '=', $id)->where('uic_id', '=', $request->uic_id)->get();
 
@@ -242,14 +212,11 @@ class ReportController extends Controller
         $model = Report::find($id);
         $result = new Result($model);
 
-        if ($model != null)
-        {
+        if ($model != null) {
             $model->update($request->all());
             $result->additional(['message' => 'update successfully']);
             return $result;
-        }
-            else
-        {
+        } else {
             $result->additional(['message' => 'failed to update, Report not found!']);
             return $result;
         }
@@ -266,29 +233,27 @@ class ReportController extends Controller
         $model = Report::find($id);
         $result = new Result($model);
 
-        if ($model != null)
-        {
+        if ($model != null) {
             $model->delete();
             $result->additional(['message' => 'delete successfully']);
             return $result;
-        }
-            else
-        {
+        } else {
             $result->additional(['message' => 'failed to delete, Report not found!']);
             return $result;
         }
     }
 
-    public function filterOption(Request $request){
+    public function filterOption(Request $request)
+    {
         $year = Report::select(DB::raw('year(date) as year'))->distinct('date')->pluck('year');
         $month = Report::select(DB::raw('month(date) as month'))->distinct('date')->pluck('month');
         $uic = UIC::select(DB::raw('uic_code as year'))->distinct('uic_code')->pluck('year');
         $status = Report::select(DB::raw('status as year'))->distinct('status')->pluck('year');
         $report = ReportController::index();
         $recom_status = array();
-        foreach($report->getData() as $rep){
-            foreach($rep as $r){
-                if(!in_array($r->recom_status,$recom_status)){
+        foreach ($report->getData() as $rep) {
+            foreach ($rep as $r) {
+                if (!in_array($r->recom_status, $recom_status)) {
                     $recom_status[] = $r->recom_status;
                 }
             }
@@ -302,70 +267,66 @@ class ReportController extends Controller
         ]);
     }
 
-    public function filter(Request $request){
+    public function filter(Request $request)
+    {
         $model = ReportController::index();
         $result = array();
-        if ($request->year != null)
-        {
+        if ($request->year != null) {
             $temp1 = array();
-            foreach ($model->getData() as $r){
-                foreach($r as $rep){
-                    if (date('Y', strtotime($rep->date)) == $request->year){
+            foreach ($model->getData() as $r) {
+                foreach ($r as $rep) {
+                    if (date('Y', strtotime($rep->date)) == $request->year) {
                         $temp1[] = $rep;
                     }
                 }
             }
             $result = $temp1;
-        }else{
-            foreach ($model->getData() as $r){
+        } else {
+            foreach ($model->getData() as $r) {
                 $result = $r;
             }
         }
-        if ($request->month != null)
-        {
+        if ($request->month != null) {
             $temp2 = array();
-            foreach($result as $rep){
-                if (date('m', strtotime($rep->date)) == $request->month){
+            foreach ($result as $rep) {
+                if (date('m', strtotime($rep->date)) == $request->month) {
                     $temp2[] = $rep;
                 }
             }
             $result = $temp2;
         }
-        if ($request->uic_code != null)
-        {
+        if ($request->uic_code != null) {
             $temp3 = array();
-            foreach($result as $rep){
-                if (in_array($request->uic_code,$rep->uic)){
+            foreach ($result as $rep) {
+                if (in_array($request->uic_code, $rep->uic)) {
                     $temp3[] = $rep;
                 }
             }
             $result = $temp3;
         }
-        if ($request->status != null)
-        {
+        if ($request->status != null) {
             $temp4 = array();
-            foreach($result as $rep){
-                if ($rep->status == $request->status){
+            foreach ($result as $rep) {
+                if ($rep->status == $request->status) {
                     $temp4[] = $rep;
                 }
             }
             $result = $temp4;
         }
-        if ($request->recom_status != null)
-        {
+        if ($request->recom_status != null) {
             $temp5 = array();
-            foreach($result as $rep){
-                if ($rep->recom_status == $request->recom_status){
+            foreach ($result as $rep) {
+                if ($rep->recom_status == $request->recom_status) {
                     $temp5[] = $rep;
                 }
             }
             $result = $temp5;
         }
 
-        if ($request->search != null){
+        if ($request->search != null) {
             $temp6 = array();
-            foreach($result as $rep){
-                if (strpos($rep->date, $request->search) !== false || strpos($rep->report_no, $request->search) !== false || strpos($rep->prepared_by, $request->search) !== false  || strpos($rep->approved_by, $request->search) !== false || strpos($rep->checked_by, $request->search) !== false ||strpos($rep->status, $request->search) !== false || in_array($request->search,$rep->uic) || strpos($rep->recom_status, $request->search) !== false ){
+            foreach ($result as $rep) {
+                if (strpos($rep->date, $request->search) !== false || strpos($rep->report_no, $request->search) !== false || strpos($rep->prepared_by, $request->search) !== false  || strpos($rep->approved_by, $request->search) !== false || strpos($rep->checked_by, $request->search) !== false || strpos($rep->status, $request->search) !== false || in_array($request->search, $rep->uic) || strpos($rep->recom_status, $request->search) !== false) {
                     $temp6[] = $rep;
                 }
             }
@@ -379,7 +340,7 @@ class ReportController extends Controller
     {
         $file = $request->file('file');
 
-        if ($request->file('file') == null){
+        if ($request->file('file') == null) {
             return response()->json([
                 'message' => 'Upload gagal, file tidak ada!'
             ]);
@@ -397,8 +358,38 @@ class ReportController extends Controller
 
     public function test_email()
     {
-        Mail::to('samsam.nursamsi02@gmail.com')->send(new ReportMail);
+        $report = Report::find(5);
+        $data = [
+            'to' => 'samsam.nursamsi02@gmail.com',
+            'cc' => ['sam.sesterdamp02@gmail.com'],
+            'from' => Config::get('mail.from.address'),
+            'from_name' => Config::get('mail.from.name'),
+            'subject' => $report->subject
+        ];
+
+        Mail::send('emails.report', $data, function ($message) use ($data) {
+            $message->to($data['to']);
+            $message->cc($data['cc']);
+            $message->from($data['from'], $data['from_name']);
+            $message->subject($data['subject']);
+        });
         return 'Email Sent';
     }
 
+    public function distribution()
+    {
+
+        $client = new Client();
+        $headers = [
+            'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImVtYWlsIjoia2lraWsuZGV2QGdtYWlsLmNvbSJ9fQ.bFBBep7EDAwjIioDWsQHt2_mHFnUPy3ea6ocRVxNcm4'
+            // 'username' => $username,
+        ];
+
+        $response = $client->get('http://172.16.40.164/API/Superior_email', [
+            'headers' => $headers
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+        return $response->getBody();
+    }
 }

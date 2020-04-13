@@ -928,16 +928,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Get the current PDO connection parameter without executing any reconnect logic.
-     *
-     * @return \PDO|\Closure|null
-     */
-    public function getRawPdo()
-    {
-        return $this->pdo;
-    }
-
-    /**
      * Get the current PDO connection used for reading.
      *
      * @return \PDO
@@ -957,16 +947,6 @@ class Connection implements ConnectionInterface
         }
 
         return $this->readPdo ?: $this->getPdo();
-    }
-
-    /**
-     * Get the current read PDO connection parameter without executing any reconnect logic.
-     *
-     * @return \PDO|\Closure|null
-     */
-    public function getRawReadPdo()
-    {
-        return $this->readPdo;
     }
 
     /**

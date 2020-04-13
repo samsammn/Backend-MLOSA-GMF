@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
 
       - name: Run friendsofphp/php-cs-fixer
         run: php7.3 ./tools/php-cs-fixer fix --diff-format=udiff --dry-run --show-progress=dots --using-cache=no --verbose
@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@master
 
       - name: Update dependencies with composer
         run: php7.3 ./tools/composer update --no-interaction --no-ansi --no-progress --no-suggest
@@ -44,19 +44,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@master
 
       - name: "Install PHP with extensions"
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@master
         with:
           php-version: 7.3
           coverage: none
-          extensions: intl
+          extension-csv: intl
 
       - name: Run roave/backward-compatibility-check
-        run: php ./tools/roave-backward-compatibility-check --from=8.5.0
+        run: php ./tools/roave-backward-compatibility-check --from=42afe2b8b42077b26148272bd03da4ab6e46a072
 
   lint-xml-configuration:
     name: Lint XML Configuration
@@ -65,7 +63,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
 
       - name: Build Docker image
         uses: ./.docker/lint-xml-configuration
@@ -93,15 +91,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
 
       - name: "Install PHP with extensions"
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@master
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          extensions: dom, json, libxml, mbstring, pdo_sqlite, soap, xml, xmlwriter
-          ini-values: assert.exception=1, zend.assertions=1
+          coverage: xdebug
+          extension-csv: dom, json, libxml, mbstring, pdo_sqlite, soap, xml, xmlwriter
+          ini-values-csv: assert.exception=1, zend.assertions=1
 
       - name: "Cache dependencies installed with composer"
         uses: actions/cache@v1

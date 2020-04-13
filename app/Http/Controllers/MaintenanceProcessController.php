@@ -47,6 +47,8 @@ class MaintenanceProcessController extends Controller
         ]);
 
         $maintenance = new MaintenanceProcess();
+        $maintenance->number = $request->number;
+        $maintenance->sequence = $request->sequence;
         $maintenance->name = $request->name;
         $maintenance->save();
 
@@ -137,20 +139,17 @@ class MaintenanceProcessController extends Controller
         $model = MaintenanceProcess::find($id);
         $result = new Result($model);
 
-        if ($model != null)
-        {
+        if ($model != null) {
             $model->delete();
 
             $detail = MaintenanceProcessDetail::where('mp_id', '=', $id);
-            if ($detail != null){
+            if ($detail != null) {
                 $detail->delete();
             }
 
             $result->additional(['message' => 'delete successfully']);
             return $result;
-        }
-            else
-        {
+        } else {
             $result->additional(['message' => 'failed to delete, observation form not found!']);
             return $result;
         }
@@ -159,7 +158,7 @@ class MaintenanceProcessController extends Controller
     public function form($id)
     {
         $maintenance = MaintenanceProcess::find($id);
-        $model = DB::select('select activity, sub_activity_id, sub_activity from vw_maintenance_process_relation where id="'.$id.'"');
+        $model = DB::select('select activity, sub_activity_id, sub_activity from vw_maintenance_process_relation where id="' . $id . '"');
         $data = collect($model)->groupBy('activity');
 
         return new Result([

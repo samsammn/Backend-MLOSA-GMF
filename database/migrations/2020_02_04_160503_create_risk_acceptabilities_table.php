@@ -13,12 +13,12 @@ class CreateRiskAcceptabilitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('risk_acceptabilities', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('index', 20)->nullable();
-            $table->string('tolerability', 30)->nullable();
-            $table->string('color', 10)->nullable();
-        });
+        // Schema::create('risk_acceptabilities', function (Blueprint $table) {
+        //     $table->bigIncrements('id');
+        //     $table->string('index', 20)->nullable();
+        //     $table->string('tolerability', 30)->nullable();
+        //     $table->string('color', 10)->nullable();
+        // });
     }
 
     /**
@@ -28,6 +28,6 @@ class CreateRiskAcceptabilitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('risk_acceptabilities');
+        // Schema::dropIfExists('risk_acceptabilities');
     }
 }

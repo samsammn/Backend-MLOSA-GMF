@@ -15,8 +15,9 @@ class CreateMaintenanceProcessesTable extends Migration
     {
         Schema::create('maintenance_processes', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('number', 20);
+            $table->string('sequence', 20);
             $table->string('name', 50);
-            $table->timestamps();
         });
     }
 

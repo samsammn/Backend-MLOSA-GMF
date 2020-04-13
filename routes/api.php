@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/signin', 'UserController@signin');
 Route::get('/signout', 'UserController@signout');
 Route::get('/check_auth', 'UserController@check_auth');
+Route::get('/observation/download_pdf', 'ObservationController@download_pdf');
+Route::get('/observation/download/logs', 'ObservationController@download_log');
 Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
 Route::get('/observation_admin/download/mlosa', 'ObservationController@download_mlosa_admin');
 
@@ -30,8 +32,9 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/observation/{id}/form', 'ObservationController@form');
     Route::get('/global_mlosa_plan', 'ObservationController@global_mlosa_plan');
     Route::get('/mlosa_implementation', 'ObservationController@mlosa_implementation');
-    Route::get('/observation/download/logs', 'ObservationController@download_log');
     Route::get('/observation/{id}/logs', 'ObservationController@logs');
+    // Route::get('/observation/download/logs', 'ObservationController@download_log');
+    // Route::get('/observation/download_pdf', 'ObservationController@download_pdf');
     // Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
     // Route::get('/observation_admin/download/mlosa', 'ObservationController@download_mlosa_admin');
     Route::get('/observation/{id}/attachments', 'ObservationController@display_attachment');
@@ -46,11 +49,15 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/risk_value/calculate', 'ObservationController@calculate_risk_value');
     Route::post('/report/upload_file_editor', 'ReportController@upload_file_editor');
 
-    Route::post('/license', 'UserController@list_obslicense');
+    Route::get('/notification', 'NotificationController@index');
+    Route::get('/notification/read_all', 'NotificationController@read_all');
+
+    // Route::post('/license', 'UserController@list_obslicense');
 
     Route::post('/report/test_email', 'ReportController@test_email');
     Route::get('/report/filter/filteroption', 'ReportController@filterOption');
     Route::get('/report/filter/filterreport', 'ReportController@filter');
+    Route::get('/report/distribution', 'ReportController@distribution');
 
     Route::put('/recommendation/verify/{id}', 'RecommendationController@verify');
     Route::get('/recommendation/detail', 'RecommendationController@detail');

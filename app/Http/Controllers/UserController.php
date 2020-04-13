@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use GuzzleHttp\Client;
 use App\Http\Resources\Result;
 use App\Http\Resources\ResultCollection;
-use App\Http\Resources\UserResource;
-use App\Http\Resources\UserResourceCollection;
 use App\Model\UIC;
 use App\Model\User;
 use Illuminate\Http\Request;

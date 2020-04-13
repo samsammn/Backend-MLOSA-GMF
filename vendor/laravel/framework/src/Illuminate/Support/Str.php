@@ -61,17 +61,7 @@ class Str
      */
     public static function afterLast($subject, $search)
     {
-        if ($search === '') {
-            return $subject;
-        }
-
-        $position = strrpos($subject, (string) $search);
-
-        if ($position === false) {
-            return $subject;
-        }
-
-        return substr($subject, $position + strlen($search));
+        return $search === '' ? $subject : array_reverse(explode($search, $subject))[0];
     }
 
     /**
@@ -252,21 +242,6 @@ class Str
     }
 
     /**
-     * Determine if a given string is a valid UUID.
-     *
-     * @param  string  $value
-     * @return bool
-     */
-    public static function isUuid($value)
-    {
-        if (! is_string($value)) {
-            return false;
-        }
-
-        return preg_match('/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iD', $value) > 0;
-    }
-
-    /**
      * Convert a string to kebab case.
      *
      * @param  string  $value
@@ -281,7 +256,7 @@ class Str
      * Return the length of the given string.
      *
      * @param  string  $value
-     * @param  string|null  $encoding
+     * @param  string  $encoding
      * @return int
      */
     public static function length($value, $encoding = null)

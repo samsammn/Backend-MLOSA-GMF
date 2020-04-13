@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\RecommendationReplies;
+use App\Model\User;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class RecommendationRepliesController extends Controller
@@ -41,7 +43,7 @@ class RecommendationRepliesController extends Controller
         $file = $request->file;
         $filename = '';
 
-        if ($request->file('file') !== null){
+        if ($request->file('file') !== null) {
             $path = '/recommendation_replies/';
             $filename = url('') . $path . $file->getClientOriginalName();
             $file->move(public_path($path), $file->getClientOriginalName());
@@ -53,6 +55,16 @@ class RecommendationRepliesController extends Controller
         $model->reply = $request->reply;
         $model->file = $filename;
         $model->save();
+
+        $user = User::where('username', '=', Session::get('username'))->first();
+        $unit = $user->uic->uic_code;
+
+        $notif = new NotificationController();
+        $notif->addRecommendation([
+            'recommendation_id' => $request->recommendation_id,
+            'role' => strtolower($user->role),
+            'unit' => $unit
+        ]);
 
         return response()->json([
             'message' => 'Store Success',
