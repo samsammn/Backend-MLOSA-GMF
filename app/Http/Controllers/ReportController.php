@@ -67,6 +67,33 @@ class ReportController extends Controller
                 ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
                 ->where('report_id', $report->id)
                 ->get();
+
+            $model_recommendation = Recommendation::where('report_id', $report->id)->get();
+            $count = 0;
+            $overdue = false;
+            $on_progress = false;
+            foreach ($model_recommendation as $recom) {
+                if ($recom->status == "Closed"){
+                    $count = $count + 1;
+                }
+                if ($recom->status == "On Progress"){
+                    $on_progress = true;
+                }
+                if ($recom->status == "Overdue"){
+                    $overdue = true;
+                }
+            }
+            if ($count == sizeof($model_recommendation)){
+                $status = "Closed";
+            } else if($overdue) {
+                $status = "Overdue";
+            } else if($on_progress) {
+                $status = "On Progress";
+            } else {
+                $status = "Open";
+            }
+
+            $report->recom_status = $status;
         }
 
         $notif = new NotificationController();
@@ -283,15 +310,18 @@ class ReportController extends Controller
         $month = Report::select(DB::raw('month(date) as month'))->distinct('date')->pluck('month');
         $uic = UIC::select(DB::raw('uic_code as year'))->distinct('uic_code')->pluck('year');
         $status = Report::select(DB::raw('status as year'))->distinct('status')->pluck('year');
-        $report = ReportController::index();
-        $recom_status = array();
-        foreach ($report->getData() as $rep) {
-            foreach ($rep as $r) {
-                if (!in_array($r->recom_status, $recom_status)) {
-                    $recom_status[] = $r->recom_status;
-                }
-            }
-        }
+
+        $recom_status = Recommendation::distinct('status')->pluck('status');
+        // $report = ReportController::index();
+        // $recom_status = array();
+        // foreach ($report->getData() as $rep) {
+        //     foreach ($rep as $r) {
+        //         if (!in_array($r->recom_status, $recom_status)) {
+        //             $recom_status[] = $r->recom_status;
+        //         }
+        //     }
+        // }
+
         return response()->json([
             "year" => $year,
             "month" => $month,
