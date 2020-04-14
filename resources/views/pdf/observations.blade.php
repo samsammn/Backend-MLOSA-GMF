@@ -107,76 +107,74 @@
 
     <main>
         <table border="1" class="table" style="margin-top: 1.5rem">
-        <thead>
-            <tr>
-            <td width="180px">
-                Observation Number
-            </td>
-            <td class="no-border">:</td>
-            <td>
-                {{ $data['observation']->no }}
-            </td>
-            <td rowspan="5">
-                Observation Team :
-                <ol>
-                    @foreach ($data['observation']->team as $item)
-                        <li>{{ $item->fullname }}</li>
-                    @endforeach
-                </ol>
-            </td>
-            </tr>
-            <tr>
-            <td>
-                Observation Date
-            </td>
-            <td class="no-border">:</td>
-            <td>
-                {{ date('d M Y', strtotime($data['observation']->date)) }}
-            </td>
-            </tr>
-            <tr>
-            <td>
-                Observation Start Time
-            </td>
-            <td class="no-border">:</td>
-            <td>
-                {{ $data['observation']->start_time }}
-            </td>
-            </tr>
-            <tr>
-            <td>
-                Observation End Time
-            </td>
-            <td class="no-border">:</td>
-            <td>
-                {{ $data['observation']->end_time }}
-            </td>
-            </tr>
-            <tr>
-            <td>
-                A/C/Engine/Component
-            </td>
-            <td class="no-border">:</td>
-            <td>
-                {{ $data['observation']->component_type }}
-            </td>
-            </tr>
-            <tr>
-            <td>
-                Process/Task Being Observation
-            </td>
-            <td class="no-border">:</td>
-            <td>
-                {{ $data['observation']->task_observed }}
-            </td>
-            <td>
-                Location/Station :
-                {{ $data['observation']->location }}
-            </td>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
+            <thead>
+                <tr>
+                <td width="180px">
+                    Observation Number
+                </td>
+                <td class="no-border">:</td>
+                <td>
+                    {{ $data['observation']->no }}
+                </td>
+                <td rowspan="5">
+                    Observation Team :
+                    <ol>
+                        @foreach ($data['observation']->team as $item)
+                            <li>{{ $item->fullname }}</li>
+                        @endforeach
+                    </ol>
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    Observation Date
+                </td>
+                <td class="no-border">:</td>
+                <td>
+                    {{ date('d M Y', strtotime($data['observation']->date)) }}
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    Observation Start Time
+                </td>
+                <td class="no-border">:</td>
+                <td>
+                    {{ $data['observation']->start_time }}
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    Observation End Time
+                </td>
+                <td class="no-border">:</td>
+                <td>
+                    {{ $data['observation']->end_time }}
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    A/C/Engine/Component
+                </td>
+                <td class="no-border">:</td>
+                <td>
+                    {{ $data['observation']->component_type }}
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    Process/Task Being Observation
+                </td>
+                <td class="no-border">:</td>
+                <td>
+                    {{ $data['observation']->task_observed }}
+                </td>
+                <td>
+                    Location/Station :
+                    {{ $data['observation']->location }}
+                </td>
+                </tr>
+            </thead>
         </table>
 
         <h3>Hazard (Threat) Codes</h3>

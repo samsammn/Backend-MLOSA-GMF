@@ -20,6 +20,7 @@ Route::get('/observation/download_pdf', 'ObservationController@download_pdf');
 Route::get('/observation/download/logs', 'ObservationController@download_log');
 Route::get('/observation/download/mlosa', 'ObservationController@download_mlosa');
 Route::get('/observation_admin/download/mlosa', 'ObservationController@download_mlosa_admin');
+Route::get('/report/attachment', 'ReportController@attachment');
 
 Route::group(['middleware' => 'auth_api'], function () {
 
@@ -58,6 +59,7 @@ Route::group(['middleware' => 'auth_api'], function () {
     Route::get('/report/filter/filteroption', 'ReportController@filterOption');
     Route::get('/report/filter/filterreport', 'ReportController@filter');
     Route::get('/report/distribution', 'ReportController@distribution');
+    // Route::get('/report/attachment', 'ReportController@attachment');
 
     Route::put('/recommendation/verify/{id}', 'RecommendationController@verify');
     Route::get('/recommendation/detail', 'RecommendationController@detail');

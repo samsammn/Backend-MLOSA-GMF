@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Client;
+use PDF;
 
 class ReportController extends Controller
 {
@@ -391,5 +392,14 @@ class ReportController extends Controller
 
         $body = json_decode($response->getBody(), true);
         return $response->getBody();
+    }
+
+    public function attachment()
+    {
+
+        set_time_limit(300);
+        // return view('pdf.report');
+        $pdf = PDF::loadView('pdf.report');
+        return $pdf->download('report.pdf');
     }
 }
