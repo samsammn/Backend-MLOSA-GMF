@@ -25,9 +25,42 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $model = Report::all();
+        $filter = [];
+        $filterRecom = [];
+
+        if ($request->year != null) {
+            $filter[] = [DB::raw('year(date)'), '=', $request->year];
+        }
+
+        if ($request->month != null) {
+            $filter[] = [DB::raw('month(date)'), '=', $request->month];
+        }
+
+        if ($request->uic_code != null) {
+            $filterRecom[] = ['uic_code', '=', $request->uic_code];
+        }
+
+        if ($request->status != null) {
+            $filter[] = ['status', '=', $request->status];
+        }
+
+        if ($request->recom_status != null) {
+            $filterRecom[] = ['status', '=', $request->recom_status];
+        }
+
+        $report_id = Recommendation::selectRaw('
+                    recommendations.report_id,
+                    recommendations.uic_id,
+                    uics.uic_code
+                ')
+                ->join('uics', 'uics.id', '=', 'recommendations.uic_id')
+                ->where($filterRecom)
+                ->groupBy('recommendations.report_id', 'recommendations.uic_id', 'uics.uic_code')
+                ->pluck('report_id');
+
+        $model = Report::where($filter)->whereIn('id', $report_id)->get();
 
         foreach ($model as $report) {
             $report->uic = Recommendation::selectRaw('uics.*')
@@ -270,11 +303,12 @@ class ReportController extends Controller
 
     public function filter(Request $request)
     {
-        $model = ReportController::index();
+        $model = ReportController::data();
+
         $result = array();
         if ($request->year != null) {
             $temp1 = array();
-            foreach ($model->getData() as $r) {
+            foreach ($model as $r) {
                 foreach ($r as $rep) {
                     if (date('Y', strtotime($rep->date)) == $request->year) {
                         $temp1[] = $rep;
@@ -283,7 +317,7 @@ class ReportController extends Controller
             }
             $result = $temp1;
         } else {
-            foreach ($model->getData() as $r) {
+            foreach ($model as $r) {
                 $result = $r;
             }
         }
