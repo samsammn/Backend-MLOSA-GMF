@@ -379,7 +379,6 @@ class ReportController extends Controller
 
     public function distribution()
     {
-
         $client = new Client();
         $headers = [
             'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImVtYWlsIjoia2lraWsuZGV2QGdtYWlsLmNvbSJ9fQ.bFBBep7EDAwjIioDWsQHt2_mHFnUPy3ea6ocRVxNcm4'
@@ -394,12 +393,17 @@ class ReportController extends Controller
         return $response->getBody();
     }
 
-    public function attachment()
+    public function attachment(Request $request)
     {
+        $model = Report::find($request->id);
+
+        $data = [
+            'report' => $model
+        ];
 
         set_time_limit(300);
-        // return view('pdf.report');
-        $pdf = PDF::loadView('pdf.report');
-        return $pdf->download('report.pdf');
+        $pdf = PDF::loadView('pdf.report', ['data' => $data]);
+
+        return $pdf->stream('report.pdf');
     }
 }

@@ -122,14 +122,16 @@
             <tbody>
                 <tr>
                     <td rowspan="7" width="72%">
-                        Title: Test MLOSA<br>
-                        Subject: Summary MLOSA Report 2020
+                        Title: {{ $data['report']->title }}<br>
+                        Subject:
+                        <h3 align="center">{{ $data['report']->subject }}</h3>
                     </td>
                     <td width="100px">
                         No
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->report_no }}
                     </td>
                 </tr>
                 <tr>
@@ -138,6 +140,7 @@
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->date }}
                     </td>
                 </tr>
                 <tr>
@@ -146,6 +149,7 @@
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->report_no }}
                     </td>
                 </tr>
                 <tr>
@@ -154,6 +158,7 @@
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->report_no }}
                     </td>
                 </tr>
                 <tr>
@@ -162,6 +167,7 @@
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->prepared_by }}
                     </td>
                 </tr>
                 <tr>
@@ -170,6 +176,7 @@
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->checked_by }}
                     </td>
                 </tr>
                 <tr>
@@ -178,6 +185,7 @@
                     </td>
                     <td class="no-border">:</td>
                     <td>
+                        {{ $data['report']->approved_by }}
                     </td>
                 </tr>
                 <tr>
