@@ -49,17 +49,21 @@ class NotificationController extends Controller
         $role = strtolower($user->role);
 
         if ($notif === 'observation') {
-            NotificationObservation::query()->update([
-                $role => 0
-            ]);
+            if ($role !== 'gm' && $role !== 'mgr') {
+                NotificationObservation::query()->update([
+                    $role => 0
+                ]);
+            }
         } else if ($notif === 'report') {
             NotificationReport::query()->where('unit', '=', $user->uic->uic_code)->update([
                 $role => 0
             ]);
         } else if ($notif === 'recommendation') {
-            NotificationRecommendation::query()->update([
-                $role => 0
-            ]);
+            if ($role !== 'gm' && $role !== 'mgr') {
+                NotificationRecommendation::query()->update([
+                    $role => 0
+                ]);
+            }
         }
     }
 
